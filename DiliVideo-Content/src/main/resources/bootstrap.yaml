@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: DiliVideo-Content
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+        register-enabled: true
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+        file-extension: yaml
+        group: DiliVideo
+  profiles:
+    active: dev
+
+
+server:
+  port: 8082
+
+
+
+
