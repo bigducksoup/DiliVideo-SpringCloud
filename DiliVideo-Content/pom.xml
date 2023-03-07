@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <okhttp3.version>4.8.1 </okhttp3.version>
     </properties>
 
     <dependencies>
@@ -32,14 +33,33 @@
 
         <dependency>
             <groupId>com.ducksoup</groupId>
+            <artifactId>DiliVideo-Entity</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ducksoup</groupId>
             <artifactId>DiliVideo-Feign</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+
+        <!--minio分布式文件系统-->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.4.3</version>
+
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideocontent.mapper.PartitionMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideocontent.Entity.Partition">
+            <id property="id" column="Id" jdbcType="CHAR"/>
+            <result property="partitionname" column="partitionName" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updataTime" column="updata_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id,partitionName,description,
+        create_time,updata_time,status
+    </sql>
+</mapper>
