@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: DiliVideo-VideoEncode
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+        register-enabled: true
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+        file-extension: yaml
+        group: DiliVideo
+  profiles:
+    active: dev
+
+
+
+ffmpeg: /Users/meichuankutou/Applications/ffmpeg/ffmpeg
+ffprobe: /Users/meichuankutou/Applications/ffmpeg/ffprobe
+
+
+
+
+server:
+  port: 8087
+
+
+
+
+
+

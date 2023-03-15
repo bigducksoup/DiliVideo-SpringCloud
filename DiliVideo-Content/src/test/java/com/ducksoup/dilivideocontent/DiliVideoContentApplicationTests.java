@@ -1,46 +1,40 @@
 package com.ducksoup.dilivideocontent;
 
+import com.ducksoup.dilivideocontent.Config.RabbitmqConfig;
+import com.ducksoup.dilivideocontent.Entity.Videofile;
 import com.ducksoup.dilivideocontent.mainservices.MinIO.UploadService;
-import io.minio.errors.*;
+import com.ducksoup.dilivideocontent.service.VideofileService;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+
 
 @SpringBootTest
 class DiliVideoContentApplicationTests {
 
 
+    public final static String ROUTING_KEY1 = "FFMPEG.convert";
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     @Autowired
     private UploadService uploadService;
 
+    @Autowired
+    private VideofileService videofileService;
+
     @Test
-    void Test(){
-        try {
-            uploadService.test();
-        } catch (ServerException e) {
-            throw new RuntimeException(e);
-        } catch (InsufficientDataException e) {
-            throw new RuntimeException(e);
-        } catch (ErrorResponseException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidResponseException e) {
-            throw new RuntimeException(e);
-        } catch (XmlParserException e) {
-            throw new RuntimeException(e);
-        } catch (InternalException e) {
-            throw new RuntimeException(e);
-        }
+    void TestRabbit(){
+        Videofile byId = videofileService.getById("746437c3-88dc-4feb-9e58-ecd66fc7db30");
+        rabbitTemplate.convertAndSend(RabbitmqConfig.FFMPEG_EXCHANGE, ROUTING_KEY1, byId);
+        System.out.println("success");
     }
+
+
+
 
 
 }

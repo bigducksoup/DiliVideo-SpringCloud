@@ -15,12 +15,13 @@
             <result property="size" column="size" jdbcType="BIGINT"/>
             <result property="state" column="state" jdbcType="TINYINT"/>
             <result property="fullpath" column="fullpath" jdbcType="VARCHAR"/>
+            <result property="md5" column="md5" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         Id,origin_name,unique_name,
         path,bucketId,upload_time,
         videoinfo_id,size,state,
-        fullpath
+        fullpath,md5
     </sql>
 </mapper>

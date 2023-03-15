@@ -1,16 +1,13 @@
 package com.ducksoup.dilivideomain;
 
 import com.ducksoup.dilivideoentity.dto.FileTransmissionInfo;
-import com.ducksoup.dilivideofeign.BarrageServices.ContentService;
-import org.checkerframework.checker.units.qual.A;
+import com.ducksoup.dilivideofeign.Content.ContentServices;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -19,7 +16,7 @@ class DiliVideoMainApplicationTests {
 
 
     @Autowired
-    private ContentService contentService;
+    private ContentServices contentService;
 
     @Test
     void Test() throws IOException {

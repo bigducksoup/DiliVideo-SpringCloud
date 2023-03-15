@@ -11,6 +11,8 @@ public class FileTransmissionInfo {
 
     private String originalFileName;
 
+    private String code;
+
 
 
 }

@@ -66,6 +66,9 @@ public class Videofile implements Serializable {
      */
     private String fullpath;
 
+    /**
+     * md5
+     */
     private String md5;
 
     @TableField(exist = false)
