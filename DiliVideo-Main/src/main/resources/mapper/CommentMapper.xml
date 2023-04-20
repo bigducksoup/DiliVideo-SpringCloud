@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideomain.mapper.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideomain.Entity.Comment">
+            <id property="id" column="Id" jdbcType="CHAR"/>
+            <result property="userNickname" column="user_nickname" jdbcType="VARCHAR"/>
+            <result property="userAvatarUrl" column="user_avatar_url" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="userId" column="user_id" jdbcType="CHAR"/>
+            <result property="likeCount" column="like_count" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="userLevel" column="user_level" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id,user_nickname,user_avatar_url,
+        create_time,user_id,like_count,
+        status,user_level
+    </sql>
+</mapper>

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.InputStream;
 
+/**
+ * 从minIO下载文件的实现
+ */
 @Service
 public class DownLoadFromMinIOService {
 
@@ -29,7 +32,7 @@ public class DownLoadFromMinIOService {
         String[] split = filename.split("\\.");
 
         File temp = File.createTempFile("temp","."+split[split.length-1]);
-//        File f = new File("/Users/meichuankutou/Desktop/testsss.MOV");
+
         FileUtils.copyInputStreamToFile(response,temp);
 
         return temp;

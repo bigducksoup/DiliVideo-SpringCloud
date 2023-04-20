@@ -18,6 +18,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 转码服务
+ */
 @Slf4j
 @Service
 public class FFMPEGService {

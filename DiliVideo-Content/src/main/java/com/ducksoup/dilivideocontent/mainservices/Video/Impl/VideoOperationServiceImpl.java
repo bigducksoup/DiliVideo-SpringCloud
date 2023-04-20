@@ -82,6 +82,7 @@ public class VideoOperationServiceImpl implements VideoOperationService {
         videoinfo.setVideofileId(videofile.getId());
         videoinfo.setIsOriginal(videoInfoForm.isIforiginal() ? 1:0);
         videoinfo.setAuthorName(user.getNickname());
+        videoinfo.setPartitionId(videoInfoForm.getPartitionId());
 
         try {
             String coverid = uploadService.uploadCover(videoInfoForm.getFile());

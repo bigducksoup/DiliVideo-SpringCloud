@@ -5,17 +5,31 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpStatus;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ducksoup.dilivideocontent.Controller.Params.VideoDeleteParams;
 import com.ducksoup.dilivideocontent.Controller.Params.VideoInfoForm;
+import com.ducksoup.dilivideocontent.Controller.Params.VideoInfoUpdateForm;
+import com.ducksoup.dilivideocontent.Entity.Cover;
 import com.ducksoup.dilivideocontent.Entity.Videofile;
+import com.ducksoup.dilivideocontent.Entity.Videoinfo;
 import com.ducksoup.dilivideocontent.dto.FileTransmissionInfo;
 import com.ducksoup.dilivideocontent.mainservices.MinIO.MinIOImpl.UploadService;
 import com.ducksoup.dilivideocontent.mainservices.Rabbit.NotifyVideoFFMPEG;
 import com.ducksoup.dilivideocontent.mainservices.Video.VideoOperationService;
+import com.ducksoup.dilivideocontent.service.CoverService;
+import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.RedisUtil;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @CrossOrigin
@@ -33,7 +47,14 @@ public class VideoManageController {
     private VideoOperationService videoOperationService;
 
     @Autowired
+    private VideoinfoService videoinfoService;
+
+
+    @Autowired
     private NotifyVideoFFMPEG notifyVideoFFMPEG;
+
+    @Autowired
+    private CoverService coverService;
 
     @SaCheckLogin
     @PostMapping("/upload")
@@ -96,6 +117,15 @@ public class VideoManageController {
     @PostMapping("/delete")
     public ResponseResult<Boolean> deleteVideo(@RequestBody VideoDeleteParams params){
 
+
+        String loginId = (String) StpUtil.getLoginId();
+        Videoinfo videoInfoUserId = videoinfoService.getOne(new LambdaQueryWrapper<Videoinfo>().select(Videoinfo::getAuthorid).eq(Videoinfo::getId, params.getVideoInfoId()));
+
+        if (!loginId.equals(videoInfoUserId.getAuthorid())){
+            return new ResponseResult<>(HttpStatus.HTTP_FORBIDDEN,"权限不足",false);
+        }
+
+
         boolean b = videoOperationService.deleteVideo(params.getVideoInfoId());
 
         if (b){
@@ -106,6 +136,57 @@ public class VideoManageController {
 
     }
 
+
+
+    @SaCheckLogin
+    @GetMapping("/published_videos")
+    public ResponseResult<List<VideoInfoVo>> getOwnVideoList(@RequestParam Integer page){
+
+        String loginId = (String) StpUtil.getLoginId();
+
+        int pageSize = 10;
+
+        Page<Videoinfo> pager = new Page<>(page,pageSize);
+
+        videoinfoService.page(pager,new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus,1).eq(Videoinfo::getAuthorid,loginId).orderByDesc(Videoinfo::getCreateTime));
+
+        List<Videoinfo> videoinfos = pager.getRecords();
+
+
+        List<VideoInfoVo> videoInfoVos = videoinfoService.getVideoInfoVoByVideoInfo(videoinfos);
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"success",videoInfoVos);
+
+
+    }
+
+
+    @SaCheckLogin
+    @PostMapping("/update_info")
+    public ResponseResult<Boolean> updateVideoInfo(@RequestBody VideoInfoUpdateForm form){
+
+        String loginId = (String) StpUtil.getLoginId();
+        Videoinfo videoinfo = videoinfoService.getById(form.getId());
+        if (!videoinfo.getAuthorid().equals(loginId)){
+            return new ResponseResult<>(HttpStatus.HTTP_FORBIDDEN,"无操作权限",false);
+        }
+
+        LambdaUpdateWrapper<Videoinfo> updateWrapper = new LambdaUpdateWrapper<Videoinfo>().eq(Videoinfo::getId, form.getId())
+                .set(Videoinfo::getTitle, form.getTitle())
+                .set(Videoinfo::getPartitionId, form.getPartitionId())
+                .set(Videoinfo::getSummary, form.getDescription())
+                .set(Videoinfo::getIsOriginal, form.isIforiginal() ? 1 : 0);
+
+
+        boolean update = videoinfoService.update(updateWrapper);
+
+        return update?
+                new ResponseResult<>(HttpStatus.HTTP_OK,"修改成功",true)
+                :
+                new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"修改失败",false);
+
+
+    }
 
 
 

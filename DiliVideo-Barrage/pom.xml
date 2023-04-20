@@ -26,6 +26,12 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.ducksoup</groupId>
+            <artifactId>DiliVideo-Entity</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

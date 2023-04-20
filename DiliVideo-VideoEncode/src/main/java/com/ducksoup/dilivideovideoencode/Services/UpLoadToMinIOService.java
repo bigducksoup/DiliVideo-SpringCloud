@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.file.Files;
 
+
+/**
+ * 上传服务
+ */
 @Service
 public class UpLoadToMinIOService {
 

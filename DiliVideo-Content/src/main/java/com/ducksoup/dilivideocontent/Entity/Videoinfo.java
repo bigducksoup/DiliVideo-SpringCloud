@@ -101,6 +101,11 @@ public class Videoinfo implements Serializable {
      */
     private Integer isOriginal;
 
+    /**
+     * 分区id
+     */
+    private String partitionId;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

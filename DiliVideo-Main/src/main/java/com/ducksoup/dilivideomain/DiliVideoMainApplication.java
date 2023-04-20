@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.ducksoup.dilivideofeign.BarrageServices")
+@EnableFeignClients(basePackages = "com.ducksoup.dilivideofeign")
 @MapperScan("com.ducksoup.dilivideomain.mapper")
 public class DiliVideoMainApplication {
 

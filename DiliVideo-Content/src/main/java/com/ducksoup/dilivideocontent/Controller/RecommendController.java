@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/recommend")
@@ -46,33 +48,7 @@ public class RecommendController {
 
         List<Videoinfo> videoinfos = pager.getRecords();
 
-        List<VideoInfoVo> videoInfoVos = new ArrayList<>();
-
-        videoinfos.forEach((item)->{
-            Cover cover = coverService.getOne(new LambdaQueryWrapper<Cover>().eq(Cover::getId, item.getCoverId()));
-            VideoInfoVo videoInfoVo = new VideoInfoVo();
-            videoInfoVo.setVideoInfoId(item.getId());
-            videoInfoVo.setVideoAuthorName(item.getAuthorName());
-            videoInfoVo.setVideoAuthorId(item.getAuthorid());
-            videoInfoVo.setCollectCount(item.getCollectCount());
-            videoInfoVo.setCommentCount(item.getCommentCount());
-            videoInfoVo.setCreateTime(item.getCreateTime());
-            videoInfoVo.setIsOriginal(item.getIsOriginal());
-            videoInfoVo.setWatchCount(item.getWatchCount());
-            videoInfoVo.setLikeCount(item.getLikeCount());
-            videoInfoVo.setIsPublish(item.getIsPublish());
-            videoInfoVo.setOpenComment(item.getOpenComment());
-            videoInfoVo.setTitle(item.getTitle());
-            videoInfoVo.setSummary(item.getSummary());
-            videoInfoVo.setVideoFileId(item.getVideofileId());
-            videoInfoVo.setVideoFileUrl("null");
-            videoInfoVo.setVideoFileName("null");
-            videoInfoVo.setCoverId(item.getCoverId());
-            videoInfoVo.setCoverName(cover.getUniqueName());
-            videoInfoVo.setCoverUrl(cover.getFullpath());
-            videoInfoVo.setVideoFileId(item.getVideofileId());
-            videoInfoVos.add(videoInfoVo);
-        });
+        List<VideoInfoVo> videoInfoVos = videoinfoService.getVideoInfoVoByVideoInfo(videoinfos);
 
         return new ResponseResult<>(HttpStatus.HTTP_OK,"success",videoInfoVos);
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideobarrage.mapper.BaBulletMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideobarrage.Entity.BaBullet">
+            <id property="id" column="Id" jdbcType="CHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="color" column="color" jdbcType="INTEGER"/>
+            <result property="appearTimeSesonds" column="appear_time_sesonds" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="videoinfoId" column="videoInfo_id" jdbcType="CHAR"/>
+            <result property="userId" column="user_id" jdbcType="CHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="ifmid" column="ifmid" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id,content,color,
+        appear_time_sesonds,create_time,videoInfo_id,
+        user_id,status,ifmid
+    </sql>
+</mapper>
