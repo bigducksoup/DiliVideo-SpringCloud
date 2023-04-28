@@ -56,6 +56,12 @@ public class VideoInfoController {
         return new ResponseResult<>(HttpStatus.HTTP_OK,"获取视频播放信息",videoFileVo);
     }
 
+    /**
+     * 获取视频作者信息
+     * @param authorId
+     * @return
+     */
+
     @SaCheckLogin
     @GetMapping("/get_authorInfo")
     public ResponseResult<UserVo> getAutherInfo(@RequestParam String authorId){
@@ -68,6 +74,12 @@ public class VideoInfoController {
         BeanUtils.copyProperties(data,userVo);
         return new ResponseResult<>(HttpStatus.HTTP_OK,"获取用户信息成功",userVo);
     }
+
+    /**
+     * 获取视频信息
+     * @param videoInfoId
+     * @return
+     */
 
     @SaCheckLogin
     @GetMapping("/get_videoInfo_byId")

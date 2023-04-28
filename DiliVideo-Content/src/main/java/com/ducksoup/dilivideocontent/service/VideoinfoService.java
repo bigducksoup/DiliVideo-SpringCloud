@@ -15,4 +15,6 @@ public interface VideoinfoService extends IService<Videoinfo> {
 
     List<VideoInfoVo> getVideoInfoVoByVideoInfo(List<Videoinfo> videoinfos);
 
+    List<VideoInfoVo> getPublishedVideoById(String userId,int page,int pageSize);
+
 }

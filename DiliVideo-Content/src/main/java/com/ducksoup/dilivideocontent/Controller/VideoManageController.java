@@ -146,14 +146,7 @@ public class VideoManageController {
 
         int pageSize = 10;
 
-        Page<Videoinfo> pager = new Page<>(page,pageSize);
-
-        videoinfoService.page(pager,new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus,1).eq(Videoinfo::getAuthorid,loginId).orderByDesc(Videoinfo::getCreateTime));
-
-        List<Videoinfo> videoinfos = pager.getRecords();
-
-
-        List<VideoInfoVo> videoInfoVos = videoinfoService.getVideoInfoVoByVideoInfo(videoinfos);
+        List<VideoInfoVo> videoInfoVos = videoinfoService.getPublishedVideoById(loginId, page, pageSize);
 
         return new ResponseResult<>(HttpStatus.HTTP_OK,"success",videoInfoVos);
 

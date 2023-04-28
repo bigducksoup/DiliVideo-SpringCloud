@@ -1,4 +1,4 @@
-package com.ducksoup.dilivideocontent.utils;
+package com.ducksoup.dilivideoauth.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,11 +12,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * @Description: redis 工具类
- * @Author: junqiang.lu
- * @Date: 2018/10/29
- */
+
 @Component
 public class RedisUtil implements Serializable {
 
@@ -157,29 +153,8 @@ public class RedisUtil implements Serializable {
         redisTemplate.opsForHash().delete(key, hashKeyList.toArray());
     }
 
-    public void addToSet(String key,Object value){
-        redisTemplate.opsForSet().add(key,value);
-    }
-
-    public void rmFromSet(String key,Object value){
-        redisTemplate.opsForSet().remove(key,value);
-    }
-
-    public long countSetItem(String key){
-        Long size = redisTemplate.opsForSet().size(key);
-        return size==null? 0:size;
-    }
-
-    public boolean checkExistSetItem(String key,Object value){
 
 
-        Boolean member = redisTemplate.opsForSet().isMember(key, value);
-        if (member==null){
-            member = false;
-        }
-        return member;
-
-    }
 
 
 }

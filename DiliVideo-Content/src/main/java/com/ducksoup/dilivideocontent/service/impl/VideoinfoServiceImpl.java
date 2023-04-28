@@ -1,6 +1,7 @@
 package com.ducksoup.dilivideocontent.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ducksoup.dilivideocontent.Entity.Cover;
 import com.ducksoup.dilivideocontent.Entity.Videoinfo;
@@ -85,6 +86,20 @@ public class VideoinfoServiceImpl extends ServiceImpl<VideoinfoMapper, Videoinfo
         });
 
         return videoInfoVos;
+    }
+
+    @Override
+    public List<VideoInfoVo> getPublishedVideoById(String userId,int page,int pageSize) {
+
+
+        Page<Videoinfo> pager = new Page<>(page,pageSize);
+
+        this.page(pager,new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus,1).eq(Videoinfo::getAuthorid,userId).orderByDesc(Videoinfo::getCreateTime));
+
+        List<Videoinfo> videoinfos = pager.getRecords();
+
+
+        return this.getVideoInfoVoByVideoInfo(videoinfos);
     }
 }
 
