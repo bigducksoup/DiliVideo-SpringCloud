@@ -4,6 +4,7 @@ package com.ducksoup.dilivideofeign.Content;
 import com.ducksoup.dilivideoentity.ContentEntity.Videoinfo;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import com.ducksoup.dilivideoentity.dto.FileTransmissionInfo;
+import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
 import com.ducksoup.dilivideofeign.Inteceptor.FeignInterceptor;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -22,4 +23,8 @@ public interface ContentServices {
 
     @GetMapping(path = "/feign/video_info/getById")
      ResponseResult<Videoinfo> getVideoInfoById(@RequestParam(value = "videoInfoId") String videoInfoId);
+
+    @PostMapping(path = "/feign/upload/file" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseResult<String> uploadFile(FileUploadDTO fileUploadDTO);
+
 }

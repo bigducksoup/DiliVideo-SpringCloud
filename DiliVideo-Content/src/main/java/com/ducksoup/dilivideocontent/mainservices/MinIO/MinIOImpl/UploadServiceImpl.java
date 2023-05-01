@@ -16,8 +16,6 @@ import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-public class UploadService implements com.ducksoup.dilivideocontent.mainservices.MinIO.UploadService {
+public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainservices.MinIO.UploadService {
 
     @Autowired
     private MinioClient minioClient;

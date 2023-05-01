@@ -19,11 +19,6 @@ spring:
     active: dev
 
 
-  mail:
-    host: smtp.qq.com
-    username: 368358212@qq.com
-    password: vnmhihqdevzubicb
-
 
 server:
   port: 8085

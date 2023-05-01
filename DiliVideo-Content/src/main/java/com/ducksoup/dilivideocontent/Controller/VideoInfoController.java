@@ -3,6 +3,8 @@ package com.ducksoup.dilivideocontent.Controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.http.HttpStatus;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ducksoup.dilivideocontent.Entity.Cover;
 import com.ducksoup.dilivideocontent.Entity.Videofile;
 import com.ducksoup.dilivideocontent.Entity.Videoinfo;
@@ -17,10 +19,9 @@ import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import com.ducksoup.dilivideofeign.Auth.AuthServices;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -117,6 +118,20 @@ public class VideoInfoController {
         return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",videoInfoVo);
 
 
+    }
+
+
+    @GetMapping("/get_videoInfo_byIdList")
+    public ResponseResult<List<VideoInfoVo>> getVideoInfoVoByIds(@RequestBody List<String> ids){
+
+
+        List<Videoinfo> videoinfos = videoinfoService.list(new LambdaQueryWrapper<Videoinfo>()
+                .in(Videoinfo::getId, ids)
+        );
+
+        List<VideoInfoVo> videoInfoVos = videoinfoService.getVideoInfoVoByVideoInfo(videoinfos);
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",videoInfoVos);
     }
 
 

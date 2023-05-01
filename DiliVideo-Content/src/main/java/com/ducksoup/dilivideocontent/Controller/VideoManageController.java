@@ -7,15 +7,13 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ducksoup.dilivideocontent.Controller.Params.VideoDeleteParams;
 import com.ducksoup.dilivideocontent.Controller.Params.VideoInfoForm;
 import com.ducksoup.dilivideocontent.Controller.Params.VideoInfoUpdateForm;
-import com.ducksoup.dilivideocontent.Entity.Cover;
 import com.ducksoup.dilivideocontent.Entity.Videofile;
 import com.ducksoup.dilivideocontent.Entity.Videoinfo;
 import com.ducksoup.dilivideocontent.dto.FileTransmissionInfo;
-import com.ducksoup.dilivideocontent.mainservices.MinIO.MinIOImpl.UploadService;
+import com.ducksoup.dilivideocontent.mainservices.MinIO.MinIOImpl.UploadServiceImpl;
 import com.ducksoup.dilivideocontent.mainservices.Rabbit.NotifyVideoFFMPEG;
 import com.ducksoup.dilivideocontent.mainservices.Video.VideoOperationService;
 import com.ducksoup.dilivideocontent.service.CoverService;
@@ -26,10 +24,7 @@ import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @CrossOrigin
@@ -41,7 +36,7 @@ public class VideoManageController {
     private RedisUtil redisUtil;
 
     @Autowired
-    private UploadService uploadService;
+    private UploadServiceImpl uploadServiceImpl;
 
     @Autowired
     private VideoOperationService videoOperationService;
@@ -61,7 +56,7 @@ public class VideoManageController {
     public ResponseResult<String> uploadVideo( FileTransmissionInfo fileTransmissionInfo){
 
         try {
-            String s = uploadService.uploadVideo(fileTransmissionInfo.getFile(), fileTransmissionInfo.getCode());
+            String s = uploadServiceImpl.uploadVideo(fileTransmissionInfo.getFile(), fileTransmissionInfo.getCode());
         } catch (Exception e){
             return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"上传失败");
         }

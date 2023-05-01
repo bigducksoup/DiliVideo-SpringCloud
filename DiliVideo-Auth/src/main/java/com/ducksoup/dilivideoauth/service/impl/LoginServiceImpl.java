@@ -3,6 +3,7 @@ package com.ducksoup.dilivideoauth.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ducksoup.dilivideoauth.Controller.Params.LoginByEmailParam;
 import com.ducksoup.dilivideoauth.Entity.MUser;
@@ -30,7 +31,9 @@ public class LoginServiceImpl implements LoginService {
             return null;
         }
 
-        if (!user.getPassword().equals(param.getPassword())){
+        String encodePassword = DigestUtil.md5Hex(param.getPassword());
+
+        if (!user.getPassword().equals(encodePassword)){
             return null;
         }
 
