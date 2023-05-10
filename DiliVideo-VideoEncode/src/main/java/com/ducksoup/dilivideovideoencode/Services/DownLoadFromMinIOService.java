@@ -20,7 +20,7 @@ public class DownLoadFromMinIOService {
     private MinioClient minioClient;
 
 
-    public File downLoadOnject(String bucket,String fullPath,String path,String filename) throws Exception{
+    public File downLoadObject(String bucket,String fullPath,String path,String filename) throws Exception{
 
         bucket = "video";
 

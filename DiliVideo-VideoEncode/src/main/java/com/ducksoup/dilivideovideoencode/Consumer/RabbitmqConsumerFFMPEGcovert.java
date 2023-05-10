@@ -34,7 +34,7 @@ public class RabbitmqConsumerFFMPEGcovert {
 
         try {
             //下载
-            File origin = downLoadFromMinIOService.downLoadOnject("video", payload.getFullpath(), payload.getPath(), payload.getUniqueName());
+            File origin = downLoadFromMinIOService.downLoadObject("video", payload.getFullpath(), payload.getPath(), payload.getUniqueName());
             //转码
             File file = ffmpegService.ffmpegEncode(origin, payload);
             //上传

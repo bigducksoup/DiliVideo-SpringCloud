@@ -5,55 +5,71 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.Date;
 import lombok.Data;
 
 /**
  * 
- * @TableName post_module
+ * @TableName post_imgs
  */
-@TableName(value ="post_module")
+@TableName(value ="post_imgs")
 @Data
-public class PostModule implements Serializable {
+public class PostImgs implements Serializable {
     /**
-     * 动态内容Id
+     * 图片文件
      */
     @TableId
     private String id;
 
     /**
-     * 用户id
+     * 
      */
-    private String userId;
+    private String originalName;
 
     /**
-     * 用户头像地址
+     * 
      */
-    private String userAvatarUrl;
+    private String uniqueName;
 
     /**
-     * 用户昵称
+     * 
      */
-    private String userNickname;
+    private String path;
 
     /**
-     * 描述
+     * 
      */
-    private String description;
+    private String moduleId;
 
     /**
-     * 分类id
+     * 
      */
-    private String typeId;
+    private String bucketId;
 
     /**
-     * 视频信息id
+     * 
      */
-    private String videoInfoId;
+    private Date uploadTime;
 
     /**
-     * 转发的动态内容id
+     * 
      */
-    private String childPostmoduleId;
+    private Long size;
+
+    /**
+     * 
+     */
+    private Integer state;
+
+    /**
+     * 
+     */
+    private String fullpath;
+
+    /**
+     * 
+     */
+    private String md5;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

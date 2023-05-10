@@ -1,5 +1,6 @@
 package com.ducksoup.dilivideomain.service;
 
+import com.ducksoup.dilivideomain.Controller.Params.TextPostParams;
 import com.ducksoup.dilivideomain.Entity.Post;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,5 +10,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-05-04 16:31:23
 */
 public interface PostService extends IService<Post> {
+
 
 }

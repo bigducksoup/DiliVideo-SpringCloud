@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideomain.mapper.PostImgsMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideomain.Entity.PostImgs">
+            <id property="id" column="Id" jdbcType="CHAR"/>
+            <result property="originalName" column="original_name" jdbcType="VARCHAR"/>
+            <result property="uniqueName" column="unique_name" jdbcType="VARCHAR"/>
+            <result property="path" column="path" jdbcType="VARCHAR"/>
+            <result property="moduleId" column="module_id" jdbcType="CHAR"/>
+            <result property="bucketId" column="bucket_id" jdbcType="CHAR"/>
+            <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+            <result property="size" column="size" jdbcType="BIGINT"/>
+            <result property="state" column="state" jdbcType="TINYINT"/>
+            <result property="fullpath" column="fullpath" jdbcType="VARCHAR"/>
+            <result property="md5" column="md5" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id,original_name,unique_name,
+        path,module_id,bucket_id,
+        upload_time,size,state,
+        fullpath,md5
+    </sql>
+</mapper>
