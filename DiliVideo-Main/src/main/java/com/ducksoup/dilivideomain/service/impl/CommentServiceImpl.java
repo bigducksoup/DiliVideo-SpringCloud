@@ -8,7 +8,10 @@ import com.ducksoup.dilivideomain.Entity.Comment;
 import com.ducksoup.dilivideomain.service.CommentService;
 import com.ducksoup.dilivideomain.mapper.CommentMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author meichuankutou
@@ -19,6 +22,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     implements CommentService{
+
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Override
     public String saveComment(String content, MUser user) {
@@ -44,6 +51,25 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
         return save? id:null;
     }
+
+
+    public List<String> queryCommentIdsByVideoInfoIdSortByLikeCount(String videoInfoId, Integer page, Integer pageSize){
+        Integer limitStart = (page-1)*pageSize;
+        Integer limitEnd = page*pageSize;
+        List<String> ids = commentMapper.queryCommentIdsByVideoInfoIdOrderByLikeCount(videoInfoId, limitStart, limitEnd);
+        return ids;
+    }
+
+
+    public List<String> queryCommentIdsByVideoInfoIdSortByTime(String videoInfoId,Integer page,Integer pageSize){
+        Integer limitStart = (page-1)*pageSize;
+        Integer limitEnd = page*pageSize;
+        List<String> ids = commentMapper.queryCommentIdsByVideoInfoIdOrderByTime(videoInfoId, limitStart, limitEnd);
+        return ids;
+    }
+
+
+
 }
 
 

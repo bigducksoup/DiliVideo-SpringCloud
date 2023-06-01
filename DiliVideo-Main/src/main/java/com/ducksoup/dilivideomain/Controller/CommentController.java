@@ -9,6 +9,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ducksoup.dilivideoentity.AuthEntity.MUser;
 import com.ducksoup.dilivideoentity.ContentEntity.Videoinfo;
@@ -158,16 +159,14 @@ public class CommentController {
     @GetMapping("/comment_item")
     public ResponseResult<List<CommentItemVo>> commentItem(@RequestParam String videoInfoId, @RequestParam Integer mode, @RequestParam Integer page) {
 
-        Page<CommentVideoinfo> pager = new Page<>(page, 20);
+        Integer pageSize = 20;
 
         //通过videoinfoid查询commentId
-        List<String> commentIds = commentVideoinfoService.page(pager, new LambdaQueryWrapper<CommentVideoinfo>()
-                        .eq(CommentVideoinfo::getVideoinfoId, videoInfoId)
-                        .select(CommentVideoinfo::getCommentId)
-                ).getRecords()
-                .stream()
-                .map(CommentVideoinfo::getCommentId)
-                .collect(Collectors.toList());
+        List<String> commentIds =
+                mode==1?
+                commentService.queryCommentIdsByVideoInfoIdSortByLikeCount(videoInfoId,page,pageSize)
+                :
+                commentService.queryCommentIdsByVideoInfoIdSortByTime(videoInfoId,page,pageSize);
 
         if (commentIds.size() == 0) {
             return new ResponseResult<>(HttpStatus.HTTP_OK, "没有评论", new ArrayList<CommentItemVo>());
@@ -178,10 +177,6 @@ public class CommentController {
                 .stream()
                 .sorted(Comparator.comparing(Comment::getCreateTime).reversed())
                 .collect(Collectors.toList());
-
-        if (mode!=1){
-            comments =  comments.stream().sorted(Comparator.comparing(Comment::getLikeCount)).collect(Collectors.toList());
-        }
 
         //回复id映射
         List<CommentReplyComment> replyComments = replyCommentService.list(new LambdaQueryWrapper<CommentReplyComment>()
