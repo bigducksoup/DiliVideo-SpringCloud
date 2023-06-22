@@ -1,6 +1,7 @@
 package com.ducksoup.dilivideovideoencode.Services;
 
 
+import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.ContentEntity.Videofile;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
@@ -37,7 +38,7 @@ public class UpLoadToMinIOService {
 
         minioClient.uploadObject(
                 UploadObjectArgs.builder()
-                        .bucket("video")
+                        .bucket(CONSTANT_MinIO.VIDEO_BUCTET)
                         .object(obj)
                         .filename(file.getAbsolutePath())
                         .build()

@@ -12,11 +12,13 @@ import com.ducksoup.dilivideocontent.dto.FileSavedInfo;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.utils.RedisUtil;
+import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,6 +61,8 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
     }
 
 
+    @Value("${minio.endpoint}")
+    private String minIOEndPoint;
 
 
 
@@ -88,7 +92,7 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
 
         ObjectWriteResponse video = minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket("video")
+                        .bucket(CONSTANT_MinIO.VIDEO_BUCTET)
                         .stream(file.getInputStream(), file.getSize(), -1)
                         .object(obj)
                         .build()
@@ -97,10 +101,10 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
         Videofile videofile = new Videofile();
         videofile.setOriginName(file.getOriginalFilename());
         videofile.setMd5(md5);
-        videofile.setBucketid("1");
+        videofile.setBucket(CONSTANT_MinIO.VIDEO_BUCTET);
         String[] objsplit = obj.split("\\.");
         String nobj = objsplit[0]+"."+"mp4";
-        videofile.setFullpath("http://127.0.0.1:9000/video/"+nobj);
+        videofile.setFullpath(minIOEndPoint+"/"+CONSTANT_MinIO.VIDEO_BUCTET+"/"+nobj);
         videofile.setId(uuid);
         videofile.setSize(file.getSize());
         videofile.setState(1);
@@ -126,13 +130,15 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
 //            return coverindatabase.getId();
 //        }
 
-        FileSavedInfo image = uploadFile(file, "img", md5);
+
+
+        FileSavedInfo image = uploadFile(file, CONSTANT_MinIO.COVER_BUCKET, md5);
 
         Cover cover = new Cover();
         String uuid = UUID.randomUUID().toString();
         cover.setId(uuid);
-        cover.setFullpath("http://127.0.0.1:9000/img/"+image.getPath());
-        cover.setBucketId("1");
+        cover.setFullpath( minIOEndPoint+"/"+CONSTANT_MinIO.COVER_BUCKET+"/"+image.getPath());
+        cover.setBucket(CONSTANT_MinIO.COVER_BUCKET);
         cover.setSize(file.getSize());
         cover.setMd5(md5);
         cover.setUploadTime(DateTime.now());

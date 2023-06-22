@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
 import com.ducksoup.dilivideoentity.AuthEntity.MUser;
+import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
 import com.ducksoup.dilivideofeign.Auth.AuthServices;
@@ -70,7 +71,7 @@ public class PostOperationService {
             for (MultipartFile f : files) {
                 FileUploadDTO fileUploadDTO = new FileUploadDTO();
                 fileUploadDTO.setFile(f);
-                fileUploadDTO.setBucketName("post-imgs");
+                fileUploadDTO.setBucketName(CONSTANT_MinIO.POST_IMG_BUCKET);
                 ResponseResult<String> result = contentServices.uploadFile(fileUploadDTO);
                 if (result.getCode() == 200) {
                     map.put(f, result.getData());
@@ -99,7 +100,7 @@ public class PostOperationService {
             item.setUniqueName(UUID.randomUUID().toString());
             item.setPath(url);
             item.setModuleId(moduleId);
-            item.setBucketId("post-imgs");
+            item.setBucket(CONSTANT_MinIO.POST_IMG_BUCKET);
             item.setUploadTime(DateTime.now());
             item.setSize(f.getSize());
             item.setState(1);

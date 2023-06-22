@@ -31,7 +31,7 @@ public class CtVideofile implements Serializable {
     /**
      * 桶Id
      */
-    private String bucketid;
+    private String bucket;
 
     /**
      * 上传时间
@@ -119,15 +119,15 @@ public class CtVideofile implements Serializable {
     /**
      * 桶Id
      */
-    public String getBucketid() {
-        return bucketid;
+    public String getBucket() {
+        return bucket;
     }
 
     /**
      * 桶Id
      */
-    public void setBucketid(String bucketid) {
-        this.bucketid = bucketid;
+    public void setBucket(String bucket) {
+        this.bucket = bucket;
     }
 
     /**
@@ -216,7 +216,7 @@ public class CtVideofile implements Serializable {
             && (this.getOriginName() == null ? other.getOriginName() == null : this.getOriginName().equals(other.getOriginName()))
             && (this.getUniqueName() == null ? other.getUniqueName() == null : this.getUniqueName().equals(other.getUniqueName()))
             && (this.getPath() == null ? other.getPath() == null : this.getPath().equals(other.getPath()))
-            && (this.getBucketid() == null ? other.getBucketid() == null : this.getBucketid().equals(other.getBucketid()))
+            && (this.getBucket() == null ? other.getBucket() == null : this.getBucket().equals(other.getBucket()))
             && (this.getUploadTime() == null ? other.getUploadTime() == null : this.getUploadTime().equals(other.getUploadTime()))
             && (this.getVideoinfoId() == null ? other.getVideoinfoId() == null : this.getVideoinfoId().equals(other.getVideoinfoId()))
             && (this.getSize() == null ? other.getSize() == null : this.getSize().equals(other.getSize()))
@@ -232,7 +232,7 @@ public class CtVideofile implements Serializable {
         result = prime * result + ((getOriginName() == null) ? 0 : getOriginName().hashCode());
         result = prime * result + ((getUniqueName() == null) ? 0 : getUniqueName().hashCode());
         result = prime * result + ((getPath() == null) ? 0 : getPath().hashCode());
-        result = prime * result + ((getBucketid() == null) ? 0 : getBucketid().hashCode());
+        result = prime * result + ((getBucket() == null) ? 0 : getBucket().hashCode());
         result = prime * result + ((getUploadTime() == null) ? 0 : getUploadTime().hashCode());
         result = prime * result + ((getVideoinfoId() == null) ? 0 : getVideoinfoId().hashCode());
         result = prime * result + ((getSize() == null) ? 0 : getSize().hashCode());
@@ -251,7 +251,7 @@ public class CtVideofile implements Serializable {
         sb.append(", originName=").append(originName);
         sb.append(", uniqueName=").append(uniqueName);
         sb.append(", path=").append(path);
-        sb.append(", bucketid=").append(bucketid);
+        sb.append(", bucket=").append(bucket);
         sb.append(", uploadTime=").append(uploadTime);
         sb.append(", videoinfoId=").append(videoinfoId);
         sb.append(", size=").append(size);

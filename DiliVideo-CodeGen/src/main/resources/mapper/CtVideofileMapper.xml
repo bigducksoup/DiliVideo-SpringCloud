@@ -9,7 +9,7 @@
             <result property="originName" column="origin_name" jdbcType="VARCHAR"/>
             <result property="uniqueName" column="unique_name" jdbcType="VARCHAR"/>
             <result property="path" column="path" jdbcType="VARCHAR"/>
-            <result property="bucketid" column="bucketId" jdbcType="CHAR"/>
+            <result property="bucket" column="bucket" jdbcType="CHAR"/>
             <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
             <result property="videoinfoId" column="videoinfo_id" jdbcType="CHAR"/>
             <result property="size" column="size" jdbcType="BIGINT"/>
@@ -19,7 +19,7 @@
 
     <sql id="Base_Column_List">
         Id,origin_name,unique_name,
-        path,bucketId,upload_time,
+        path,bucket,upload_time,
         videoinfo_id,size,state,
         fullpath
     </sql>

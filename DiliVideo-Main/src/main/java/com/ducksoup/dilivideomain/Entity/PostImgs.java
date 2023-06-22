@@ -44,7 +44,7 @@ public class PostImgs implements Serializable {
     /**
      * 
      */
-    private String bucketId;
+    private String bucket;
 
     /**
      * 

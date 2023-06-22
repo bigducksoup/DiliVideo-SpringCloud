@@ -12,6 +12,7 @@ import com.ducksoup.dilivideoauth.Entity.MUser;
 import com.ducksoup.dilivideoauth.mainServices.MailSenderService;
 import com.ducksoup.dilivideoauth.service.MUserService;
 import com.ducksoup.dilivideoauth.utils.RedisUtil;
+import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
 import com.ducksoup.dilivideofeign.Content.ContentServices;
@@ -148,7 +149,7 @@ public class RegisterController {
 
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
         fileUploadDTO.setFile(file);
-        fileUploadDTO.setBucketName("avatar");
+        fileUploadDTO.setBucketName(CONSTANT_MinIO.AVATAR_BUCKET);
 
         //远程调用上传头像
         ResponseResult<String> result = contentServices.uploadFile(fileUploadDTO);

@@ -1,4 +1,5 @@
 package com.ducksoup.dilivideoauth;
+import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,7 +31,7 @@ class DiliVideoAuthApplicationTests {
 
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
         fileUploadDTO.setFile(mockMultipartFile);
-        fileUploadDTO.setBucketName("avatar");
+        fileUploadDTO.setBucketName(CONSTANT_MinIO.AVATAR_BUCKET);
 
         ResponseResult<String> stringResponseResult = contentServices.uploadFile(fileUploadDTO);
 

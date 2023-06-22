@@ -40,7 +40,7 @@ public class Cover implements Serializable {
     /**
      * 
      */
-    private String bucketId;
+    private String bucket;
 
     /**
      * 

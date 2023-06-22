@@ -39,7 +39,7 @@ public class Videofile implements Serializable {
     /**
      * 桶Id
      */
-    private String bucketid;
+    private String bucket;
 
     /**
      * 上传时间
