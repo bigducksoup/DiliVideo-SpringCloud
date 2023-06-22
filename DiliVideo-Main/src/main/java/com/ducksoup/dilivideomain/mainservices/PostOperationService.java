@@ -50,8 +50,6 @@ public class PostOperationService {
     private AuthServices authServices;
 
 
-
-
     @Transactional
     public Boolean saveTextPost(TextPostParams postParams) throws Exception {
 
@@ -59,25 +57,27 @@ public class PostOperationService {
 
         //获取用户信息
         ResponseResult<MUser> userInfo = authServices.getUserInfo(loginId);
-        if (userInfo.getCode()!=200){
+        if (userInfo.getCode() != 200) {
             log.error("远程调用失败:main->auth");
             throw new ServiceUnavailableException();
         }
 
-        Map<MultipartFile,String> map = new HashMap<>();
+        Map<MultipartFile, String> map = new HashMap<>();
 
         //上传图片
         List<MultipartFile> files = postParams.getFiles();
-        for (MultipartFile f : files) {
-            FileUploadDTO fileUploadDTO = new FileUploadDTO();
-            fileUploadDTO.setFile(f);
-            fileUploadDTO.setBucketName("post-imgs");
-            ResponseResult<String> result = contentServices.uploadFile(fileUploadDTO);
-            if (result.getCode() == 200) {
-                map.put(f, result.getData());
-            } else {
-                log.error(f.getOriginalFilename() + "上传失败");
-                throw new ServiceUnavailableException();
+        if (files != null) {
+            for (MultipartFile f : files) {
+                FileUploadDTO fileUploadDTO = new FileUploadDTO();
+                fileUploadDTO.setFile(f);
+                fileUploadDTO.setBucketName("post-imgs");
+                ResponseResult<String> result = contentServices.uploadFile(fileUploadDTO);
+                if (result.getCode() == 200) {
+                    map.put(f, result.getData());
+                } else {
+                    log.error(f.getOriginalFilename() + "上传失败");
+                    throw new ServiceUnavailableException();
+                }
             }
         }
 
@@ -91,8 +91,8 @@ public class PostOperationService {
 
         String moduleId = this.savePostModule(postModuleInfo);
         //保存图片到数据库
-        List<PostImgs> postImgs  = new ArrayList<>();
-        map.forEach((f,url)->{
+        List<PostImgs> postImgs = new ArrayList<>();
+        map.forEach((f, url) -> {
             PostImgs item = new PostImgs();
             item.setId(UUID.randomUUID().toString());
             item.setOriginalName(f.getOriginalFilename());
@@ -108,7 +108,9 @@ public class PostOperationService {
             postImgs.add(item);
         });
 
-        boolean saveImgsBatch = postImgsService.saveBatch(postImgs);
+        if (!postImgs.isEmpty()){
+            postImgsService.saveBatch(postImgs);
+        }
 
 
         Post post = new Post();
@@ -121,15 +123,14 @@ public class PostOperationService {
         post.setCreateTime(DateTime.now());
         post.setStatus(1);
 
-        boolean savePost = postService.save(post);
-
-        return saveImgsBatch&&savePost;
+        return postService.save(post);
 
     }
 
 
     /**
      * 保存模块信息
+     *
      * @param postModuleInfo 模块信息
      * @return 模块ID
      * @throws Exception 保存异常
@@ -148,7 +149,7 @@ public class PostOperationService {
         postModule.setChildPostmoduleId(postModule.getChildPostmoduleId());
         boolean save = postModuleService.save(postModule);
 
-        if (!save){
+        if (!save) {
             throw new Exception("not save");
         }
 

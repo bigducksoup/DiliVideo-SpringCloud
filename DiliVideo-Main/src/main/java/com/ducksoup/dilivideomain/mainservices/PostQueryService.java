@@ -46,11 +46,16 @@ public class PostQueryService {
         Page<PostModule> queryRes = postModuleService.page(pager,postQuery);
 
         List<PostModule> modules = queryRes.getRecords();
+
+        if (modules.isEmpty()){
+            return new ArrayList<>();
+        }
+
         //获取moduleID集合
         List<String> moduleIds = modules.stream().map(PostModule::getId).collect(Collectors.toList());
 
         //根据moduleID获取Post
-        List<Post> postList = postService.list(new LambdaQueryWrapper<Post>().in(Post::getModuleId, moduleIds));
+        List<Post> postList = postService.list(new LambdaQueryWrapper<Post>().in(Post::getModuleId, moduleIds).orderByDesc(Post::getCreateTime));
 
         //根据moduleID获取Imgs
         List<PostImgs> postImgs = postImgsService.list(new LambdaQueryWrapper<PostImgs>().in(PostImgs::getModuleId, moduleIds));
@@ -71,7 +76,12 @@ public class PostQueryService {
             PostModule postModule = moduleMap.get(item.getModuleId());
             ModuleVo moduleVo = new ModuleVo();
             BeanUtil.copyProperties(postModule,moduleVo);
-            moduleVo.setImgs(moduleIdImgList.get(item.getModuleId()));
+            List<String> imgUrls = moduleIdImgList.get(item.getModuleId());
+            if (imgUrls==null){
+                moduleVo.setImgs(new ArrayList<>());
+            }else {
+                moduleVo.setImgs(imgUrls);
+            }
             postVo.setModule(moduleVo);
             postVos.add(postVo);
         });
