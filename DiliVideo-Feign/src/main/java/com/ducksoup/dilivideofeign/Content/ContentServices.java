@@ -3,6 +3,7 @@ package com.ducksoup.dilivideofeign.Content;
 
 import com.ducksoup.dilivideoentity.ContentEntity.Videoinfo;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.dto.FileInfo;
 import com.ducksoup.dilivideoentity.dto.FileTransmissionInfo;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
 import com.ducksoup.dilivideofeign.Inteceptor.FeignInterceptor;
@@ -25,6 +26,6 @@ public interface ContentServices {
      ResponseResult<Videoinfo> getVideoInfoById(@RequestParam(value = "videoInfoId") String videoInfoId);
 
     @PostMapping(path = "/feign/upload/file" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseResult<String> uploadFile(FileUploadDTO fileUploadDTO);
+    ResponseResult<FileInfo> uploadFile(FileUploadDTO fileUploadDTO);
 
 }

@@ -30,6 +30,10 @@ public class PostModule implements Serializable {
      */
     private String userAvatarUrl;
 
+    private String userAvatarPath;
+
+    private String userAvatarBucket;
+
     /**
      * 用户昵称
      */

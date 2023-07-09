@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ducksoup.dilivideomain.Entity.Post;
 import com.ducksoup.dilivideomain.Entity.PostImgs;
 import com.ducksoup.dilivideomain.Entity.PostModule;
+import com.ducksoup.dilivideomain.Utils.OSSUtils;
 import com.ducksoup.dilivideomain.service.PostImgsService;
 import com.ducksoup.dilivideomain.service.PostModuleService;
 import com.ducksoup.dilivideomain.service.PostService;
@@ -34,6 +35,9 @@ public class PostQueryService {
     @Autowired
     private PostImgsService postImgsService;
 
+    @Autowired
+    private OSSUtils ossUtils;
+
 
     public List<PostVo> getPostByUserId(String userId,Integer page){
         //分页
@@ -60,6 +64,11 @@ public class PostQueryService {
         //根据moduleID获取Imgs
         List<PostImgs> postImgs = postImgsService.list(new LambdaQueryWrapper<PostImgs>().in(PostImgs::getModuleId, moduleIds));
 
+        //根据配置里的minio地址转换full_path
+        postImgs.forEach(item->{
+            item.setFullpath(ossUtils.makeUrl(item.getBucket(),item.getPath()));
+        });
+
         //key:moduleId,value:imgList
         Map<String, List<String>> moduleIdImgList = postImgs.stream().collect(Collectors.groupingBy(PostImgs::getModuleId, Collectors.mapping(PostImgs::getFullpath, Collectors.toList())));
 
@@ -76,6 +85,9 @@ public class PostQueryService {
             PostModule postModule = moduleMap.get(item.getModuleId());
             ModuleVo moduleVo = new ModuleVo();
             BeanUtil.copyProperties(postModule,moduleVo);
+
+            moduleVo.setUserAvatarUrl(ossUtils.makeUrl(postModule.getUserAvatarBucket(),postModule.getUserAvatarPath()));
+
             List<String> imgUrls = moduleIdImgList.get(item.getModuleId());
             if (imgUrls==null){
                 moduleVo.setImgs(new ArrayList<>());

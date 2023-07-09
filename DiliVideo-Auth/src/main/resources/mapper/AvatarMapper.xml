@@ -2,14 +2,13 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ducksoup.dilivideocontent.mapper.CoverMapper">
+<mapper namespace="com.ducksoup.dilivideoauth.mapper.AvatarMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideocontent.Entity.Cover">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.Entity.Avatar">
             <id property="id" column="Id" jdbcType="CHAR"/>
             <result property="originalName" column="original_name" jdbcType="VARCHAR"/>
             <result property="uniqueName" column="unique_name" jdbcType="VARCHAR"/>
             <result property="path" column="path" jdbcType="VARCHAR"/>
-            <result property="videoinfo" column="videoinfo_id" jdbcType="CHAR"/>
             <result property="bucket" column="bucket" jdbcType="CHAR"/>
             <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
             <result property="size" column="size" jdbcType="BIGINT"/>
@@ -20,8 +19,8 @@
 
     <sql id="Base_Column_List">
         Id,original_name,unique_name,
-        path,videoinfo_id,bucket,
-        upload_time,size,state,
-        fullpath,md5
+        path,bucket,upload_time,
+        size,state,fullpath,
+        md5
     </sql>
 </mapper>

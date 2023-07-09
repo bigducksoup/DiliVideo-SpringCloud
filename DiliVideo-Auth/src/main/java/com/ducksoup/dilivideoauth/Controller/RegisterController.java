@@ -2,18 +2,22 @@ package com.ducksoup.dilivideoauth.Controller;
 
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ducksoup.dilivideoauth.Controller.Params.RegisterParam;
+import com.ducksoup.dilivideoauth.Entity.Avatar;
 import com.ducksoup.dilivideoauth.Entity.MUser;
 import com.ducksoup.dilivideoauth.mainServices.MailSenderService;
+import com.ducksoup.dilivideoauth.service.AvatarService;
 import com.ducksoup.dilivideoauth.service.MUserService;
 import com.ducksoup.dilivideoauth.utils.RedisUtil;
 import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.dto.FileInfo;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
 import com.ducksoup.dilivideofeign.Content.ContentServices;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -41,6 +46,9 @@ public class RegisterController {
     @Autowired
     private MUserService userService;
 
+    @Autowired
+    private AvatarService avatarService;
+
 
     /**
      * 提交注册表单
@@ -55,8 +63,18 @@ public class RegisterController {
             return new ResponseResult<Boolean>(HttpStatus.HTTP_NO_CONTENT, "验证码失效", false);
         }
         redisUtil.remove(param.getCode());
-        //获取头像
-        String avatarUrl = param.getAvatarCode().equals("") ? "" : (String) redisUtil.get(param.getAvatarCode());
+
+        MUser user = new MUser();
+        //设置头像
+        user.setAvatarId("default");
+        if (!param.getAvatarCode().equals("")){
+            Avatar avatar = (Avatar) redisUtil.get(param.getAvatarCode());
+            avatarService.save(avatar);
+            String avatarUrl = avatar.getFullpath();
+            user.setAvatarUrl(avatarUrl);
+            user.setAvatarId(avatar.getId());
+        }
+
 
         redisUtil.remove(param.getAvatarCode());
 
@@ -65,12 +83,11 @@ public class RegisterController {
 
         DateTime now = DateTime.now();
 
-        MUser user = new MUser();
+
         user.setId(UUID.randomUUID().toString());
         user.setNickname(param.getNickname());
         user.setEmail(email);
         user.setPassword(encodePassword);
-        user.setAvatarUrl(avatarUrl);
         user.setSummary("还没有简介");
         user.setFollowerCount(0L);
         user.setFollowedCount(0L);
@@ -144,7 +161,7 @@ public class RegisterController {
      * @return ResponseResult<String> 文件地址
      */
     @PostMapping("/upload_avatar")
-    public ResponseResult<String> uploadAvatar(MultipartFile file) {
+    public ResponseResult<String> uploadAvatar(MultipartFile file) throws IOException {
 
 
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
@@ -152,12 +169,32 @@ public class RegisterController {
         fileUploadDTO.setBucketName(CONSTANT_MinIO.AVATAR_BUCKET);
 
         //远程调用上传头像
-        ResponseResult<String> result = contentServices.uploadFile(fileUploadDTO);
+        ResponseResult<FileInfo> result = contentServices.uploadFile(fileUploadDTO);
 
         if (result.getCode() != 200) {
             log.error("远程调用失败：auth->content,msg:" + result.getMsg());
             return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR, "上传失败");
         }
+
+        FileInfo fileInfo = result.getData();
+
+        Avatar avatar = new Avatar();
+        String uuid = UUID.randomUUID().toString();
+        avatar.setId(uuid);
+        avatar.setOriginalName(fileInfo.getOriginalName());
+
+        String extName = "." + FileUtil.extName(file.getOriginalFilename());
+
+        avatar.setUniqueName(uuid+extName);
+        avatar.setPath(fileInfo.getPath());
+        avatar.setBucket(fileInfo.getBucket());
+        avatar.setUploadTime(fileInfo.getUploadTime());
+        avatar.setSize(fileInfo.getSize());
+        avatar.setState(1);
+        avatar.setFullpath(fileInfo.getFullpath());
+        avatar.setMd5(fileInfo.getMd5());
+
+
 
         String randomNumber = RandomUtil.randomNumbers(10);
 
@@ -165,7 +202,8 @@ public class RegisterController {
             randomNumber = RandomUtil.randomNumbers(10);
         }
 
-        redisUtil.set(randomNumber,result.getData(),10L,TimeUnit.MINUTES);
+        redisUtil.set(randomNumber,avatar,10L,TimeUnit.MINUTES);
+
 
         return new ResponseResult<>(HttpStatus.HTTP_OK, "上传成功", randomNumber);
     }

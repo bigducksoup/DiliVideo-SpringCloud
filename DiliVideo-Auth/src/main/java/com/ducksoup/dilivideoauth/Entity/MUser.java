@@ -36,6 +36,8 @@ public class MUser implements Serializable {
      */
     private String password;
 
+    private String avatarId;
+
     /**
      * 昵称地址
      */

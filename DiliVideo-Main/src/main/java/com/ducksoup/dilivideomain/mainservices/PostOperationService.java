@@ -4,9 +4,11 @@ package com.ducksoup.dilivideomain.mainservices;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
+import com.ducksoup.dilivideoentity.AuthEntity.Avatar;
 import com.ducksoup.dilivideoentity.AuthEntity.MUser;
 import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.dto.FileInfo;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
 import com.ducksoup.dilivideofeign.Auth.AuthServices;
 import com.ducksoup.dilivideofeign.Content.ContentServices;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.naming.ServiceUnavailableException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +66,7 @@ public class PostOperationService {
             throw new ServiceUnavailableException();
         }
 
-        Map<MultipartFile, String> map = new HashMap<>();
+        Map<MultipartFile, FileInfo> map = new HashMap<>();
 
         //上传图片
         List<MultipartFile> files = postParams.getFiles();
@@ -72,7 +75,7 @@ public class PostOperationService {
                 FileUploadDTO fileUploadDTO = new FileUploadDTO();
                 fileUploadDTO.setFile(f);
                 fileUploadDTO.setBucketName(CONSTANT_MinIO.POST_IMG_BUCKET);
-                ResponseResult<String> result = contentServices.uploadFile(fileUploadDTO);
+                ResponseResult<FileInfo> result = contentServices.uploadFile(fileUploadDTO);
                 if (result.getCode() == 200) {
                     map.put(f, result.getData());
                 } else {
@@ -93,19 +96,19 @@ public class PostOperationService {
         String moduleId = this.savePostModule(postModuleInfo);
         //保存图片到数据库
         List<PostImgs> postImgs = new ArrayList<>();
-        map.forEach((f, url) -> {
+        map.forEach((f, fileInfo) -> {
             PostImgs item = new PostImgs();
             item.setId(UUID.randomUUID().toString());
-            item.setOriginalName(f.getOriginalFilename());
+            item.setOriginalName(fileInfo.getOriginalName());
             item.setUniqueName(UUID.randomUUID().toString());
-            item.setPath(url);
+            item.setPath(fileInfo.getPath());
             item.setModuleId(moduleId);
             item.setBucket(CONSTANT_MinIO.POST_IMG_BUCKET);
-            item.setUploadTime(DateTime.now());
-            item.setSize(f.getSize());
+            item.setUploadTime(fileInfo.getUploadTime());
+            item.setSize(fileInfo.getSize());
             item.setState(1);
-            item.setFullpath(url);
-            item.setMd5("");
+            item.setFullpath(fileInfo.getFullpath());
+            item.setMd5(fileInfo.getMd5());
             postImgs.add(item);
         });
 
@@ -142,7 +145,16 @@ public class PostOperationService {
         PostModule postModule = new PostModule();
         postModule.setId(UUID.randomUUID().toString());
         postModule.setUserId(userInfo.getId());
+
+        ResponseResult<Avatar> responseResult = authServices.getAvatarInfo(userInfo.getAvatarId());
+        if (responseResult.getCode()!=200){
+            log.error("远程调用失败,Main--->Auth");
+            throw new Exception("远程调用失败,Main--->Auth");
+        }
+        Avatar avatar = responseResult.getData();
+        postModule.setUserAvatarPath(avatar.getPath());
         postModule.setUserAvatarUrl(userInfo.getAvatarUrl());
+
         postModule.setUserNickname(userInfo.getNickname());
         postModule.setDescription(postModuleInfo.getDesc());
         postModule.setTypeId(postModuleInfo.getTypeId());

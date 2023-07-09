@@ -1,5 +1,6 @@
 package com.ducksoup.dilivideocontent.service.impl;
 
+import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,8 +9,10 @@ import com.ducksoup.dilivideocontent.Entity.Videoinfo;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.mapper.VideoinfoMapper;
+import com.ducksoup.dilivideocontent.utils.OSSUtils;
 import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +31,11 @@ public class VideoinfoServiceImpl extends ServiceImpl<VideoinfoMapper, Videoinfo
 
     @Autowired
     private CoverService coverService;
+
+
+    @Autowired
+    private OSSUtils ossUtils;
+
 
     @Override
     public List<VideoInfoVo> getVideoInfoVoByVideoInfo(List<Videoinfo> videoinfos) {
@@ -78,7 +86,10 @@ public class VideoinfoServiceImpl extends ServiceImpl<VideoinfoMapper, Videoinfo
             videoInfoVo.setVideoFileName("null");
             videoInfoVo.setCoverId(item.getCoverId());
             videoInfoVo.setCoverName(cover.getUniqueName());
-            videoInfoVo.setCoverUrl(cover.getFullpath());
+
+            String url = ossUtils.makeUrl(cover.getBucket(), cover.getPath());
+
+            videoInfoVo.setCoverUrl(url);
             videoInfoVo.setVideoFileId(item.getVideofileId());
             videoInfoVo.setPartitionId(item.getPartitionId());
             videoInfoVos.add(videoInfoVo);

@@ -21,6 +21,7 @@ import com.ducksoup.dilivideomain.Controller.Params.ReplyCommentParams;
 import com.ducksoup.dilivideomain.Entity.Comment;
 import com.ducksoup.dilivideomain.Entity.CommentReplyComment;
 import com.ducksoup.dilivideomain.Entity.CommentVideoinfo;
+import com.ducksoup.dilivideomain.Utils.OSSUtils;
 import com.ducksoup.dilivideomain.service.CommentReplyCommentService;
 import com.ducksoup.dilivideomain.service.CommentService;
 import com.ducksoup.dilivideomain.service.CommentVideoinfoService;
@@ -59,6 +60,9 @@ public class CommentController {
     @Autowired
     private CommentReplyCommentService replyCommentService;
 
+    @Autowired
+    private OSSUtils ossUtils;
+
 
     /**
      * 视频下发评论
@@ -86,7 +90,13 @@ public class CommentController {
         MUser user = userInfoRes.getData();
         Videoinfo videoinfo = videoInfoByIdRes.getData();
 
-        String commentId = commentService.saveComment(commentParams.getContent(), user);
+        String commentId = null;
+        try {
+            commentId = commentService.saveComment(commentParams.getContent(), user);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"服务器内部错误",false);
+        }
 
         if (commentId == null) {
             return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR, "服务器内部错误", false);
@@ -126,7 +136,13 @@ public class CommentController {
 
 
         MUser user = userInfoRes.getData();
-        String commentId = commentService.saveComment(params.getContent(), user);
+
+        String commentId = null;
+        try {
+            commentId = commentService.saveComment(params.getContent(), user);
+        } catch (Exception e) {
+            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"服务器内部错误",false);
+        }
 
 
         if (commentId == null) {
@@ -212,6 +228,9 @@ public class CommentController {
         for (Comment c : comments) {
             CommentItemVo vo = new CommentItemVo();
             BeanUtil.copyProperties(c, vo);
+
+            vo.setUserAvatarUrl(ossUtils.makeUrl(vo.getUserAvatarBucket(),vo.getUserAvatarPath()));
+
             vo.setChildren(new ArrayList<>());
             //获取子评论ids
             List<CommentReplyComment> commentReplyComments = collect.get(c.getId());
@@ -265,7 +284,7 @@ public class CommentController {
                 ReplyVo replyVo = new ReplyVo();
                 replyVo.setId(rep.getId());
                 replyVo.setReplierId(rep.getUserId());
-                replyVo.setAvatar(rep.getUserAvatarUrl());
+                replyVo.setAvatar(ossUtils.makeUrl(rep.getUserAvatarBucket(),rep.getUserAvatarPath()));
                 replyVo.setReplierName(rep.getUserNickname());
                 replyVo.setLevel(rep.getUserLevel());
                 replyVo.setToId(com.getUserId());

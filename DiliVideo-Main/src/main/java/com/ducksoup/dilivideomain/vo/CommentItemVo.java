@@ -20,6 +20,11 @@ public class CommentItemVo {
      */
     private String userAvatarUrl;
 
+
+    private String userAvatarPath;
+
+    private String userAvatarBucket;
+
     /**
      * 评论时间
      */

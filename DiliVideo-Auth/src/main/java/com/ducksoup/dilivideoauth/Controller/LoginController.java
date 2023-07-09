@@ -6,9 +6,12 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideoauth.Controller.Params.LoginByEmailParam;
+import com.ducksoup.dilivideoauth.Entity.Avatar;
 import com.ducksoup.dilivideoauth.Entity.MUser;
+import com.ducksoup.dilivideoauth.service.AvatarService;
 import com.ducksoup.dilivideoauth.service.LoginService;
 import com.ducksoup.dilivideoauth.service.MUserService;
+import com.ducksoup.dilivideoauth.utils.OSSUtils;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
 
 import com.ducksoup.dilivideoentity.vo.LoginUserInfoVo;
@@ -29,6 +32,12 @@ public class LoginController {
 
     @Autowired
     private MUserService userService;
+
+    @Autowired
+    private OSSUtils ossUtils;
+
+    @Autowired
+    private AvatarService avatarService;
 
     @PostMapping("/login_by_email")
     public ResponseResult<LoginUserInfoVo> login(@RequestBody LoginByEmailParam param){
@@ -51,6 +60,12 @@ public class LoginController {
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
 
         MUser user = userService.getById(loginId);
+
+        Avatar avatar = avatarService.getById(user.getAvatarId());
+
+        String url = ossUtils.makeUrl(avatar.getBucket(), avatar.getPath());
+
+        user.setAvatarUrl(url);
 
         LoginUserInfoVo loginUserInfoVo = new LoginUserInfoVo();
         //设置信息

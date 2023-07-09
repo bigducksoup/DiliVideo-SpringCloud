@@ -23,6 +23,8 @@ public class ModuleVo {
      */
     private String userAvatarUrl;
 
+    private String userAvatarPath;
+
     /**
      * 用户昵称
      */

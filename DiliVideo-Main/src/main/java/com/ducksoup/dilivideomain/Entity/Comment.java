@@ -31,6 +31,11 @@ public class Comment implements Serializable {
      */
     private String userAvatarUrl;
 
+
+    private String userAvatarPath;
+
+    private String userAvatarBucket;
+
     /**
      * 评论时间
      */

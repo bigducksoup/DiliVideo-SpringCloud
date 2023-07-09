@@ -3,7 +3,10 @@ package com.ducksoup.dilivideomain.service.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ducksoup.dilivideoentity.AuthEntity.Avatar;
 import com.ducksoup.dilivideoentity.AuthEntity.MUser;
+import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideofeign.Auth.AuthServices;
 import com.ducksoup.dilivideomain.Entity.Comment;
 import com.ducksoup.dilivideomain.service.CommentService;
 import com.ducksoup.dilivideomain.mapper.CommentMapper;
@@ -27,14 +30,29 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     @Autowired
     private CommentMapper commentMapper;
 
+    @Autowired
+    private AuthServices authServices;
+
     @Override
-    public String saveComment(String content, MUser user) {
+    public String saveComment(String content, MUser user) throws Exception {
+
+        ResponseResult<Avatar> responseResult = authServices.getAvatarInfo(user.getAvatarId());
+        if (responseResult.getCode()!=200){
+            log.error("远程调用失败:main->auth:" + responseResult);
+            throw new Exception(responseResult.getMsg());
+        }
+
+        Avatar avatar = responseResult.getData();
 
         String id = UUID.randomUUID().toString();
 
         Comment comment = new Comment();
         comment.setId(id);
         comment.setUserNickname(user.getNickname());
+
+        comment.setUserAvatarBucket(avatar.getBucket());
+        comment.setUserAvatarPath(avatar.getPath());
+
         comment.setUserAvatarUrl(user.getAvatarUrl());
         comment.setCreateTime(DateTime.now());
         comment.setUserId(user.getId());
@@ -42,6 +60,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         comment.setStatus(1);
         comment.setUserLevel(user.getLevel());
         comment.setContent(content);
+
 
         boolean save = this.save(comment);
 

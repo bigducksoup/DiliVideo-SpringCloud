@@ -13,7 +13,7 @@ import java.util.List;
 */
 public interface CommentService extends IService<Comment> {
 
-    String saveComment(String content, MUser user);
+    String saveComment(String content, MUser user) throws Exception;
 
     List<String> queryCommentIdsByVideoInfoIdSortByLikeCount(String videoInfoId, Integer page, Integer pageSize);
 

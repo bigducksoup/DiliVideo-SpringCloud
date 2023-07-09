@@ -1,6 +1,7 @@
 package com.ducksoup.dilivideoauth;
 import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.dto.FileInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ducksoup.dilivideoauth.mainServices.Impl.QQmailSenderServiceImpl;
@@ -33,7 +34,7 @@ class DiliVideoAuthApplicationTests {
         fileUploadDTO.setFile(mockMultipartFile);
         fileUploadDTO.setBucketName(CONSTANT_MinIO.AVATAR_BUCKET);
 
-        ResponseResult<String> stringResponseResult = contentServices.uploadFile(fileUploadDTO);
+        ResponseResult<FileInfo> stringResponseResult = contentServices.uploadFile(fileUploadDTO);
 
         System.out.println(stringResponseResult);
 

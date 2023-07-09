@@ -1,7 +1,9 @@
 package com.ducksoup.dilivideomain;
 
+import cn.hutool.core.collection.CollUtil;
 import com.ducksoup.dilivideoentity.dto.FileTransmissionInfo;
 import com.ducksoup.dilivideofeign.Content.ContentServices;
+import com.ducksoup.dilivideomain.Entity.Comment;
 import com.ducksoup.dilivideomain.service.CommentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest

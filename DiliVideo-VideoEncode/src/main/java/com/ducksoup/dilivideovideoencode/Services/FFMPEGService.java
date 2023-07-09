@@ -61,8 +61,8 @@ public class FFMPEGService {
 
                     @Override
                     public void progress(Progress progress) {
-                        System.out.println(progress);
-                        System.out.println(origin.length());
+                        log.info(progress.toString());
+                        log.info(String.valueOf(origin.length()));
                     }
                 }
         ).run();

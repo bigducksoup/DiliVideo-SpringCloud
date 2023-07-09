@@ -11,6 +11,7 @@ import com.ducksoup.dilivideocontent.Entity.Videoinfo;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
+import com.ducksoup.dilivideocontent.utils.OSSUtils;
 import com.ducksoup.dilivideoentity.AuthEntity.MUser;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import com.ducksoup.dilivideoentity.vo.UserVo;
@@ -43,6 +44,11 @@ public class VideoInfoController {
 
     @Autowired
     private CoverService coverService;
+
+
+    @Autowired
+    private OSSUtils ossUtils;
+
     /**
      * 获取视频播放url
      * @param videoId
@@ -52,8 +58,17 @@ public class VideoInfoController {
     @GetMapping("/get_playurl")
     public ResponseResult<VideoFileVo> getPlayerUrl(@RequestParam String videoId){
         Videofile videofile = videofileService.getById(videoId);
+
+        if (videofile==null){
+            return new ResponseResult<>(HttpStatus.HTTP_NOT_FOUND,"未找到资源");
+        }
+
         VideoFileVo videoFileVo = new VideoFileVo();
         BeanUtils.copyProperties(videofile,videoFileVo);
+
+        String url = ossUtils.makeUrl(videofile.getBucket(), videofile.getPath());
+        videoFileVo.setFullpath(url);
+
         return new ResponseResult<>(HttpStatus.HTTP_OK,"获取视频播放信息",videoFileVo);
     }
 
@@ -111,7 +126,10 @@ public class VideoInfoController {
         videoInfoVo.setVideoFileName("null");
         videoInfoVo.setCoverId(cover.getId());
         videoInfoVo.setCoverName(cover.getUniqueName());
-        videoInfoVo.setCoverUrl(cover.getFullpath());
+
+        String coverUrl = ossUtils.makeUrl(cover.getBucket(), cover.getPath());
+
+        videoInfoVo.setCoverUrl(coverUrl);
         videoInfoVo.setPartitionId(videoinfo.getPartitionId());
 
 
