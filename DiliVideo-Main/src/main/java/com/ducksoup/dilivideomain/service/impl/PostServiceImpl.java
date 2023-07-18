@@ -6,6 +6,7 @@ import com.ducksoup.dilivideomain.Entity.Post;
 import com.ducksoup.dilivideomain.service.PostModuleService;
 import com.ducksoup.dilivideomain.service.PostService;
 import com.ducksoup.dilivideomain.mapper.PostMapper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +19,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post>
     implements PostService{
 
 
+    @Async
+    @Override
+    public void increasePostCommentCount(String postId) {
+        this.baseMapper.increaseCommentCount(postId);
+    }
 }
 
 

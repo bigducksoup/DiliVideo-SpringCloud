@@ -2,6 +2,8 @@ package com.ducksoup.dilivideomain.mapper;
 
 import com.ducksoup.dilivideomain.Entity.Post;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
 * @author meichuankutou
@@ -10,6 +12,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.ducksoup.dilivideomain.Entity.Post
 */
 public interface PostMapper extends BaseMapper<Post> {
+
+
+    @Update("UPDATE post SET comment_count = comment_count + 1 WHERE post.Id = #{postId}")
+    boolean increaseCommentCount(@Param("postId") String postId);
 
 }
 

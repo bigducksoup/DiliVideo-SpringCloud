@@ -1,48 +1,49 @@
-# DiliVideo-SpringCloud（正在施工中）
-
+# DiliVideo-SpringCloud（更新中）
 
 # 简介
-一个从0实现的视频弹幕网站服务端
 
-本项目是本人学习SpringCloud的练手项目,仅供参考
+一个从0实现的视频弹幕网站服务端。
 
 
- ## 技术栈：
-Spring-Boot
 
-Mybatis-Plus
+## 技术栈：
 
-Sa-token
+| 技术               | 说明             |
+| ------------------ | ---------------- |
+| Spring-Boot        | 容器+MVC框架     |
+| Mybatis-Plus       | ORM框架          |
+| sa-token           | 认证和授权框架   |
+| MySQL              | 关系型数据库     |
+| Redis              | 分布式缓存       |
+| RabbitMq           | 消息队列         |
+| Nacos              | 注册与配置中心   |
+| MinIO              | 对象存储         |
+| SpringCloud        | 微服务框架       |
+| SpringCloudAlibaba | 微服务框架       |
+| Hutools            | 工具类           |
+| ffmpeg             | 视频编辑         |
+| docker             | 应用容器引擎     |
+| Lombok             | 简化对象封装工具 |
 
-MySQL
 
-Redis
-
-RabbitMq
-
-Nacos
-
-MinIO
-
-Spring Cloud Gateway
-
-openFeign
-
-Hutools
-
-ffmpeg
 
 ## 开发工具
 
-IDEA
+| 工具    | 说明             |
+| ------- | ---------------- |
+| IDEA    | 集成开发环境     |
+| Navicat | 数据库可视化管理 |
+| utools  | 开发工具         |
+| Postman | 接口测试工具     |
+| Tabby   | 终端模拟软件     |
 
-Navicat
 
-utools
 
-Postman
+## 架构图
 
-Tabby
+![image-20230717094300147](./imgs/架构图.png)
+
+
 
 ## 组织结构
 

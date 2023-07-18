@@ -31,6 +31,10 @@ public class PostComment implements Serializable {
      */
     private String userNickname;
 
+    private String userAvatarPath;
+
+    private String userAvatarBucket;
+
     /**
      * 评论人头像地址
      */

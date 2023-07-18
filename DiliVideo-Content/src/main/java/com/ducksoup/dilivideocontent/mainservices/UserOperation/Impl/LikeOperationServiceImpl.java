@@ -5,12 +5,14 @@ import com.ducksoup.dilivideocontent.Entity.Videoinfo;
 import com.ducksoup.dilivideocontent.mainservices.UserOperation.LikeOperationService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class LikeOperationServiceImpl implements LikeOperationService {
 
     @Autowired
@@ -62,6 +64,10 @@ public class LikeOperationServiceImpl implements LikeOperationService {
                         .eq(Videoinfo::getId, videoInfoId)
                         .set(Videoinfo::getLikeCount, likeCount)
         );
+
+        if (update){
+            log.info("更新"+videoInfoId +"like数量为" + likeCount);
+        }
 
         return update;
     }
