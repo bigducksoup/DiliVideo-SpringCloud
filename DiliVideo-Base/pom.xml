@@ -37,9 +37,6 @@
         </dependency>
 
 
-
-
-
         <!-- nacos客户端依赖包 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

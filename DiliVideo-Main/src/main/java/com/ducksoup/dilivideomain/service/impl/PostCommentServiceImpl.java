@@ -9,10 +9,13 @@ import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import com.ducksoup.dilivideofeign.Auth.AuthServices;
 import com.ducksoup.dilivideomain.Entity.PostComment;
 import com.ducksoup.dilivideomain.Utils.OSSUtils;
+import com.ducksoup.dilivideomain.dto.IdMap;
 import com.ducksoup.dilivideomain.service.PostCommentService;
 import com.ducksoup.dilivideomain.mapper.PostCommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author meichuankutou
@@ -62,6 +65,23 @@ public class PostCommentServiceImpl extends ServiceImpl<PostCommentMapper, PostC
             throw new Exception("添加动态评论失败");
         }
         return id;
+    }
+
+    @Override
+    public List<PostComment> queryPostCommentByPostId(String postId, Integer page, Integer pageSize, boolean orderByTime) {
+
+        Integer start =  ( page - 1 ) * pageSize;
+        Integer end = (page) * pageSize;
+
+        return this.baseMapper.queryPostCommentByPostId(postId,start,end,orderByTime);
+    }
+
+    @Override
+    public List<IdMap> queryPostCommentReplies(String commentId, Integer page, Integer pageSize, boolean orderByTime) {
+        Integer start =  ( page - 1 ) * pageSize;
+        Integer end = (page) * pageSize;
+
+        return this.baseMapper.queryCommentReplies(commentId,start,end,orderByTime);
     }
 }
 
