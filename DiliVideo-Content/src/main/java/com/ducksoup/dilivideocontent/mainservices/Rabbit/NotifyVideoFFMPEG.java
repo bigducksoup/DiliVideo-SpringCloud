@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideocontent.mainservices.Rabbit;
 
-import com.ducksoup.dilivideocontent.Config.RabbitmqConfig;
-import com.ducksoup.dilivideocontent.Entity.Videofile;
+import com.ducksoup.dilivideocontent.config.RabbitmqConfig;
+import com.ducksoup.dilivideocontent.entity.Videofile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

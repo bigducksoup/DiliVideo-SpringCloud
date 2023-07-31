@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideocontent.mainservices.Video;
 
-import com.ducksoup.dilivideocontent.Controller.Params.VideoInfoForm;
-import com.ducksoup.dilivideocontent.Entity.Videofile;
+import com.ducksoup.dilivideocontent.controller.Params.VideoInfoForm;
+import com.ducksoup.dilivideocontent.entity.Videofile;
 
 public interface VideoOperationService {
 

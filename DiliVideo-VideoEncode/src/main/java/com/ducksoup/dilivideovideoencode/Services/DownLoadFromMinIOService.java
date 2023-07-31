@@ -22,7 +22,6 @@ public class DownLoadFromMinIOService {
 
     public File downLoadObject(String bucket,String fullPath,String path,String filename) throws Exception{
 
-        bucket = "video";
 
         InputStream response = minioClient.getObject(GetObjectArgs.builder()
                 .bucket(bucket)
@@ -34,6 +33,8 @@ public class DownLoadFromMinIOService {
         File temp = File.createTempFile("temp","."+split[split.length-1]);
 
         FileUtils.copyInputStreamToFile(response,temp);
+
+        response.close();
 
         return temp;
 

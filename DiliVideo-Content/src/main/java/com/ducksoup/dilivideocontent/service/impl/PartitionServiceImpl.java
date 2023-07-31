@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideocontent.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideocontent.Entity.Partition;
+import com.ducksoup.dilivideocontent.entity.Partition;
 import com.ducksoup.dilivideocontent.service.PartitionService;
 import com.ducksoup.dilivideocontent.mapper.PartitionMapper;
 import org.springframework.stereotype.Service;

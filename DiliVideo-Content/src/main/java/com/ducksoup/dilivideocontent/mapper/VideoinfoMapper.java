@@ -1,12 +1,10 @@
 package com.ducksoup.dilivideocontent.mapper;
 
-import com.ducksoup.dilivideocontent.Entity.Videoinfo;
+import com.ducksoup.dilivideocontent.entity.Videoinfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-
-import java.util.List;
 
 /**
 * @author meichuankutou

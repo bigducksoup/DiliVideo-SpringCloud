@@ -6,8 +6,8 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.DigestUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ducksoup.dilivideocontent.Entity.Cover;
-import com.ducksoup.dilivideocontent.Entity.Videofile;
+import com.ducksoup.dilivideocontent.entity.Cover;
+import com.ducksoup.dilivideocontent.entity.Videofile;
 import com.ducksoup.dilivideocontent.dto.FileSavedInfo;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
@@ -156,7 +156,6 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
     public FileSavedInfo uploadFile(MultipartFile file, String BucketName, String md5) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
 
         String[] split = file.getOriginalFilename().split("\\.");
-
         //后缀
         String suffix = split[split.length-1];
         //id

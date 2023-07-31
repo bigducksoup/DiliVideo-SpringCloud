@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideocontent.mapper.VideofileMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideocontent.Entity.Videofile">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideocontent.entity.Videofile">
             <id property="id" column="Id" jdbcType="CHAR"/>
             <result property="originName" column="origin_name" jdbcType="VARCHAR"/>
             <result property="uniqueName" column="unique_name" jdbcType="VARCHAR"/>

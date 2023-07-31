@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideocontent;
 
-import com.ducksoup.dilivideocontent.Config.RabbitmqConfig;
-import com.ducksoup.dilivideocontent.Entity.Videofile;
+import com.ducksoup.dilivideocontent.config.RabbitmqConfig;
+import com.ducksoup.dilivideocontent.entity.Videofile;
 import com.ducksoup.dilivideocontent.mainservices.MinIO.UploadService;
 import com.ducksoup.dilivideocontent.mainservices.UserOperation.LikeOperationService;
 import com.ducksoup.dilivideocontent.service.VideofileService;

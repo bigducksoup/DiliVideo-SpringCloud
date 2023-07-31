@@ -1,18 +1,16 @@
 package com.ducksoup.dilivideocontent.service.impl;
 
-import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideocontent.Entity.Cover;
-import com.ducksoup.dilivideocontent.Entity.Videoinfo;
+import com.ducksoup.dilivideocontent.entity.Cover;
+import com.ducksoup.dilivideocontent.entity.Videoinfo;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.mapper.VideoinfoMapper;
 import com.ducksoup.dilivideocontent.utils.OSSUtils;
 import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

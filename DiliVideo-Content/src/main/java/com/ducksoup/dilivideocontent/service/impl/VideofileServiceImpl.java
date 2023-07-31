@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideocontent.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideocontent.Entity.Videofile;
+import com.ducksoup.dilivideocontent.entity.Videofile;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.mapper.VideofileMapper;
 import org.springframework.stereotype.Service;

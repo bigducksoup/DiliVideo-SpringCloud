@@ -11,6 +11,15 @@ public class CONSTANT_MinIO {
     public static  String AVATAR_BUCKET = "avatar";
 
 
+    public static String VIDEO_CHUNK_BUCKET = "video-chunk";
+
+
+    public static final String RANDOM_CODE_CHECK_PREFIX = "RANDOMCODELOGINID:";
+
+    public static final String VIDEO_CHUNK_LIST_PREFIX = "VIDEO_CHUNK:";
+
+    public static final String VIDEO_CHUNK_MD5_PREFIX = "VIDEO_CHUNK_MD5";
+
 
 
 }

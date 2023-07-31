@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideocontent.mainservices.UserOperation.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.ducksoup.dilivideocontent.Entity.Videoinfo;
+import com.ducksoup.dilivideocontent.entity.Videoinfo;
 import com.ducksoup.dilivideocontent.mainservices.UserOperation.LikeOperationService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.RedisUtil;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideocontent.mapper.VideoChunkMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideocontent.entity.VideoChunk">
+            <id property="id" column="id" jdbcType="CHAR"/>
+            <result property="uniqueName" column="unique_name" jdbcType="VARCHAR"/>
+            <result property="originalName" column="original_name" jdbcType="VARCHAR"/>
+            <result property="code" column="code" jdbcType="CHAR"/>
+            <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+            <result property="md5" column="md5" jdbcType="VARCHAR"/>
+            <result property="used" column="used" jdbcType="TINYINT"/>
+            <result property="totalChunkCount" column="total_chunk_count" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,unique_name,original_name,
+        code,upload_time,md5,
+        used,total_chunk_count
+    </sql>
+</mapper>

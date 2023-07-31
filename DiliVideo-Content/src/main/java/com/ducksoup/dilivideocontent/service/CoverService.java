@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideocontent.service;
 
-import com.ducksoup.dilivideocontent.Entity.Cover;
+import com.ducksoup.dilivideocontent.entity.Cover;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
