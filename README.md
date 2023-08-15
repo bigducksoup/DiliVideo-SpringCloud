@@ -45,6 +45,17 @@
 
 
 
+### 直播架构
+
+![live](./imgs/live-service.png)
+
+### 直播弹幕架构
+
+![live-barrage](./imgs/live-barrage-service.png)
+
+### 媒体服务架构（上传视频）
+![live-barrage](./imgs/content-videoUpload.png)
+
 ## 组织结构
 
 ```

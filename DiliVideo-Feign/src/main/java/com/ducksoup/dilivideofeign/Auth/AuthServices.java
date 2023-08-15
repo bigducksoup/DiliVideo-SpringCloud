@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Component
 @FeignClient(value = "DiliVideo-Auth",configuration = FeignInterceptor.class)
 public interface AuthServices {
@@ -22,4 +24,9 @@ public interface AuthServices {
     ResponseResult<Avatar> getAvatarInfo(@RequestParam(value = "avatarId") String avatarId);
 
 
+    @GetMapping(path = "feign/auth/get_roles")
+    List<String> getRolesByLoginId(@RequestParam(value = "loginId")String loginId);
+
+    @GetMapping(path = "feign/auth/get_permissions")
+    List<String> getPermissionsByLoginId(@RequestParam(value = "loginId")String loginId);
 }

@@ -1,6 +1,7 @@
 package com.ducksoup.dilivideomain.Controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import com.ducksoup.dilivideomain.mainservices.PostQueryService;
@@ -22,6 +23,7 @@ public class PostQueryController {
     private PostQueryService postQueryService;
 
 
+
     @GetMapping("/query_by_userId")
     public ResponseResult<List<PostVo>> queryPostById(@RequestParam String userId,@RequestParam Integer page){
 
@@ -32,6 +34,15 @@ public class PostQueryController {
         return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",postVos);
     }
 
+
+    @GetMapping("/count")
+    public ResponseResult<Long> getUserPostCount(String userId){
+
+        long userPostCount = postQueryService.getUserPostCount(userId);
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",userPostCount);
+
+    }
 
 
 }

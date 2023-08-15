@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideolive.mapper.LiveRoomMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.Entity.LiveRoom">
+            <id property="id" column="id" jdbcType="CHAR"/>
+            <result property="roomNumber" column="room_number" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="CHAR"/>
+            <result property="categoryId" column="category_id" jdbcType="CHAR"/>
+            <result property="roomname" column="roomName" jdbcType="VARCHAR"/>
+            <result property="isLive" column="is_live" jdbcType="TINYINT"/>
+            <result property="coverId" column="cover_id" jdbcType="CHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,room_number,user_id,
+        category_id,roomName,is_live,
+        cover_id,status
+    </sql>
+</mapper>

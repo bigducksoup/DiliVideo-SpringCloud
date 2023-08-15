@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideolive.mapper.LiveServerMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.Entity.LiveServer">
+            <id property="id" column="id" jdbcType="CHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="ip" column="ip" jdbcType="VARCHAR"/>
+            <result property="domain" column="domain" jdbcType="VARCHAR"/>
+            <result property="port" column="port" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="connectionCount" column="connection_count" jdbcType="INTEGER"/>
+            <result property="cores" column="cores" jdbcType="INTEGER"/>
+            <result property="memory" column="memory" jdbcType="INTEGER"/>
+            <result property="storage" column="storage" jdbcType="INTEGER"/>
+            <result property="bandwidth" column="bandwidth" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,ip,
+        domain,port,status,
+        connection_count,cores,memory,
+        storage,bandwidth
+    </sql>
+    <select id="getByConnectionCount" resultType="com.ducksoup.dilivideolive.Entity.LiveServer">
+        SELECT
+            live_server.id,
+            live_server.`name`,
+            live_server.ip,
+            live_server.domain,
+            live_server.protocol,
+            live_server.`port`,
+            live_server.`status`,
+            live_server.connection_count,
+            live_server.cores,
+            live_server.memory,
+            live_server.`storage`,
+            live_server.bandwidth,
+            live_server.create_time
+        from live_server
+        WHERE live_server.`status` = 1
+        ORDER BY live_server.connection_count
+        LIMIT 1
+    </select>
+</mapper>

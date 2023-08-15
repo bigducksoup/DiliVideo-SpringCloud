@@ -55,12 +55,17 @@ public class FileCombineServiceImpl implements FileCombineService{
         List<VideoChunk> chunkList = new ArrayList<>(chunkSet);
         chunkList.sort(Comparator.comparing(VideoChunk::getChunkIndex));
 
+        log.info("共"+chunkList.size()+"片文件需合并");
+
         List<File> chunks = new ArrayList<>();
         chunkList.forEach(item->{
             try {
                 File file = downLoadFromMinIOService.downLoadObject(item.getChunkBucket(), item.getChunkPath(), item.getOriginalName());
                 chunks.add(file);
             } catch (Exception e) {
+                chunks.forEach(chunk->{
+                    chunk.delete();
+                });
                 throw new RuntimeException(e);
             }
         });
@@ -95,6 +100,9 @@ public class FileCombineServiceImpl implements FileCombineService{
     @Override
     public void combineVideoChunks(Set<VideoChunk> chunkSet,String fileName,String code)  {
         File file = combineChunks(chunkSet,fileName);
+
+        log.info(file.getName()+"合成完毕+code="+code);
+
         try {
             FileSavedInfo savedInfo = uploadServiceForFile.uploadFile(file, CONSTANT_MinIO.VIDEO_BUCTET, DigestUtil.md5Hex(file));
             Videofile videofile = new Videofile();

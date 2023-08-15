@@ -102,5 +102,10 @@ public class PostQueryService {
     }
 
 
+    public long getUserPostCount(String userId){
+
+        return  postModuleService.count(new LambdaQueryWrapper<PostModule>().eq(PostModule::getUserId,userId));
+
+    }
 
 }

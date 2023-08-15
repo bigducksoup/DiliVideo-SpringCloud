@@ -14,6 +14,7 @@
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
         <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
         <org.projectlombok.version>1.18.16</org.projectlombok.version>
+        <spring-boot.version>2.6.11</spring-boot.version>
     </properties>
 
 
@@ -108,7 +109,13 @@
             <version>2.6.7</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring-boot.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
     </dependencies>
     </dependencyManagement>
 
