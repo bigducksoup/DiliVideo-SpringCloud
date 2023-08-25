@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideomain.mapper.PostImgsMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideomain.Entity.PostImgs">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideomain.entity.PostImgs">
             <id property="id" column="Id" jdbcType="CHAR"/>
             <result property="originalName" column="original_name" jdbcType="VARCHAR"/>
             <result property="uniqueName" column="unique_name" jdbcType="VARCHAR"/>

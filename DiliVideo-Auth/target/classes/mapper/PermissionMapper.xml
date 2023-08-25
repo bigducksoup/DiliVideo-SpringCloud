@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideoauth.mapper.PermissionMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.Entity.Permission">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.entity.Permission">
             <result property="id" column="Id" jdbcType="CHAR"/>
             <result property="permissionName" column="permission_name" jdbcType="VARCHAR"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

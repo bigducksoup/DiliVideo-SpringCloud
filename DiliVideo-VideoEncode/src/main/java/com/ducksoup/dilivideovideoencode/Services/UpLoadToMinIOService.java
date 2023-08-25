@@ -1,17 +1,14 @@
 package com.ducksoup.dilivideovideoencode.Services;
 
 
-import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
-import com.ducksoup.dilivideoentity.ContentEntity.Videofile;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
+import com.ducksoup.dilivideoentity.contentEntity.Videofile;
 import io.minio.MinioClient;
-import io.minio.ObjectWriteResponse;
-import io.minio.PutObjectArgs;
 import io.minio.UploadObjectArgs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.file.Files;
 
 
 /**

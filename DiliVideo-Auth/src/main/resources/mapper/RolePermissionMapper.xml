@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideoauth.mapper.RolePermissionMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.Entity.RolePermission">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.entity.RolePermission">
             <id property="id" column="Id" jdbcType="CHAR"/>
             <result property="roleId" column="role_id" jdbcType="CHAR"/>
             <result property="permissionId" column="permission_id" jdbcType="CHAR"/>

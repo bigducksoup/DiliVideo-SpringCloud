@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideomain.service;
 
-import com.ducksoup.dilivideomain.Entity.PostCommentReplyComment;
+import com.ducksoup.dilivideomain.entity.PostCommentReplyComment;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

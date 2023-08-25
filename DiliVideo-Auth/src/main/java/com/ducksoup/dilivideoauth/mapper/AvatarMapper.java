@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideoauth.mapper;
 
-import com.ducksoup.dilivideoauth.Entity.Avatar;
+import com.ducksoup.dilivideoauth.entity.Avatar;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

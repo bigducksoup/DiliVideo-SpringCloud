@@ -6,7 +6,7 @@ import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideocontent.dto.FileSavedInfo;
 import com.ducksoup.dilivideocontent.mainservices.MinIO.UploadService;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.dto.FileInfo;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
 import lombok.extern.slf4j.Slf4j;

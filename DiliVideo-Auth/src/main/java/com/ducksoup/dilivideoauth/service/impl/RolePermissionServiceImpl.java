@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideoauth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideoauth.Entity.RolePermission;
+import com.ducksoup.dilivideoauth.entity.RolePermission;
 import com.ducksoup.dilivideoauth.service.RolePermissionService;
 import com.ducksoup.dilivideoauth.mapper.RolePermissionMapper;
 import org.springframework.stereotype.Service;

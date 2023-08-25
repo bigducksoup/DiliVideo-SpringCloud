@@ -2,10 +2,10 @@ package com.ducksoup.dilivideoauth.mainServices.Impl;
 
 import cn.dev33.satoken.stp.StpInterface;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ducksoup.dilivideoauth.Entity.Permission;
-import com.ducksoup.dilivideoauth.Entity.Role;
-import com.ducksoup.dilivideoauth.Entity.RolePermission;
-import com.ducksoup.dilivideoauth.Entity.UserRole;
+import com.ducksoup.dilivideoauth.entity.Permission;
+import com.ducksoup.dilivideoauth.entity.Role;
+import com.ducksoup.dilivideoauth.entity.RolePermission;
+import com.ducksoup.dilivideoauth.entity.UserRole;
 import com.ducksoup.dilivideoauth.service.PermissionService;
 import com.ducksoup.dilivideoauth.service.RolePermissionService;
 import com.ducksoup.dilivideoauth.service.RoleService;

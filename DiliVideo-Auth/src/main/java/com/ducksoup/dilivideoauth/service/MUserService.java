@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideoauth.service;
 
-import com.ducksoup.dilivideoauth.Entity.MUser;
+import com.ducksoup.dilivideoauth.entity.MUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

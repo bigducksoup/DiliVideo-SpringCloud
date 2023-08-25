@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideoauth.service;
 
-import com.ducksoup.dilivideoauth.Entity.RelationFollow;
+import com.ducksoup.dilivideoauth.entity.RelationFollow;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

@@ -4,30 +4,32 @@ package com.ducksoup.dilivideomain.mainservices;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
-import com.ducksoup.dilivideoentity.AuthEntity.Avatar;
-import com.ducksoup.dilivideoentity.AuthEntity.MUser;
-import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.ducksoup.dilivideoentity.authEntity.Avatar;
+import com.ducksoup.dilivideoentity.authEntity.MUser;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.dto.FileInfo;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
-import com.ducksoup.dilivideofeign.Auth.AuthServices;
-import com.ducksoup.dilivideofeign.Content.ContentServices;
-import com.ducksoup.dilivideomain.Controller.Params.TextPostParams;
-import com.ducksoup.dilivideomain.Entity.Post;
-import com.ducksoup.dilivideomain.Entity.PostImgs;
-import com.ducksoup.dilivideomain.Entity.PostModule;
+import com.ducksoup.dilivideofeign.auth.AuthServices;
+import com.ducksoup.dilivideofeign.content.ContentServices;
+import com.ducksoup.dilivideomain.controller.params.TextPostParams;
+import com.ducksoup.dilivideomain.entity.Post;
+import com.ducksoup.dilivideomain.entity.PostImgs;
+import com.ducksoup.dilivideomain.entity.PostModule;
 import com.ducksoup.dilivideomain.dto.PostModuleInfo;
 import com.ducksoup.dilivideomain.service.PostImgsService;
 import com.ducksoup.dilivideomain.service.PostModuleService;
 import com.ducksoup.dilivideomain.service.PostService;
+import com.ducksoup.dilivideomain.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.naming.ServiceUnavailableException;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,10 @@ public class PostOperationService {
 
     @Autowired
     private AuthServices authServices;
+
+
+    @Autowired
+    private RedisUtil redisUtil;
 
 
     @Transactional
@@ -170,5 +176,11 @@ public class PostOperationService {
 
     }
 
+
+
+    @Async(value = "ThreadPool")
+    public void updatePostLikeCount(String postId,Long likeCount){
+        postService.update(new LambdaUpdateWrapper<Post>().eq(Post::getId,postId).set(Post::getLikeCount,likeCount));
+    }
 
 }

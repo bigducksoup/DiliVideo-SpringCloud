@@ -4,15 +4,13 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideoentity.Constant.CONSTANT_LIVE;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_LIVE;
 import com.ducksoup.dilivideolive.Entity.LiveRoom;
 import com.ducksoup.dilivideolive.service.LiveRoomService;
 import com.ducksoup.dilivideolive.mapper.LiveRoomMapper;
 import com.ducksoup.dilivideolive.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
 
 /**
 * @author meichuankutou

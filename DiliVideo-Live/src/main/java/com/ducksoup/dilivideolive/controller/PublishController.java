@@ -6,7 +6,7 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideolive.Entity.LiveRoom;
 import com.ducksoup.dilivideolive.service.LiveRoomService;
 import com.ducksoup.dilivideolive.service.LiveServerService;

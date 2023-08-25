@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideoauth.mapper.RelationFollowMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.Entity.RelationFollow">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.entity.RelationFollow">
             <id property="id" column="Id" jdbcType="CHAR"/>
             <result property="userNickname" column="user_nickname" jdbcType="VARCHAR"/>
             <result property="userId" column="user_id" jdbcType="CHAR"/>

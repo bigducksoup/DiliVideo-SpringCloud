@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideomain.mapper.PostCommentReplyCommentMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideomain.Entity.PostCommentReplyComment">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideomain.entity.PostCommentReplyComment">
             <id property="id" column="Id" jdbcType="CHAR"/>
             <result property="fatherCommentId" column="father_comment_id" jdbcType="CHAR"/>
             <result property="commentId" column="comment_id" jdbcType="CHAR"/>

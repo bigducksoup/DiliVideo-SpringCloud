@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideomain.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideomain.Entity.PostType;
+import com.ducksoup.dilivideomain.entity.PostType;
 import com.ducksoup.dilivideomain.service.PostTypeService;
 import com.ducksoup.dilivideomain.mapper.PostTypeMapper;
 import org.springframework.stereotype.Service;

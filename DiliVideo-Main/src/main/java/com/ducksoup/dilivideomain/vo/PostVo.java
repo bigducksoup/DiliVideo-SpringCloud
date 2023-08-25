@@ -1,10 +1,8 @@
 package com.ducksoup.dilivideomain.vo;
 
-import com.ducksoup.dilivideomain.Entity.PostModule;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
 
 @Data

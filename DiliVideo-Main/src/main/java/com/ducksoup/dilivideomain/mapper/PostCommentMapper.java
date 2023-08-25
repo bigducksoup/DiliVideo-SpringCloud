@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideomain.mapper;
 
-import com.ducksoup.dilivideomain.Entity.PostComment;
+import com.ducksoup.dilivideomain.entity.PostComment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ducksoup.dilivideomain.dto.IdMap;
 import org.apache.ibatis.annotations.Param;

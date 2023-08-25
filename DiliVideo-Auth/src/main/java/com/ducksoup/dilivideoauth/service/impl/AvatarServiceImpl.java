@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideoauth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideoauth.Entity.Avatar;
+import com.ducksoup.dilivideoauth.entity.Avatar;
 import com.ducksoup.dilivideoauth.service.AvatarService;
 import com.ducksoup.dilivideoauth.mapper.AvatarMapper;
 import org.springframework.stereotype.Service;

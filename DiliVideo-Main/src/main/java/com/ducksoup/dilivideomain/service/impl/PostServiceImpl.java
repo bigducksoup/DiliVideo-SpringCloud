@@ -1,9 +1,7 @@
 package com.ducksoup.dilivideomain.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideomain.Controller.Params.TextPostParams;
-import com.ducksoup.dilivideomain.Entity.Post;
-import com.ducksoup.dilivideomain.service.PostModuleService;
+import com.ducksoup.dilivideomain.entity.Post;
 import com.ducksoup.dilivideomain.service.PostService;
 import com.ducksoup.dilivideomain.mapper.PostMapper;
 import org.springframework.scheduling.annotation.Async;

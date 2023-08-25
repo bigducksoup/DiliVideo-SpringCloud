@@ -2,16 +2,14 @@ package com.ducksoup.dilivideoauth.service.impl;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
-import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideoauth.Entity.MUser;
-import com.ducksoup.dilivideoauth.Entity.RelationFollow;
+import com.ducksoup.dilivideoauth.entity.MUser;
+import com.ducksoup.dilivideoauth.entity.RelationFollow;
 import com.ducksoup.dilivideoauth.service.MUserService;
 import com.ducksoup.dilivideoauth.service.RelationFollowService;
 import com.ducksoup.dilivideoauth.mapper.RelationFollowMapper;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

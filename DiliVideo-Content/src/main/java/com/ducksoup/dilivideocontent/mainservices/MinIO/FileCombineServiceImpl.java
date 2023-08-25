@@ -13,18 +13,20 @@ import com.ducksoup.dilivideocontent.mainservices.MinIO.MinIOImpl.UploadServiceF
 import com.ducksoup.dilivideocontent.service.VideoChunkService;
 import com.ducksoup.dilivideocontent.utils.OSSUtils;
 import com.ducksoup.dilivideocontent.utils.RedisUtil;
-import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -49,28 +51,49 @@ public class FileCombineServiceImpl implements FileCombineService{
     @Autowired
     private OSSUtils ossUtils;
 
-    @Override
-    public File combineChunks(Set<VideoChunk> chunkSet,String fileName)  {
 
-        List<VideoChunk> chunkList = new ArrayList<>(chunkSet);
+    @Autowired
+    private ThreadPoolTaskExecutor MinIOThreadPool;
+
+    @Override
+    public File combineChunks(Set<VideoChunk> chunkSet,String fileName) {
+
+        List<VideoChunk> chunkList = new CopyOnWriteArrayList<>(chunkSet);
         chunkList.sort(Comparator.comparing(VideoChunk::getChunkIndex));
 
         log.info("共"+chunkList.size()+"片文件需合并");
 
-        List<File> chunks = new ArrayList<>();
-        chunkList.forEach(item->{
-            try {
-                File file = downLoadFromMinIOService.downLoadObject(item.getChunkBucket(), item.getChunkPath(), item.getOriginalName());
+        List<File> chunks = new CopyOnWriteArrayList<>();
+
+        CountDownLatch countDownLatch = new CountDownLatch(chunkList.size());
+
+        for (VideoChunk item : chunkList) {
+            MinIOThreadPool.execute(() -> {
+                File file = null;
+                try {
+                    file = downLoadFromMinIOService.downLoadObject(item.getChunkBucket(), item.getChunkPath(), item.getOriginalName());
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    throw new RuntimeException(e);
+                }finally {
+                    countDownLatch.countDown();
+                }
                 chunks.add(file);
-            } catch (Exception e) {
-                chunks.forEach(chunk->{
-                    chunk.delete();
-                });
-                throw new RuntimeException(e);
-            }
-        });
+            });
+        }
+
+
         File mergedFile = null;
         try {
+            countDownLatch.await();
+
+            if (chunkList.size()!=chunks.size()){
+                for (File chunk : chunks) {
+                    chunk.delete();
+                }
+                throw new RuntimeException("分片缺失");
+            }
+
             //创建临时文件
             mergedFile = File.createTempFile(FileUtil.getPrefix(fileName),"."+FileUtil.getSuffix(fileName));
             // 创建输出流
@@ -86,6 +109,7 @@ public class FileCombineServiceImpl implements FileCombineService{
                 inputStream.close();
                 f.delete();
             }
+
             outputStream.close();
         } catch (Exception e) {
             throw new RuntimeException(e);

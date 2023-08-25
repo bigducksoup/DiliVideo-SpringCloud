@@ -2,7 +2,7 @@ package com.ducksoup.dilivideocontent.handlers;
 
 
 import cn.dev33.satoken.exception.NotLoginException;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

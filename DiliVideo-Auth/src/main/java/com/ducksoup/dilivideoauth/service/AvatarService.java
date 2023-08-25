@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideoauth.service;
 
-import com.ducksoup.dilivideoauth.Entity.Avatar;
+import com.ducksoup.dilivideoauth.entity.Avatar;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

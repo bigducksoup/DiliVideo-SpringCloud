@@ -8,7 +8,7 @@ import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideobarrage.Controller.params.BarrageParams;
 import com.ducksoup.dilivideobarrage.Entity.BaBullet;
 import com.ducksoup.dilivideobarrage.service.BaBulletService;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

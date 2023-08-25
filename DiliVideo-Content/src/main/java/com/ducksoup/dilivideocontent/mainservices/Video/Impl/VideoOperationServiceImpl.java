@@ -15,9 +15,9 @@ import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 
-import com.ducksoup.dilivideoentity.AuthEntity.MUser;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
-import com.ducksoup.dilivideofeign.Auth.AuthServices;
+import com.ducksoup.dilivideoentity.authEntity.MUser;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
+import com.ducksoup.dilivideofeign.auth.AuthServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

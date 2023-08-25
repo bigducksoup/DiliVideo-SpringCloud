@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideomain.dto;
 
-import com.ducksoup.dilivideoentity.AuthEntity.MUser;
+import com.ducksoup.dilivideoentity.authEntity.MUser;
 import lombok.Data;
 
 @Data

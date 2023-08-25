@@ -4,10 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import com.ducksoup.dilivideomain.Entity.Post;
-import com.ducksoup.dilivideomain.Entity.PostImgs;
-import com.ducksoup.dilivideomain.Entity.PostModule;
-import com.ducksoup.dilivideomain.Utils.OSSUtils;
+import com.ducksoup.dilivideomain.entity.Post;
+import com.ducksoup.dilivideomain.entity.PostImgs;
+import com.ducksoup.dilivideomain.entity.PostModule;
+import com.ducksoup.dilivideomain.utils.OSSUtils;
 import com.ducksoup.dilivideomain.service.PostImgsService;
 import com.ducksoup.dilivideomain.service.PostModuleService;
 import com.ducksoup.dilivideomain.service.PostService;

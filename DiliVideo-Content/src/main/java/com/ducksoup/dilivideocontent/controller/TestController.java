@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideocontent.controller;
 
 
-import com.ducksoup.dilivideofeign.BarrageServices.TestServices;
+import com.ducksoup.dilivideofeign.barrage.TestServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideovideoencode.Consumer;
 
-import com.ducksoup.dilivideoentity.ContentEntity.Videofile;
+import com.ducksoup.dilivideoentity.contentEntity.Videofile;
 import com.ducksoup.dilivideovideoencode.Config.RabbitmqConfig;
 import com.ducksoup.dilivideovideoencode.Services.DownLoadFromMinIOService;
 import com.ducksoup.dilivideovideoencode.Services.FFMPEGService;

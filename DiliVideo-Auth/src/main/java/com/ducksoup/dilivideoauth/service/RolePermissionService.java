@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideoauth.service;
 
-import com.ducksoup.dilivideoauth.Entity.RolePermission;
+import com.ducksoup.dilivideoauth.entity.RolePermission;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

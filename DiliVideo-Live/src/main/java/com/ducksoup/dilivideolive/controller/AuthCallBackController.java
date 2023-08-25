@@ -1,10 +1,7 @@
 package com.ducksoup.dilivideolive.controller;
 
 
-import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.symmetric.AES;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.ducksoup.dilivideoentity.Constant.CONSTANT_LIVE;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_LIVE;
 import com.ducksoup.dilivideolive.Entity.LiveRoom;
 import com.ducksoup.dilivideolive.controller.params.OnPublishParams;
 import com.ducksoup.dilivideolive.service.LiveRoomService;
@@ -14,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.crypto.SecretKey;
 
 @RestController
 @RequestMapping("/auth")

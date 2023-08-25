@@ -2,12 +2,11 @@ package com.ducksoup.dilivideoauth.service.impl;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ducksoup.dilivideoauth.Controller.Params.LoginByEmailParam;
-import com.ducksoup.dilivideoauth.Entity.Avatar;
-import com.ducksoup.dilivideoauth.Entity.MUser;
+import com.ducksoup.dilivideoauth.controller.Params.LoginByEmailParam;
+import com.ducksoup.dilivideoauth.entity.Avatar;
+import com.ducksoup.dilivideoauth.entity.MUser;
 import com.ducksoup.dilivideoauth.service.AvatarService;
 import com.ducksoup.dilivideoauth.service.LoginService;
 import com.ducksoup.dilivideoauth.service.MUserService;

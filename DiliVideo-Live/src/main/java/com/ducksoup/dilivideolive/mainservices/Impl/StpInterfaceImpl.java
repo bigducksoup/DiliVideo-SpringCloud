@@ -3,7 +3,7 @@ package com.ducksoup.dilivideolive.mainservices.Impl;
 import cn.dev33.satoken.stp.StpInterface;
 
 
-import com.ducksoup.dilivideofeign.Auth.AuthServices;
+import com.ducksoup.dilivideofeign.auth.AuthServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

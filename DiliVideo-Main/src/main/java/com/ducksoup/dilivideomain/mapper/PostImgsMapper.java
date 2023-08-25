@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideomain.mapper;
 
-import com.ducksoup.dilivideomain.Entity.PostImgs;
+import com.ducksoup.dilivideomain.entity.PostImgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

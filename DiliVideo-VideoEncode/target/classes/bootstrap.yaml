@@ -17,8 +17,8 @@ spring:
 
 
 
-ffmpeg: /Users/meichuankutou/Applications/ffmpeg/ffmpeg
-ffprobe: /Users/meichuankutou/Applications/ffmpeg/ffprobe
+ffmpeg: /Users/meichuankutou/Public/ffmp/ffmpeg
+ffprobe: /Users/meichuankutou/Public/ffmp/ffprobe
 
 
 

@@ -12,7 +12,7 @@ import com.ducksoup.dilivideocontent.dto.FileSavedInfo;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.utils.RedisUtil;
-import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;

@@ -1,13 +1,11 @@
 package com.ducksoup.dilivideoauth;
-import com.ducksoup.dilivideoentity.Constant.CONSTANT_MinIO;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.dto.FileInfo;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ducksoup.dilivideoauth.mainServices.Impl.QQmailSenderServiceImpl;
-import com.ducksoup.dilivideoauth.mainServices.MailSenderService;
 import com.ducksoup.dilivideoentity.dto.FileUploadDTO;
-import com.ducksoup.dilivideofeign.Content.ContentServices;
+import com.ducksoup.dilivideofeign.content.ContentServices;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

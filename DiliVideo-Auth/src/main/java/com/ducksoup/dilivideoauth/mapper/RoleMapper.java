@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideoauth.mapper;
 
-import com.ducksoup.dilivideoauth.Entity.Role;
+import com.ducksoup.dilivideoauth.entity.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

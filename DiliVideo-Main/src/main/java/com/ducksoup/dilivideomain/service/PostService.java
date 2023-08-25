@@ -1,7 +1,6 @@
 package com.ducksoup.dilivideomain.service;
 
-import com.ducksoup.dilivideomain.Controller.Params.TextPostParams;
-import com.ducksoup.dilivideomain.Entity.Post;
+import com.ducksoup.dilivideomain.entity.Post;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

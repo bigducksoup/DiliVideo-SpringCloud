@@ -6,7 +6,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideocontent.controller.Params.LikeParams;
 import com.ducksoup.dilivideocontent.mainservices.UserOperation.LikeOperationService;
-import com.ducksoup.dilivideoentity.Result.ResponseResult;
+import com.ducksoup.dilivideoentity.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
