@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideolive.mapper.LivePlayServerMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.entity.LivePlayServer">
+            <id property="id" column="id" jdbcType="CHAR"/>
+            <result property="applicationName" column="application_name" jdbcType="VARCHAR"/>
+            <result property="ip" column="ip" jdbcType="CHAR"/>
+            <result property="port" column="port" jdbcType="CHAR"/>
+            <result property="domain" column="domain" jdbcType="VARCHAR"/>
+            <result property="connectionCount" column="connection_count" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="hls" column="hls" jdbcType="TINYINT"/>
+            <result property="httpPort" column="http_port" jdbcType="CHAR"/>
+            <result property="httpPath" column="http_path" jdbcType="VARCHAR"/>
+            <result property="pushServerId" column="push_server_id" jdbcType="CHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,application_name,ip,
+        port,domain,connection_count,
+        status,hls,http_port,
+        http_path,push_server_id,create_time
+    </sql>
+</mapper>

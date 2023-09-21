@@ -1,5 +1,6 @@
 package com.ducksoup.dilivideolive;
 
+import cn.hutool.db.Db;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -8,6 +9,7 @@ class DiliVideoLiveApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

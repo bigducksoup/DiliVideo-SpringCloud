@@ -140,8 +140,6 @@ public class VideoManageController {
         if (redisUtil.setNx("lock:" + params.getCode(), 100) && redisUtil.countSetItem(CONSTANT_MinIO.VIDEO_CHUNK_MD5_PREFIX + params.getCode())== params.getTotalChunkCount()){
             redisUtil.remove(CONSTANT_MinIO.VIDEO_CHUNK_MD5_PREFIX + params.getCode());
             redisUtil.remove(CONSTANT_MinIO.RANDOM_CODE_CHECK_PREFIX + params.getCode());
-            //解锁
-            redisUtil.remove("lock:" + params.getCode());
 
             Set<VideoChunk> chunks = redisUtil.getSet(CONSTANT_MinIO.VIDEO_CHUNK_LIST_PREFIX + params.getCode(), VideoChunk.class);
             log.info("开始合并文件 code="+params.getCode());
@@ -149,6 +147,9 @@ public class VideoManageController {
             new Thread(()->{
                 fileCombineService.combineVideoChunks(chunks,params.getFileName(),params.getCode());
             }).start();
+
+            //解锁
+            redisUtil.remove("lock:" + params.getCode());
         }
 
         return new ResponseResult<>(HttpStatus.HTTP_OK,"上传成功");

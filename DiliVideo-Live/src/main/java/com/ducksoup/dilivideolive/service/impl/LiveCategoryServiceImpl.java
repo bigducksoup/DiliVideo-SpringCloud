@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideolive.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ducksoup.dilivideolive.Entity.LiveCategory;
+import com.ducksoup.dilivideolive.entity.LiveCategory;
 import com.ducksoup.dilivideolive.service.LiveCategoryService;
 import com.ducksoup.dilivideolive.mapper.LiveCategoryMapper;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,8 @@
 package com.ducksoup.dilivideofeign.content;
 
 
-import com.ducksoup.dilivideoentity.contentEntity.Videoinfo;
+import com.ducksoup.dilivideoentity.content.Videoinfo;
+import com.ducksoup.dilivideoentity.dto.FileDeleteDTO;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.dto.FileInfo;
 import com.ducksoup.dilivideoentity.dto.FileTransmissionInfo;
@@ -12,7 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Component
 @FeignClient(value = "DiliVideo-Content",configuration = FeignInterceptor.class)
@@ -27,5 +31,8 @@ public interface ContentServices {
 
     @PostMapping(path = "/feign/upload/file" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseResult<FileInfo> uploadFile(FileUploadDTO fileUploadDTO);
+
+    @PostMapping(path = "/feign/delete/file")
+    void deleteFile(@RequestBody List<FileDeleteDTO> fileDeleteDTOS);
 
 }

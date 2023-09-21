@@ -5,8 +5,8 @@ import cn.hutool.crypto.symmetric.AES;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_LIVE;
-import com.ducksoup.dilivideolive.Entity.LiveRoom;
-import com.ducksoup.dilivideolive.Entity.LiveServer;
+import com.ducksoup.dilivideolive.entity.LiveRoom;
+import com.ducksoup.dilivideolive.entity.LiveServer;
 import com.ducksoup.dilivideolive.service.LiveServerService;
 import com.ducksoup.dilivideolive.mapper.LiveServerMapper;
 import com.ducksoup.dilivideolive.utils.RedisUtil;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author meichuankutou
@@ -52,14 +53,14 @@ public class LiveServerServiceImpl extends ServiceImpl<LiveServerMapper, LiveSer
         String encryptHex = aes.encryptHex(content);
 
 
-        redisUtil.set(CONSTANT_LIVE.LIVE_SECRET_KEY+encryptHex,secretKey.getEncoded());
-        redisUtil.set(CONSTANT_LIVE.LIVE_IP_PORT_KEY+room.getId(),ipAndPort);
-        String uuid = UUID.randomUUID().toString();
-        redisUtil.set(CONSTANT_LIVE.LIVE_RANDOM_URL_SUFFIX_KEY+room.getId(), uuid);
+        redisUtil.set(CONSTANT_LIVE.LIVE_SECRET_KEY+encryptHex,secretKey.getEncoded(),10L, TimeUnit.MINUTES);
+        redisUtil.set(CONSTANT_LIVE.LIVE_PUSH_SERVER_KEY+room.getId(),server,10L, TimeUnit.MINUTES);
+
+
 
         //生成pushUrl
         //向此url推流会通过exec命令调用ffmpeg重新推到liveUrl
-        String pushUrl = baseUrl+"/push"+"/"+room.getId() + "?key="+encryptHex+"&random="+uuid;
+        String pushUrl = baseUrl+"/push"+"/"+room.getId() + "?key="+encryptHex;
 
         return pushUrl;
     }

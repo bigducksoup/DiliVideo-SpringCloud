@@ -1,8 +1,8 @@
 package com.ducksoup.dilivideoentity.vo;
 
 
-import com.ducksoup.dilivideoentity.contentEntity.Cover;
-import com.ducksoup.dilivideoentity.contentEntity.Videoinfo;
+import com.ducksoup.dilivideoentity.content.Cover;
+import com.ducksoup.dilivideoentity.content.Videoinfo;
 
 
 import lombok.Data;

@@ -48,7 +48,7 @@ public class ModuleVo {
     /**
      * 转发的动态内容id
      */
-    private String childPostmoduleId;
+    private String childPostId;
 
     private List<String> imgs;
 }

@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideomain.dto;
 
-import com.ducksoup.dilivideoentity.authEntity.MUser;
+import com.ducksoup.dilivideoentity.auth.MUser;
 import lombok.Data;
 
 @Data
@@ -14,5 +14,5 @@ public class PostModuleInfo {
 
     private String videoInfoId;
 
-    private String childPostmoduleId;
+    private String childPostId;
 }

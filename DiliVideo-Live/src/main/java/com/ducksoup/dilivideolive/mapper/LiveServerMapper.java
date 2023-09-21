@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideolive.mapper;
 
-import com.ducksoup.dilivideolive.Entity.LiveServer;
+import com.ducksoup.dilivideolive.entity.LiveServer;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

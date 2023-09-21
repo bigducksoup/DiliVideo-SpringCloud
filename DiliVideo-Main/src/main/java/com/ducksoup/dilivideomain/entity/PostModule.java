@@ -56,7 +56,8 @@ public class PostModule implements Serializable {
     /**
      * 转发的动态内容id
      */
-    private String childPostmoduleId;
+    private String childPostId;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

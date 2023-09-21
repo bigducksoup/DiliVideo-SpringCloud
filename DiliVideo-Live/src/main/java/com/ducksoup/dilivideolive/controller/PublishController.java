@@ -6,8 +6,9 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 
+import com.ducksoup.dilivideoentity.constant.CONSTANT_ROLE;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
-import com.ducksoup.dilivideolive.Entity.LiveRoom;
+import com.ducksoup.dilivideolive.entity.LiveRoom;
 import com.ducksoup.dilivideolive.service.LiveRoomService;
 import com.ducksoup.dilivideolive.service.LiveServerService;
 import com.ducksoup.dilivideolive.utils.RedisUtil;
@@ -33,13 +34,13 @@ public class PublishController {
     private RedisUtil redisUtil;
 
 
-    @SaCheckRole("ANCHOR")
+    @SaCheckRole(CONSTANT_ROLE.ANCHOR)
     @SaCheckLogin
     @GetMapping("/get_rtmp_publish_url")
     public ResponseResult<String> getPublishUrl() {
 
         // rtmp://127.0.0.1:1938/live/roomId?userId=#{userId}&key=#{key}
-        String loginId = StpUtil.getLoginId("empty");
+        String loginId = (String) StpUtil.getLoginId();
 
 
         LiveRoom liveRoom = liveRoomService.checkRoomReady(loginId);

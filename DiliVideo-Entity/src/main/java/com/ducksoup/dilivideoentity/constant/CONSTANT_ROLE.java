@@ -8,4 +8,6 @@ public class CONSTANT_ROLE {
      */
     public final static String SUPER_ADMIN = "SUPER_ADMIN";
 
+    public final static String ANCHOR = "ANCHOR";
+
 }

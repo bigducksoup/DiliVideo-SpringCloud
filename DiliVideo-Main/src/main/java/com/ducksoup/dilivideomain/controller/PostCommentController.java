@@ -7,7 +7,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ducksoup.dilivideoentity.authEntity.MUser;
+import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import com.ducksoup.dilivideomain.controller.params.PostCommentParams;

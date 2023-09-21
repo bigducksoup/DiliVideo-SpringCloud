@@ -15,7 +15,7 @@ import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 
-import com.ducksoup.dilivideoentity.authEntity.MUser;
+import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import lombok.extern.slf4j.Slf4j;

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = "com.ducksoup.dilivideocontent.controller")
 public class GlobalExceptionHandler {
 
 
@@ -18,4 +18,8 @@ public class GlobalExceptionHandler {
     public ResponseResult<Object> handleNotLoginEx(NotLoginException e){
         return new ResponseResult<>(e.getCode(),e.getMessage());
     }
+
+
+
+
 }

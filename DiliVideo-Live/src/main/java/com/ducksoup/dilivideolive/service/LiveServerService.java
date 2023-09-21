@@ -1,7 +1,7 @@
 package com.ducksoup.dilivideolive.service;
 
-import com.ducksoup.dilivideolive.Entity.LiveRoom;
-import com.ducksoup.dilivideolive.Entity.LiveServer;
+import com.ducksoup.dilivideolive.entity.LiveRoom;
+import com.ducksoup.dilivideolive.entity.LiveServer;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

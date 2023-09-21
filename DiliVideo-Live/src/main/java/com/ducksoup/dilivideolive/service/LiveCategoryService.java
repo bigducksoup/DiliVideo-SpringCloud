@@ -1,6 +1,6 @@
 package com.ducksoup.dilivideolive.service;
 
-import com.ducksoup.dilivideolive.Entity.LiveCategory;
+import com.ducksoup.dilivideolive.entity.LiveCategory;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

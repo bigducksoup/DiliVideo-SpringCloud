@@ -5,8 +5,8 @@ import com.ducksoup.dilivideoentity.admin.params.PermissionGrantParam;
 import com.ducksoup.dilivideoentity.admin.params.RevokeRolePermissionParam;
 import com.ducksoup.dilivideoentity.admin.params.RevokeUserRoleParam;
 import com.ducksoup.dilivideoentity.admin.params.RoleAssignParam;
-import com.ducksoup.dilivideoentity.authEntity.params.PermissionAddParam;
-import com.ducksoup.dilivideoentity.authEntity.params.RoleAddParam;
+import com.ducksoup.dilivideoentity.auth.params.PermissionAddParam;
+import com.ducksoup.dilivideoentity.auth.params.RoleAddParam;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_ROLE;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
@@ -48,7 +48,7 @@ public class RoleManageController {
      * 添加系统权限
      * @param param RoleAddParam
      * @return boolean
-     * @see com.ducksoup.dilivideoentity.authEntity.params.PermissionAddParam
+     * @see com.ducksoup.dilivideoentity.auth.params.PermissionAddParam
      */
     @PostMapping("/add_permission")
     public ResponseResult<Boolean> addPermission(@RequestBody PermissionAddParam param){

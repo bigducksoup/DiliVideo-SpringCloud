@@ -11,7 +11,7 @@ import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.OSSUtils;
-import com.ducksoup.dilivideoentity.authEntity.MUser;
+import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.vo.UserVo;
 import com.ducksoup.dilivideoentity.vo.VideoFileVo;

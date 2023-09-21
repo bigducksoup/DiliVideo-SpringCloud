@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideolive.mapper.LiveServerMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.Entity.LiveServer">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.entity.LiveServer">
             <id property="id" column="id" jdbcType="CHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="ip" column="ip" jdbcType="VARCHAR"/>
@@ -24,7 +24,7 @@
         connection_count,cores,memory,
         storage,bandwidth
     </sql>
-    <select id="getByConnectionCount" resultType="com.ducksoup.dilivideolive.Entity.LiveServer">
+    <select id="getByConnectionCount" resultType="com.ducksoup.dilivideolive.entity.LiveServer">
         SELECT
             live_server.id,
             live_server.`name`,

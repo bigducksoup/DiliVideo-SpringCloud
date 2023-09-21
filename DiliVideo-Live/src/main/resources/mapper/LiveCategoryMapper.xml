@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ducksoup.dilivideolive.mapper.LiveCategoryMapper">
 
-    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.Entity.LiveCategory">
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.entity.LiveCategory">
             <id property="id" column="id" jdbcType="CHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
