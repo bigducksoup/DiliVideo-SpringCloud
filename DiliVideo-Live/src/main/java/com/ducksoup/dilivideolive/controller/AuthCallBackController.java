@@ -29,11 +29,12 @@ public class AuthCallBackController {
 
     /**
      * 开启直播时的回调 Nginx会携带原来的参数回调此接口
-     * @param params OnPublishParams 包含Key和random
+     * @param params  OnPublishParams
+     * @see OnPublishParams 包含Key和
      * @return 200状态码允许推流 其他状态码拒绝推流
      */
     @PostMapping("/on_publish")
-    ResponseEntity<Void> onPublish( OnPublishParams params) {
+    ResponseEntity<Void> onPublish(OnPublishParams params) {
 
         //解密key获取RoomId 判断合法性
         String roomId = liveRoomService.getRoomIdBykey(params.getKey());
@@ -50,6 +51,7 @@ public class AuthCallBackController {
                 liveInfoService.initRoomInfo(liveRoom);
             }catch (Exception e){
                 //TODO kick Publish Client
+                liveInfoService.deleteRoomInfo(liveRoom);
             }
         }).start();
 
@@ -60,7 +62,7 @@ public class AuthCallBackController {
 
 
     @PostMapping("/on_publish_done")
-    ResponseEntity<Void> onPublishDone(@RequestBody OnPublishParams params) {
+    ResponseEntity<Void> onPublishDone(OnPublishParams params) {
 
         String roomId = liveRoomService.getRoomIdBykey(params.getKey());
         if (roomId == null) {
@@ -70,20 +72,21 @@ public class AuthCallBackController {
         LiveRoom liveRoom = liveRoomService.getById(roomId);
 
         //设置直播状态为0
-        liveRoom.setIsLive(0);
-        liveRoomService.updateById(liveRoom);
 
-
-        //删除关于直播room的所有信息
         redisUtil.remove(CONSTANT_LIVE.LIVE_SECRET_KEY+params.getKey());
-        redisUtil.remove(CONSTANT_LIVE.LIVE_PUSH_SERVER_KEY+roomId);
-        redisUtil.remove(CONSTANT_LIVE.LIVE_PLAY_URL+roomId);
-        redisUtil.remove(CONSTANT_LIVE.LIVE_RANDOM_URL_SUFFIX_KEY + roomId);
 
+        //删除房间直播信息
+        liveInfoService.deleteRoomInfo(liveRoom);
 
         return ResponseEntity.status(HttpStatus.OK).build();
 
     }
+
+
+
+
+
+
 
 
 }

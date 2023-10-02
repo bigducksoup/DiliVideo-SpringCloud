@@ -16,6 +16,7 @@ import com.ducksoup.dilivideomain.vo.ModuleVo;
 import com.ducksoup.dilivideomain.vo.PostVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +106,51 @@ public class PostQueryService {
     public long getUserPostCount(String userId){
 
         return  postModuleService.count(new LambdaQueryWrapper<PostModule>().eq(PostModule::getUserId,userId));
+
+    }
+
+    /**
+     * 根据PostId查询PostVo
+     * @param postId postId
+     * @return PostVo
+     */
+    public PostVo queryPostById(String postId){
+
+        Post post = postService.getById(postId);
+
+        if (post==null)return null;
+
+        ModuleVo moduleVo = queryModuleById(post.getModuleId());
+
+        PostVo postVo = new PostVo();
+        BeanUtil.copyProperties(post,postVo);
+        postVo.setModule(moduleVo);
+
+        return postVo;
+    }
+
+
+    public ModuleVo queryModuleById(String moduleId){
+        PostModule postModule = postModuleService.getById(moduleId);
+        List<String> imgUrls = queryPostImgByModuleId(moduleId);
+        ModuleVo moduleVo = new ModuleVo();
+        BeanUtil.copyProperties(postModule,moduleVo);
+        moduleVo.setImgs(imgUrls);
+        moduleVo.setUserAvatarUrl(ossUtils.makeUrl(postModule.getUserAvatarBucket(),postModule.getUserAvatarPath()));
+
+        return moduleVo;
+    }
+
+
+    public List<String> queryPostImgByModuleId(String moduleId){
+        List<PostImgs> postImgs = postImgsService.list(new LambdaQueryWrapper<PostImgs>().eq(PostImgs::getModuleId,moduleId));
+
+        List<String> res = new ArrayList<>();
+
+        postImgs.forEach(item->{
+            res.add(ossUtils.makeUrl(item.getBucket(),item.getPath()));
+        });
+        return res;
 
     }
 

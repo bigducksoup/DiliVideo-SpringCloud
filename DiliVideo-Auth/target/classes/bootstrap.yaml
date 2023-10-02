@@ -13,10 +13,9 @@ spring:
         file-extension: yaml
         group: DiliVideo
 
-
-
   profiles:
     active: dev
+
 
 
 

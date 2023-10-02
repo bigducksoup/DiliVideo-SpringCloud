@@ -1,6 +1,7 @@
 package com.ducksoup.dilivideofeign.content;
 
 
+import com.ducksoup.dilivideoentity.content.FileInfoUpdateParam;
 import com.ducksoup.dilivideoentity.content.Videoinfo;
 import com.ducksoup.dilivideoentity.dto.FileDeleteDTO;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
@@ -34,5 +35,8 @@ public interface ContentServices {
 
     @PostMapping(path = "/feign/delete/file")
     void deleteFile(@RequestBody List<FileDeleteDTO> fileDeleteDTOS);
+
+    @PostMapping(path = "/feign/video_info/update_file_info")
+    boolean setVideoInfoStatus(@RequestBody FileInfoUpdateParam fileStatusUpdateParam);
 
 }

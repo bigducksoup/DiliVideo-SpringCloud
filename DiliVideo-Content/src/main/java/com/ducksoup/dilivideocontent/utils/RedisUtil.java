@@ -263,4 +263,15 @@ public class RedisUtil implements Serializable {
     }
 
 
+
+
+    public Long increaseKey(String key) {
+        return redisTemplate.opsForValue().increment(key);
+    }
+
+    public Long decreaseKey(String key) {
+        return redisTemplate.opsForValue().decrement(key);
+    }
+
+
 }

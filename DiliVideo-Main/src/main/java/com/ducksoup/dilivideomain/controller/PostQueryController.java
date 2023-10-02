@@ -44,4 +44,16 @@ public class PostQueryController {
     }
 
 
+    @GetMapping("/query_by_id")
+    public ResponseResult<PostVo> queryPostById(@RequestParam String postId){
+        PostVo postVo = postQueryService.queryPostById(postId);
+
+        if (postVo == null){
+            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"查询失败",null);
+        }
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",postVo);
+    }
+
+
+
 }

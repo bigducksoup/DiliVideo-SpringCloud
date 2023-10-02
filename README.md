@@ -69,7 +69,7 @@ DiliVideo-SpringCloud
 ├── DiliVideo-Gateway -- 网关
 ├── DiliVideo-Main    -- 评论，动态等内容
 ├── DiliVideo-Parent  -- 版本约束
-└── DiliVideo-VideoEncode  -- 视频转码
+└── DiliVideo-VideoTranscoding  -- 视频转码
  
 ```
 

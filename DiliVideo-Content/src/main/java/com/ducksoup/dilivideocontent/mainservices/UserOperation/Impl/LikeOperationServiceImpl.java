@@ -3,6 +3,7 @@ package com.ducksoup.dilivideocontent.mainservices.UserOperation.Impl;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.ducksoup.dilivideocontent.entity.Videoinfo;
 import com.ducksoup.dilivideocontent.mainservices.UserOperation.LikeOperationService;
+import com.ducksoup.dilivideocontent.mainservices.UserOperation.RefreshDataService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,20 +22,23 @@ public class LikeOperationServiceImpl implements LikeOperationService {
     @Autowired
     private VideoinfoService videoinfoService;
 
+    @Autowired
+    private RefreshDataService refreshDataService;
+
     @Override
-    public void likeVideo(String userId, String videoInfoId) {
+    public Long likeVideo(String userId, String videoInfoId) {
 
         redisUtil.addToSet("videoLike:"+videoInfoId,userId);
 
-        this.updateLikeCount(videoInfoId);
+        return this.updateLikeCount(videoInfoId);
 
     }
 
     @Override
-    public void unlikeVideo(String userId,String videoInfoId){
+    public Long unlikeVideo(String userId,String videoInfoId){
         redisUtil.rmFromSet("videoLike:"+videoInfoId,userId);
 
-        this.updateLikeCount(videoInfoId);
+        return this.updateLikeCount(videoInfoId);
 
     }
 
@@ -47,29 +51,20 @@ public class LikeOperationServiceImpl implements LikeOperationService {
     }
 
     @Override
-    public boolean updateLikeCount(String videoInfoId) {
+    public Long updateLikeCount(String videoInfoId) {
         String refreshkey = "refreshVideoLike:";
-
-        if (redisUtil.exists(refreshkey+videoInfoId)){
-            return true;
-        }
-
-
-        redisUtil.set(refreshkey+videoInfoId,null,5L, TimeUnit.MINUTES);
 
         long likeCount = redisUtil.countSetItem("videoLike:"+videoInfoId);
 
-        boolean update = videoinfoService.update(
-                new LambdaUpdateWrapper<Videoinfo>()
-                        .eq(Videoinfo::getId, videoInfoId)
-                        .set(Videoinfo::getLikeCount, likeCount)
-        );
 
-        if (update){
-            log.info("更新"+videoInfoId +"like数量为" + likeCount);
-        }
+        refreshDataService.refreshData(likeCount,refreshkey,(count) -> {
+            videoinfoService.update(
+                    new LambdaUpdateWrapper<Videoinfo>()
+                            .eq(Videoinfo::getId, videoInfoId)
+                            .set(Videoinfo::getLikeCount, count));
+        });
 
-        return update;
+        return likeCount;
     }
 
 

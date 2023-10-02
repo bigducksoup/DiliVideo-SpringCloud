@@ -137,7 +137,7 @@ public class VideoManageController {
 
 
         //加锁 防止 在删除set前 线程同时进入if语句造成合并多次
-        if (redisUtil.setNx("lock:" + params.getCode(), 100) && redisUtil.countSetItem(CONSTANT_MinIO.VIDEO_CHUNK_MD5_PREFIX + params.getCode())== params.getTotalChunkCount()){
+        if (redisUtil.countSetItem(CONSTANT_MinIO.VIDEO_CHUNK_MD5_PREFIX + params.getCode()) == params.getTotalChunkCount() && redisUtil.setNx("lock:" + params.getCode(), 100)){
             redisUtil.remove(CONSTANT_MinIO.VIDEO_CHUNK_MD5_PREFIX + params.getCode());
             redisUtil.remove(CONSTANT_MinIO.RANDOM_CODE_CHECK_PREFIX + params.getCode());
 
@@ -191,7 +191,6 @@ public class VideoManageController {
 
         if (saveVideo) {
             notifyVideoFFMPEG.notifyVideoFFMPG(fileinfo);
-            videofileService.update(new LambdaUpdateWrapper<Videofile>().set(Videofile::getState,1));
         }
 
         return saveVideo ? new ResponseResult<>(HttpStatus.HTTP_OK, "上传完成", true) :

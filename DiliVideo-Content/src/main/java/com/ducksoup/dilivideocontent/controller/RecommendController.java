@@ -6,6 +6,7 @@ import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ducksoup.dilivideocontent.entity.Videoinfo;
+import com.ducksoup.dilivideocontent.mainservices.UserOperation.ViewsService;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
@@ -28,6 +29,9 @@ public class RecommendController {
     @Autowired
     private CoverService coverService;
 
+    @Autowired
+    private ViewsService viewsService;
+
 
 
     //Todo 缓存优化
@@ -44,6 +48,9 @@ public class RecommendController {
         List<Videoinfo> videoinfos = pager.getRecords();
 
         List<VideoInfoVo> videoInfoVos = videoinfoService.getVideoInfoVoByVideoInfo(videoinfos);
+
+        viewsService.setVideoListViewCount(videoInfoVos);
+
 
         return new ResponseResult<>(HttpStatus.HTTP_OK,"success",videoInfoVos);
 

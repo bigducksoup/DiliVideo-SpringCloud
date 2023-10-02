@@ -5,6 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.ducksoup.dilivideocontent.entity.ChunkFile;
 import com.ducksoup.dilivideocontent.entity.VideoChunk;
 import com.ducksoup.dilivideocontent.entity.Videofile;
 import com.ducksoup.dilivideocontent.dto.FileSavedInfo;
@@ -59,11 +60,11 @@ public class FileCombineServiceImpl implements FileCombineService{
     public File combineChunks(Set<VideoChunk> chunkSet,String fileName) {
 
         List<VideoChunk> chunkList = new CopyOnWriteArrayList<>(chunkSet);
-        chunkList.sort(Comparator.comparing(VideoChunk::getChunkIndex));
+
 
         log.info("共"+chunkList.size()+"片文件需合并");
 
-        List<File> chunks = new CopyOnWriteArrayList<>();
+        List<ChunkFile> chunks = new CopyOnWriteArrayList<>();
 
         CountDownLatch countDownLatch = new CountDownLatch(chunkList.size());
 
@@ -78,7 +79,7 @@ public class FileCombineServiceImpl implements FileCombineService{
                 }finally {
                     countDownLatch.countDown();
                 }
-                chunks.add(file);
+                chunks.add(new ChunkFile(file,item.getChunkIndex()));
             });
         }
 
@@ -88,26 +89,30 @@ public class FileCombineServiceImpl implements FileCombineService{
             countDownLatch.await();
 
             if (chunkList.size()!=chunks.size()){
-                for (File chunk : chunks) {
-                    chunk.delete();
+                for (ChunkFile chunk : chunks) {
+                    chunk.getChunk().delete();
                 }
                 throw new RuntimeException("分片缺失");
             }
 
+            chunks.sort(Comparator.comparing(ChunkFile::getIndex));
             //创建临时文件
             mergedFile = File.createTempFile(FileUtil.getPrefix(fileName),"."+FileUtil.getSuffix(fileName));
             // 创建输出流
             OutputStream outputStream = Files.newOutputStream(mergedFile.toPath());
+
+
+
             // 逐个读取输入文件并写入输出文件
-            for (File f : chunks){
-                FileInputStream inputStream = new FileInputStream(f);
+            for (ChunkFile f : chunks){
+                FileInputStream inputStream = new FileInputStream(f.getChunk());
                 int data = inputStream.read();
                 while (data != -1) {
                     outputStream.write(data);
                     data = inputStream.read();
                 }
                 inputStream.close();
-                f.delete();
+                f.getChunk().delete();
             }
 
             outputStream.close();
@@ -129,6 +134,7 @@ public class FileCombineServiceImpl implements FileCombineService{
 
         try {
             FileSavedInfo savedInfo = uploadServiceForFile.uploadFile(file, CONSTANT_MinIO.VIDEO_BUCTET, DigestUtil.md5Hex(file));
+
             Videofile videofile = new Videofile();
             videofile.setId(UUID.randomUUID().toString());
             videofile.setOriginName(fileName);
@@ -139,7 +145,6 @@ public class FileCombineServiceImpl implements FileCombineService{
             videofile.setUploadTime(DateTime.now());
             videofile.setSize(FileUtil.size(file));
             videofile.setState(0);
-            videofile.setFullpath(videofile.getFullpath());
             videofile.setMd5(DigestUtil.md5Hex(file));
             redisUtil.set(code,videofile,1L, TimeUnit.DAYS);
 
@@ -148,4 +153,7 @@ public class FileCombineServiceImpl implements FileCombineService{
         }
         file.delete();
     }
+
+
+
 }

@@ -9,6 +9,7 @@ import com.ducksoup.dilivideolive.service.LivePlayServerService;
 import com.ducksoup.dilivideolive.service.LiveRoomService;
 import com.ducksoup.dilivideolive.utils.RedisUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +20,16 @@ import java.util.stream.Collectors;
 
 
 @Service
-@AllArgsConstructor
 public class LiveInfoServiceImpl implements LiveInfoService {
 
+    @Autowired
     private LiveRoomService liveRoomService;
 
+    @Autowired
     private RedisUtil redisUtil;
 
 
+    @Autowired
     private LivePlayServerService livePlayServerService;
 
     @Value("${live.maxConnPerApp}")
@@ -59,6 +62,21 @@ public class LiveInfoServiceImpl implements LiveInfoService {
         liveRoomService.updateById(liveRoom);
 
 
+    }
+
+
+    @Override
+    public void deleteRoomInfo(LiveRoom liveRoom) {
+        liveRoom.setIsLive(0);
+        liveRoomService.updateById(liveRoom);
+
+
+        //删除关于直播room的所有信息
+
+        redisUtil.remove(CONSTANT_LIVE.LIVE_PUSH_SERVER_KEY+liveRoom.getId());
+        redisUtil.remove(CONSTANT_LIVE.LIVE_PLAY_URL+liveRoom.getId());
+        redisUtil.remove(CONSTANT_LIVE.LIVE_RANDOM_URL_SUFFIX_KEY + liveRoom.getId());
+        redisUtil.remove(CONSTANT_LIVE.LIVE_ROOM_INFO + liveRoom.getId());
     }
 
 
@@ -176,6 +194,8 @@ public class LiveInfoServiceImpl implements LiveInfoService {
 
         return playServers;
     }
+
+
 
 
 }

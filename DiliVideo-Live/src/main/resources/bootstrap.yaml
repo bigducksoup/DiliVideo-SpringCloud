@@ -14,12 +14,13 @@ spring:
         group: DiliVideo
 
 
+  profiles:
+    active: dev
+
+
 live:
   maxConnPerApp: 100
 
-
-  profiles:
-    active: dev
 
 
 

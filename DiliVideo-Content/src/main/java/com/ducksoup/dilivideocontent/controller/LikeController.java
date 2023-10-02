@@ -30,13 +30,13 @@ public class LikeController {
 
     @SaCheckLogin
     @PostMapping("/like_video")
-    public ResponseResult<Boolean> likeVideo(@RequestBody LikeParams params){
+    public ResponseResult<Long> likeVideo(@RequestBody LikeParams params){
 
         String loginId = (String) StpUtil.getLoginId();
 
-        likeOperationService.likeVideo(loginId,params.getVideoInfoId());
+        Long likeCount = likeOperationService.likeVideo(loginId, params.getVideoInfoId());
 
-        return new ResponseResult<>(HttpStatus.HTTP_OK,"点赞成功",true);
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"点赞成功",likeCount);
 
     }
 
@@ -48,13 +48,13 @@ public class LikeController {
 
     @SaCheckLogin
     @PostMapping("/unlike_video")
-    public ResponseResult<Boolean> unlikeVideo(@RequestBody LikeParams params){
+    public ResponseResult<Long> unlikeVideo(@RequestBody LikeParams params){
 
         String loginId = (String) StpUtil.getLoginId();
 
-        likeOperationService.unlikeVideo(loginId,params.getVideoInfoId());
+        Long likeCount = likeOperationService.unlikeVideo(loginId, params.getVideoInfoId());
 
-        return new ResponseResult<>(HttpStatus.HTTP_OK,"取消点赞成功",true);
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"取消点赞成功",likeCount);
 
     }
 

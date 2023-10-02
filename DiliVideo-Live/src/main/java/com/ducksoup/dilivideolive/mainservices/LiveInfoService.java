@@ -16,5 +16,7 @@ public interface LiveInfoService {
 
     List<LivePlayServer> getPlayServerApplication(LiveServer liveServer);
 
+    void deleteRoomInfo(LiveRoom liveRoom);
+
 
 }
