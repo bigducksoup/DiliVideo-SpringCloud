@@ -4,6 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.ducksoup.dilivideoentity.vo.UserVo;
+import com.ducksoup.dilivideofeign.auth.AuthServices;
+import com.ducksoup.dilivideomain.aop.annonation.PerformanceLog;
 import com.ducksoup.dilivideomain.entity.Post;
 import com.ducksoup.dilivideomain.entity.PostImgs;
 import com.ducksoup.dilivideomain.entity.PostModule;
@@ -30,6 +34,10 @@ public class PostQueryService {
     @Autowired
     private PostService postService;
 
+
+    @Autowired
+    private AuthServices authServices;
+
     @Autowired
     private PostModuleService postModuleService;
 
@@ -37,15 +45,18 @@ public class PostQueryService {
     private PostImgsService postImgsService;
 
     @Autowired
+    private PostQueryService postQueryService;
+
+    @Autowired
     private OSSUtils ossUtils;
 
 
-    public List<PostVo> getPostByUserId(String userId,Integer page){
+    public List<PostVo> getPostByUserId(String userId,Integer page,boolean video_only){
         //分页
         Page<PostModule> pager = new Page<>(page,20);
 
         LambdaQueryWrapper<PostModule> postQuery = new LambdaQueryWrapper<PostModule>()
-                .eq(PostModule::getUserId, userId);
+                .eq(PostModule::getUserId, userId).eq(video_only,PostModule::getTypeId,1);
 
         //查询module
         Page<PostModule> queryRes = postModuleService.page(pager,postQuery);
@@ -62,44 +73,8 @@ public class PostQueryService {
         //根据moduleID获取Post
         List<Post> postList = postService.list(new LambdaQueryWrapper<Post>().in(Post::getModuleId, moduleIds).orderByDesc(Post::getCreateTime));
 
-        //根据moduleID获取Imgs
-        List<PostImgs> postImgs = postImgsService.list(new LambdaQueryWrapper<PostImgs>().in(PostImgs::getModuleId, moduleIds));
 
-        //根据配置里的minio地址转换full_path
-        postImgs.forEach(item->{
-            item.setFullpath(ossUtils.makeUrl(item.getBucket(),item.getPath()));
-        });
-
-        //key:moduleId,value:imgList
-        Map<String, List<String>> moduleIdImgList = postImgs.stream().collect(Collectors.groupingBy(PostImgs::getModuleId, Collectors.mapping(PostImgs::getFullpath, Collectors.toList())));
-
-
-        Map<String, PostModule> moduleMap = modules.stream().collect(Collectors.toMap(PostModule::getId, item -> item));
-
-        List<PostVo> postVos = new ArrayList<>();
-
-
-        //把post放入postVo
-        postList.forEach(item->{
-            PostVo postVo = new PostVo();
-            BeanUtil.copyProperties(item,postVo);
-            PostModule postModule = moduleMap.get(item.getModuleId());
-            ModuleVo moduleVo = new ModuleVo();
-            BeanUtil.copyProperties(postModule,moduleVo);
-
-            moduleVo.setUserAvatarUrl(ossUtils.makeUrl(postModule.getUserAvatarBucket(),postModule.getUserAvatarPath()));
-
-            List<String> imgUrls = moduleIdImgList.get(item.getModuleId());
-            if (imgUrls==null){
-                moduleVo.setImgs(new ArrayList<>());
-            }else {
-                moduleVo.setImgs(imgUrls);
-            }
-            postVo.setModule(moduleVo);
-            postVos.add(postVo);
-        });
-
-        return postVos;
+        return getPostVOByPosts(postList);
     }
 
 
@@ -124,7 +99,7 @@ public class PostQueryService {
 
         PostVo postVo = new PostVo();
         BeanUtil.copyProperties(post,postVo);
-        postVo.setModule(moduleVo);
+        postVo.setModuleVO(moduleVo);
 
         return postVo;
     }
@@ -153,5 +128,87 @@ public class PostQueryService {
         return res;
 
     }
+
+
+    @PerformanceLog
+    public List<PostVo> queryFollowPost(String userId,Integer page,Integer pageSize,boolean video_only){
+
+        List<String> followIds = authServices.getFollowList(userId).stream().map(UserVo::getId).collect(Collectors.toList());
+
+        if (followIds.isEmpty())return new ArrayList<>();
+
+        //查询关注用户的动态
+        List<Post> posts = postService.queryByFollowIds(followIds, page, pageSize,video_only);
+
+
+        return postQueryService.getPostVOByPosts(posts);
+
+
+    }
+
+
+    @PerformanceLog
+    public List<PostVo> getPostVOByPosts(List<Post> posts){
+
+        List<String> moduleIds = posts.stream().map(Post::getModuleId).collect(Collectors.toList());
+
+        List<PostVo> res = new ArrayList<>();
+
+        if (moduleIds.isEmpty()){
+            return res;
+        }
+
+        List<PostModule> modules = postModuleService.list(new LambdaQueryWrapper<PostModule>()
+                .in(PostModule::getId, moduleIds));
+
+
+        List<ModuleVo> moduleVos = postQueryService.getModuleVOByModules(modules);
+
+        Map<String, ModuleVo> moduleId_moduleVo = moduleVos.stream().collect(Collectors.toMap(ModuleVo::getId, item -> item));
+
+
+
+        posts.forEach(item->{
+            PostVo postVo = new PostVo();
+            BeanUtil.copyProperties(item,postVo);
+            ModuleVo moduleVo = moduleId_moduleVo.get(item.getModuleId());
+            postVo.setModuleVO(moduleVo);
+            res.add(postVo);
+        });
+
+        return res;
+    }
+
+
+    @PerformanceLog
+    public List<ModuleVo> getModuleVOByModules(List<PostModule> modules){
+
+        List<PostImgs> postImgs = postImgsService.list(new LambdaQueryWrapper<PostImgs>().in(PostImgs::getModuleId, modules.stream().map(PostModule::getId).collect(Collectors.toList())));
+
+        //根据配置里的minio地址转换full_path
+        postImgs.forEach(item->{
+            item.setFullpath(ossUtils.makeUrl(item.getBucket(),item.getPath()));
+        });
+
+        Map<String, List<String>> moduleId_ImgUrls = postImgs.stream().collect((Collectors.groupingBy(PostImgs::getModuleId, Collectors.mapping(PostImgs::getFullpath, Collectors.toList()))));
+
+        List<ModuleVo> res = new ArrayList<>();
+
+        modules.forEach(item->{
+            ModuleVo moduleVo = new ModuleVo();
+            BeanUtil.copyProperties(item,moduleVo);
+            List<String> imgUrls = moduleId_ImgUrls.get(item.getId());
+            moduleVo.setUserAvatarUrl(ossUtils.makeUrl(item.getUserAvatarBucket(),item.getUserAvatarPath()));
+            if (imgUrls==null){
+                moduleVo.setImgs(new ArrayList<>());
+            }else {
+                moduleVo.setImgs(imgUrls);
+            }
+            res.add(moduleVo);
+        });
+
+        return res;
+    }
+
 
 }

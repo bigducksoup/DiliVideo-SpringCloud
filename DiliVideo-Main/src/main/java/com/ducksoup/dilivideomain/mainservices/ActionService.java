@@ -1,6 +1,7 @@
 package com.ducksoup.dilivideomain.mainservices;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_MAIN;
 import com.ducksoup.dilivideomain.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,30 @@ public class ActionService {
         }
 
         return res;
+    }
+
+
+
+    public boolean checkLike(Integer targetType, String targetId) {
+
+        String key;
+
+        switch (targetType){
+            case POST:
+                key = CONSTANT_MAIN.POSTLIKEPERFIX+targetId;
+                break;
+            case POSTCOMMENT:
+                key = CONSTANT_MAIN.POSTCOMMENTLIKEPERFIX+targetId;
+                break;
+            case COMMENT:
+                key = CONSTANT_MAIN.COMMENTLIKEPERFIX+targetId;
+                break;
+            default:
+                return false;
+        }
+
+        return redisUtil.checkExistSetItem(key, StpUtil.getLoginId());
+
     }
 
 

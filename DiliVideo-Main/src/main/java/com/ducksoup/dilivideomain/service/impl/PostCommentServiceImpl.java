@@ -71,7 +71,7 @@ public class PostCommentServiceImpl extends ServiceImpl<PostCommentMapper, PostC
     public List<PostComment> queryPostCommentByPostId(String postId, Integer page, Integer pageSize, boolean orderByTime) {
 
         Integer start =  ( page - 1 ) * pageSize;
-        Integer end = (page) * pageSize;
+        Integer end = pageSize;
 
         return this.baseMapper.queryPostCommentByPostId(postId,start,end,orderByTime);
     }
@@ -79,7 +79,7 @@ public class PostCommentServiceImpl extends ServiceImpl<PostCommentMapper, PostC
     @Override
     public List<IdMap> queryPostCommentReplies(String commentId, Integer page, Integer pageSize, boolean orderByTime) {
         Integer start =  ( page - 1 ) * pageSize;
-        Integer end = (page) * pageSize;
+        Integer end = pageSize;
 
         return this.baseMapper.queryCommentReplies(commentId,start,end,orderByTime);
     }

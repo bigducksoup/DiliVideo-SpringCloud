@@ -2,6 +2,7 @@ package com.ducksoup.dilivideomain.mainservices;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.ducksoup.dilivideomain.aop.annonation.PerformanceLog;
 import com.ducksoup.dilivideomain.utils.RedisUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +37,7 @@ public class LikeActionHandler {
      * @return true为点赞 false为取消点赞
      */
 
+    @PerformanceLog
     public boolean doHandel(BiConsumer<String,Long> consumer){
 
         Assert.notNull(targetId,"被（取消）点赞对象id不可以为null");

@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author meichuankutou
  * @description 针对表【relation_follow】的数据库操作Service实现
@@ -51,7 +53,6 @@ public class RelationFollowServiceImpl extends ServiceImpl<RelationFollowMapper,
         RelationFollow relationFollow = new RelationFollow();
         relationFollow.setId(UUID.randomUUID().toString());
         relationFollow.setUserId(userId);
-        relationFollow.setFllowAvatarurl(follow.getAvatarUrl());
         relationFollow.setFollowNickname(follow.getNickname());
         relationFollow.setFollowId(follow.getId());
         relationFollow.setCreateTime(DateTime.now());
@@ -106,6 +107,18 @@ public class RelationFollowServiceImpl extends ServiceImpl<RelationFollowMapper,
         return remove&&updateFollowedCount&&updateFollowerCount;
 
     }
+
+    @Override
+    public List<MUser> getFollowList(String userId) {
+        return baseMapper.getFollowList(userId);
+    }
+
+    @Override
+    public List<MUser> getFollowerList(String userId) {
+        return baseMapper.getFansList(userId);
+    }
+
+
 }
 
 

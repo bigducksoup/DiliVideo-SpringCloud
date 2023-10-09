@@ -20,4 +20,24 @@
         like_count,comment_count,share_count,
         create_time,status
     </sql>
+    <select id="selectByFollowIds"  resultType="com.ducksoup.dilivideomain.entity.Post">
+        SELECT
+            p.*
+        from post p,
+             post_module m
+        WHERE
+            p.module_id = m.Id
+          and
+            m.user_id in
+        <foreach collection="followIds" item="item" open="(" separator="," close=")">#{item}</foreach>
+        <if test='video_only'>
+            and
+            m.type_id =1
+        </if>
+        ORDER BY p.create_time
+        desc
+        LIMIT #{start},#{end}
+    </select>
+
+
 </mapper>

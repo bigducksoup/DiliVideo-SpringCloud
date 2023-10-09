@@ -1,7 +1,10 @@
 package com.ducksoup.dilivideoauth.service;
 
+import com.ducksoup.dilivideoauth.entity.MUser;
 import com.ducksoup.dilivideoauth.entity.RelationFollow;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author meichuankutou
@@ -13,5 +16,9 @@ public interface RelationFollowService extends IService<RelationFollow> {
     boolean follow(String userId,String followId);
 
     boolean unfollow(String userId,String followId);
+
+    List<MUser> getFollowList(String userId);
+
+    List<MUser> getFollowerList(String userId);
 
 }

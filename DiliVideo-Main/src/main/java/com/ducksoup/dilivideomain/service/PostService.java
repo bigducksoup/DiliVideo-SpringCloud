@@ -3,6 +3,8 @@ package com.ducksoup.dilivideomain.service;
 import com.ducksoup.dilivideomain.entity.Post;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author meichuankutou
 * @description 针对表【post】的数据库操作Service
@@ -11,5 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface PostService extends IService<Post> {
 
     void increasePostCommentCount(String postId);
+
+    List<Post> queryByFollowIds(List<String> followIds, Integer page, Integer pageSize,boolean video_only);
 
 }

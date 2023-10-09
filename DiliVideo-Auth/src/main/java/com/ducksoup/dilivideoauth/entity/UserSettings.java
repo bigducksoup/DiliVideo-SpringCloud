@@ -1,53 +1,38 @@
 package com.ducksoup.dilivideoauth.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 
 /**
  * 
- * @TableName relation_follow
+ * @TableName user_settings
  */
-@TableName(value ="relation_follow")
+@TableName(value ="user_settings")
 @Data
-public class RelationFollow implements Serializable {
+public class UserSettings implements Serializable {
     /**
-     * 关系id
+     * 主键
      */
-    @TableId
     private String id;
 
-
-
     /**
-     * 用户id
+     * setting所属用户id
      */
     private String userId;
 
-
+    /**
+     * 是否公开关注 0：否 1:是
+     */
+    private Integer followPublic;
 
     /**
-     * 关注昵称
+     * 是否公开粉丝 0：否 1:是
      */
-    private String followNickname;
-
-    /**
-     * 关注id
-     */
-    private String followId;
-
-    /**
-     * 
-     */
-    private Date createTime;
-
-    /**
-     * 状态
-     */
-    private Integer status;
+    private Integer followerPublic;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

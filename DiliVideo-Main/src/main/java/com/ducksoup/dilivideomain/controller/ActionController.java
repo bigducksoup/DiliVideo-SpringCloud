@@ -42,5 +42,14 @@ public class ActionController {
     }
 
 
+    @SaCheckLogin
+    @GetMapping("/check_like")
+    public ResponseResult<Boolean> checkLike(@RequestParam Integer targetType,@RequestParam String targetId){
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"操作成功",actionService.checkLike(targetType, targetId));
+
+    }
+
+
 
 }

@@ -6,6 +6,7 @@ import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +33,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseResult<Object> handleException(Exception e){
+        e.printStackTrace();
+        log.error(e.getMessage());
+        return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,e.getMessage());
+    }
+
+
+    //参数绑定错误（缺少参数）
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseBody
+    public ResponseResult<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException e){
         e.printStackTrace();
         log.error(e.getMessage());
         return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,e.getMessage());

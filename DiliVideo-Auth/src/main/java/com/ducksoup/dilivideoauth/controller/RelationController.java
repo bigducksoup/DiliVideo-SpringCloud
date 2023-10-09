@@ -7,12 +7,21 @@ import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ducksoup.dilivideoauth.controller.Params.FollowParam;
 
+import com.ducksoup.dilivideoauth.entity.MUser;
 import com.ducksoup.dilivideoauth.entity.RelationFollow;
 
+import com.ducksoup.dilivideoauth.entity.UserSettings;
+import com.ducksoup.dilivideoauth.mainServices.DesensitizationService;
 import com.ducksoup.dilivideoauth.service.RelationFollowService;
+import com.ducksoup.dilivideoauth.service.UserSettingsService;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
+import com.ducksoup.dilivideoentity.vo.UserVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/relation")
@@ -21,6 +30,12 @@ public class RelationController {
 
     @Autowired
     private RelationFollowService relationFollowService;
+
+    @Autowired
+    private UserSettingsService userSettingsService;
+
+    @Autowired
+    private DesensitizationService desensitizationService;
 
 
     /**
@@ -91,9 +106,59 @@ public class RelationController {
         return relationFollow != null ?
                 new ResponseResult<>(HttpStatus.HTTP_OK, "已关注", true)
                 :
-                new ResponseResult<>(HttpStatus.HTTP_NO_CONTENT, "未关注", false);
+                new ResponseResult<>(HttpStatus.HTTP_OK, "未关注", false);
 
     }
+
+
+
+
+    @SaCheckLogin
+    @GetMapping("/get_follows")
+    public ResponseResult<List<UserVo>> getFollows(String userId){
+
+
+        String loginId = (String) StpUtil.getLoginId();
+
+        if (!loginId.equals(userId)){
+            UserSettings settings = userSettingsService.getOne(new LambdaQueryWrapper<UserSettings>().eq(UserSettings::getUserId, userId));
+            if (settings.getFollowPublic().equals(0)){
+                return new ResponseResult<>(HttpStatus.HTTP_NO_CONTENT,"不公开",null);
+            }
+        }
+
+
+        List<MUser> followList = relationFollowService.getFollowList(userId);
+
+
+        List<UserVo> res = desensitizationService.desensitizeUserInfo(followList);
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"获取成功",res);
+    }
+
+
+
+    @SaCheckLogin
+    @GetMapping("/get_fans")
+    public ResponseResult<List<UserVo>> getFans(@RequestParam String userId){
+
+        String loginId = (String) StpUtil.getLoginId();
+        if (!loginId.equals(userId)){
+            UserSettings settings = userSettingsService.getOne(new LambdaQueryWrapper<UserSettings>().eq(UserSettings::getUserId, userId));
+            if (settings.getFollowerPublic().equals(0)){
+                return new ResponseResult<>(HttpStatus.HTTP_NO_CONTENT,"不公开",null);
+            }
+        }
+
+        List<MUser> fans = relationFollowService.getFollowerList(userId);
+
+        List<UserVo> res = desensitizationService.desensitizeUserInfo(fans);
+
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"获取成功",res);
+
+    }
+
 
 
 }

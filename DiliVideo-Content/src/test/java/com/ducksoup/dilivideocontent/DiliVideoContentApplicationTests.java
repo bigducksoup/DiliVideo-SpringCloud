@@ -41,7 +41,7 @@ class DiliVideoContentApplicationTests {
 
     @Test
     void TestLike(){
-        boolean b = likeOperationService.updateLikeCount("8269d8d5-a0c3-42de-b942-bc44844b2fe0");
+        likeOperationService.updateLikeCount("8269d8d5-a0c3-42de-b942-bc44844b2fe0");
     }
 
 

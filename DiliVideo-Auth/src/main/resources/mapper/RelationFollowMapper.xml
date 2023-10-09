@@ -6,9 +6,9 @@
 
     <resultMap id="BaseResultMap" type="com.ducksoup.dilivideoauth.entity.RelationFollow">
             <id property="id" column="Id" jdbcType="CHAR"/>
-            <result property="userNickname" column="user_nickname" jdbcType="VARCHAR"/>
+
             <result property="userId" column="user_id" jdbcType="CHAR"/>
-            <result property="fllowAvatarurl" column="fllow_avatarUrl" jdbcType="VARCHAR"/>
+
             <result property="followNickname" column="follow_nickname" jdbcType="VARCHAR"/>
             <result property="followId" column="follow_id" jdbcType="CHAR"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
@@ -20,4 +20,28 @@
         fllow_avatarUrl,follow_nickname,follow_id,
         create_time,status
     </sql>
+    <select id="getFollowList" resultType="com.ducksoup.dilivideoauth.entity.MUser">
+        SELECT
+            u.*
+        from
+            m_user u,
+            m_avatar a,
+            relation_follow re
+        WHERE u.Id = re.follow_id
+          and u.avatar_id = a.Id
+          and re.user_id = #{userId}
+    </select>
+    <select id="getFansList" resultType="com.ducksoup.dilivideoauth.entity.MUser">
+        SELECT
+            u.*
+        from
+            m_user u,
+            m_avatar a,
+            relation_follow re
+        WHERE u.Id = re.user_id
+          and u.avatar_id = a.Id
+          and re.follow_id = #{userId}
+    </select>
+
+
 </mapper>

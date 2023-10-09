@@ -10,6 +10,7 @@ import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.auth.params.PermissionAddParam;
 import com.ducksoup.dilivideoentity.auth.params.RoleAddParam;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
+import com.ducksoup.dilivideoentity.vo.UserVo;
 import com.ducksoup.dilivideofeign.Inteceptor.FeignInterceptor;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,11 @@ public interface AuthServices {
 
     @GetMapping(path = "feign/info/getAvatarInfo")
     ResponseResult<Avatar> getAvatarInfo(@RequestParam(value = "avatarId") String avatarId);
+
+
+
+    @GetMapping(path = "feign/info/get_follows")
+    List<UserVo> getFollowList(@RequestParam(value = "userId") String userId);
 
 
     @GetMapping(path = "feign/auth/get_roles")

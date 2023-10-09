@@ -3,7 +3,10 @@ package com.ducksoup.dilivideomain.mapper;
 import com.ducksoup.dilivideomain.entity.Post;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
 * @author meichuankutou
@@ -16,6 +19,11 @@ public interface PostMapper extends BaseMapper<Post> {
 
     @Update("UPDATE post SET comment_count = comment_count + 1 WHERE post.Id = #{postId}")
     boolean increaseCommentCount(@Param("postId") String postId);
+
+
+
+    List<Post> selectByFollowIds(@Param("followIds") List<String> followIds,@Param("start") Integer start,@Param("end") Integer end,@Param("video_only") boolean video_only);
+
 
 }
 

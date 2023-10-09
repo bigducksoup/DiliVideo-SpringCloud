@@ -74,7 +74,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     public List<String> queryCommentIdsByVideoInfoIdSortByLikeCount(String videoInfoId, Integer page, Integer pageSize){
         Integer limitStart = (page-1)*pageSize;
-        Integer limitEnd = page*pageSize;
+        Integer limitEnd =  pageSize;
         List<String> ids = commentMapper.queryCommentIdsByVideoInfoIdOrderByLikeCount(videoInfoId, limitStart, limitEnd);
         return ids;
     }
@@ -82,7 +82,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     public List<String> queryCommentIdsByVideoInfoIdSortByTime(String videoInfoId,Integer page,Integer pageSize){
         Integer limitStart = (page-1)*pageSize;
-        Integer limitEnd = page*pageSize;
+        Integer limitEnd = pageSize;
         List<String> ids = commentMapper.queryCommentIdsByVideoInfoIdOrderByTime(videoInfoId, limitStart, limitEnd);
         return ids;
     }

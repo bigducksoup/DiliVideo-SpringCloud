@@ -44,7 +44,7 @@ public class PostVo {
     private Integer status;
 
 
-    private ModuleVo module;
+    private ModuleVo moduleVO;
 
 
 

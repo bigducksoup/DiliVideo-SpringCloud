@@ -41,6 +41,8 @@ public class RabbitmqConsumerFFMPEGcovert {
     @Autowired
     private ContentServices contentServices;
 
+
+
     @RabbitListener(queues = FFMPEGRabbitmqConfig.FFMPEG_QUEUE)
     public void Consumer1(Videofile payload, Message message){
         log.info("payload:【{}】,message:【{}】",payload.toString(),message.getMessageProperties());

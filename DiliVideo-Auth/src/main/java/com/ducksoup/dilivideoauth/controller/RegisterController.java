@@ -11,9 +11,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ducksoup.dilivideoauth.controller.Params.RegisterParam;
 import com.ducksoup.dilivideoauth.entity.Avatar;
 import com.ducksoup.dilivideoauth.entity.MUser;
+import com.ducksoup.dilivideoauth.entity.UserSettings;
 import com.ducksoup.dilivideoauth.mainServices.MailSenderService;
 import com.ducksoup.dilivideoauth.service.AvatarService;
 import com.ducksoup.dilivideoauth.service.MUserService;
+import com.ducksoup.dilivideoauth.service.UserSettingsService;
 import com.ducksoup.dilivideoauth.utils.RedisUtil;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
@@ -48,6 +50,9 @@ public class RegisterController {
 
     @Autowired
     private AvatarService avatarService;
+
+    @Autowired
+    private UserSettingsService userSettingsService;
 
 
     /**
@@ -104,6 +109,10 @@ public class RegisterController {
         user.setWechatId("");
 
         boolean save = userService.save(user);
+        UserSettings userSettings = new UserSettings();
+        userSettings.setId(UUID.randomUUID().toString());
+        userSettings.setUserId(user.getId());
+        userSettingsService.save(userSettings);
 
         if (save) {
             log.info(user.getEmail() + "...注册成功");
