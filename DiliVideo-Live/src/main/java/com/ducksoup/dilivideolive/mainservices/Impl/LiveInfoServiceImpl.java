@@ -1,8 +1,12 @@
 package com.ducksoup.dilivideolive.mainservices.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.ducksoup.dilivideobase.annotation.Cache;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_LIVE;
+import com.ducksoup.dilivideolive.controller.params.OnPublishParams;
 import com.ducksoup.dilivideolive.entity.*;
 import com.ducksoup.dilivideolive.mainservices.LiveInfoService;
 import com.ducksoup.dilivideolive.service.LivePlayServerService;
@@ -11,11 +15,13 @@ import com.ducksoup.dilivideolive.utils.RedisUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -35,6 +41,7 @@ public class LiveInfoServiceImpl implements LiveInfoService {
     @Value("${live.maxConnPerApp}")
     private Integer maxPlayCount;
 
+
     @Override
     public void initRoomInfo(LiveRoom liveRoom) {
 
@@ -43,7 +50,7 @@ public class LiveInfoServiceImpl implements LiveInfoService {
         LiveInfo liveInfo = new LiveInfo();
 
         liveInfo.setRoomId(liveRoom.getId());
-        liveInfo.setUserId(liveInfo.getUserId());
+        liveInfo.setUserId(liveRoom.getUserId());
         liveInfo.setStartTime(DateTime.now());
 
         //获取LiveServer
@@ -64,12 +71,23 @@ public class LiveInfoServiceImpl implements LiveInfoService {
 
     }
 
+    @Override
+    public void initRoomControlInfo(OnPublishParams params,String roomId) {
+
+        LiveControlInfo liveControlInfo = new LiveControlInfo();
+        liveControlInfo.setId(UUID.randomUUID().toString());
+        liveControlInfo.setLiveRoomId(roomId);
+        BeanUtil.copyProperties(params,liveControlInfo);
+        Db.save(liveControlInfo);
+    }
+
 
     @Override
     public void deleteRoomInfo(LiveRoom liveRoom) {
         liveRoom.setIsLive(0);
         liveRoomService.updateById(liveRoom);
 
+        Db.remove(new LambdaQueryWrapper<LiveControlInfo>().eq(LiveControlInfo::getLiveRoomId,liveRoom.getId()));
 
         //删除关于直播room的所有信息
 
@@ -77,6 +95,7 @@ public class LiveInfoServiceImpl implements LiveInfoService {
         redisUtil.remove(CONSTANT_LIVE.LIVE_PLAY_URL+liveRoom.getId());
         redisUtil.remove(CONSTANT_LIVE.LIVE_RANDOM_URL_SUFFIX_KEY + liveRoom.getId());
         redisUtil.remove(CONSTANT_LIVE.LIVE_ROOM_INFO + liveRoom.getId());
+
     }
 
 
@@ -110,20 +129,20 @@ public class LiveInfoServiceImpl implements LiveInfoService {
         LivePlayUrls HLSPlayUrls = new LivePlayUrls();
         LivePlayUrls RTMPPLayUrls = new LivePlayUrls();
 
-        collect.get("SD").forEach(item -> {
+        collect.getOrDefault("SD",new ArrayList<>()).forEach(item -> {
             String url = buildPlayUrl(item, roomId);
 
             boolean b = item.getHls().equals(1) ? HLSPlayUrls.getSD().add(url) : RTMPPLayUrls.getSD().add(url);
         });
 
-        collect.get("HD").forEach(item -> {
+        collect.getOrDefault("HD",new ArrayList<>()).forEach(item -> {
             String url = buildPlayUrl(item, roomId);
 
             boolean b = item.getHls().equals(1) ? HLSPlayUrls.getHD().add(url) : RTMPPLayUrls.getHD().add(url);
 
         });
 
-        collect.get("FHD").forEach(item -> {
+        collect.getOrDefault("FHD",new ArrayList<>()).forEach(item -> {
             String url = buildPlayUrl(item, roomId);
             boolean b = item.getHls().equals(1) ? HLSPlayUrls.getFHD().add(url) : RTMPPLayUrls.getFHD().add(url);
         });
@@ -146,7 +165,7 @@ public class LiveInfoServiceImpl implements LiveInfoService {
 
         String domain = application.getIp();
 
-        if (application.getDomain() == null) {
+        if (application.getDomain() != null) {
             domain = application.getDomain();
         }
 
@@ -167,7 +186,8 @@ public class LiveInfoServiceImpl implements LiveInfoService {
             return application.getHttpProtocol() + afterProtocol + domain + httpPort + path + roomId;
         }
         //否则使用RTMP
-        return protocol + afterProtocol + domain + port + "/" + applicationName + "/" + roomId;
+        //rtmp://null1935/watch360p/1
+        return protocol + afterProtocol + domain +":"+ port + "/" + applicationName + "/" + roomId;
     }
 
 

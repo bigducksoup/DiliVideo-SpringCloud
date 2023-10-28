@@ -37,7 +37,6 @@ public class UpLoadToMinIOService {
                 UploadObjectArgs.builder()
                         .bucket(CONSTANT_MinIO.VIDEO_BUCTET)
                         .object(obj)
-                        .filename(file.getAbsolutePath())
                         .build()
         );
 

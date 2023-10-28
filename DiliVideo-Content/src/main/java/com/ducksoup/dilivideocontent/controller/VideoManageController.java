@@ -33,6 +33,8 @@ import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -86,6 +88,26 @@ public class VideoManageController {
             return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR, "上传失败");
         }
         return new ResponseResult<>(HttpStatus.HTTP_OK, "上传成功", fileTransmissionInfo.getCode());
+    }
+
+
+    @SaCheckLogin
+    @PostMapping("/check_md5_upload")
+    public ResponseResult<Boolean> checkMd5Upload(String md5,String code) {
+
+        VideoChunk videoChunk = videoChunkService.checkExist(md5);
+        if (videoChunk==null){
+            return new ResponseResult<>(HttpStatus.HTTP_OK,"not exist",false);
+        }
+
+        redisUtil.addToSet(CONSTANT_MinIO.VIDEO_CHUNK_LIST_PREFIX + code, videoChunk);
+        redisUtil.addToSet(CONSTANT_MinIO.VIDEO_CHUNK_MD5_PREFIX+code,videoChunk.getMd5());
+
+
+        return  new ResponseResult<>(HttpStatus.HTTP_OK,"exist",true);
+
+
+
     }
 
 
@@ -176,7 +198,7 @@ public class VideoManageController {
     }
 
     @PostMapping("/submit_videoInfo_form")
-    public ResponseResult<Boolean> submitVideoInfoForm(VideoInfoForm videoInfoForm) {
+    public ResponseResult<Boolean> submitVideoInfoForm(@Validated VideoInfoForm videoInfoForm) {
 
         String code = videoInfoForm.getCode();
         //通过code防止重复提交，且取出上传视频时保存的数据

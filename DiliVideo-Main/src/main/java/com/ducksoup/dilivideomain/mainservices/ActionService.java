@@ -37,20 +37,24 @@ public class ActionService {
         LikeActionHandler handler = new LikeActionHandler();
         handler.setTargetId(targetId);
         handler.setRedisUtil(redisUtil);
+        handler.setUserId((String) StpUtil.getLoginId());
         switch (targetType) {
             case POST:
-                handler.setPREFIX(CONSTANT_MAIN.POSTLIKEPERFIX);
-                handler.setREDISLOCK(CONSTANT_MAIN.POSTLIKEUPDATELOCK);
+                handler.setLIKE_COUNT_PREFIX(CONSTANT_MAIN.POST_LIKE_COUNT_PREFIX);
+                handler.setPREFIX(CONSTANT_MAIN.POST_LIKE_PREFIX);
+                handler.setREDISLOCK(CONSTANT_MAIN.POST_COMMENT_UPDATE_LOCK);
                 res = handler.doHandel((id, count) -> postOperationService.updatePostLikeCount(id, count));
                 break;
             case POSTCOMMENT:
-                handler.setPREFIX(CONSTANT_MAIN.POSTCOMMENTLIKEPERFIX);
-                handler.setREDISLOCK(CONSTANT_MAIN.POSTCOMMENTUPDATELOCK);
+                handler.setLIKE_COUNT_PREFIX(CONSTANT_MAIN.POST_COMMENT_LIKE_COUNT_PREFIX);
+                handler.setPREFIX(CONSTANT_MAIN.POST_COMMENT_LIKE_PREFIX);
+                handler.setREDISLOCK(CONSTANT_MAIN.POST_COMMENT_UPDATE_LOCK);
                 res = handler.doHandel((id, count) -> postCommentLikeService.updatePostCommentLikeCount(id, count));
                 break;
             case COMMENT:
-                handler.setPREFIX(CONSTANT_MAIN.COMMENTLIKEPERFIX);
-                handler.setREDISLOCK(CONSTANT_MAIN.COMMENTUPDATELOCK);
+                handler.setLIKE_COUNT_PREFIX(CONSTANT_MAIN.COMMENT_LIKE_COUNT_PREFIX);
+                handler.setPREFIX(CONSTANT_MAIN.COMMENT_LIKE_PREFIX);
+                handler.setREDISLOCK(CONSTANT_MAIN.COMMENT_UPDATE_LOCK);
                 res = handler.doHandel((id, count) -> commentLikeService.updateCommentLikeCount(id, count));
                 break;
             default:
@@ -63,25 +67,25 @@ public class ActionService {
 
 
 
-    public boolean checkLike(Integer targetType, String targetId) {
+    public boolean checkLike(Integer targetType, String targetId,String userId) {
 
         String key;
 
         switch (targetType){
             case POST:
-                key = CONSTANT_MAIN.POSTLIKEPERFIX+targetId;
+                key = CONSTANT_MAIN.POST_LIKE_PREFIX+userId;
                 break;
             case POSTCOMMENT:
-                key = CONSTANT_MAIN.POSTCOMMENTLIKEPERFIX+targetId;
+                key = CONSTANT_MAIN.POST_COMMENT_LIKE_PREFIX+userId;
                 break;
             case COMMENT:
-                key = CONSTANT_MAIN.COMMENTLIKEPERFIX+targetId;
+                key = CONSTANT_MAIN.COMMENT_LIKE_PREFIX+userId;
                 break;
             default:
                 return false;
         }
 
-        return redisUtil.checkExistSetItem(key, StpUtil.getLoginId());
+        return redisUtil.checkExistSetItem(key,targetId);
 
     }
 

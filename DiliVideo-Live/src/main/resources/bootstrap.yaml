@@ -12,7 +12,8 @@ spring:
         namespace: dev
         file-extension: yaml
         group: DiliVideo
-
+  main:
+    allow-bean-definition-overriding: true
 
   profiles:
     active: dev

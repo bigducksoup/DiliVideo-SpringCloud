@@ -39,7 +39,7 @@ public class PublishController {
     @GetMapping("/get_rtmp_publish_url")
     public ResponseResult<String> getPublishUrl() {
 
-        // rtmp://127.0.0.1:1938/live/roomId?userId=#{userId}&key=#{key}
+        // rtmp://127.0.0.1:1938/live/roomId?key=#{key}
         String loginId = (String) StpUtil.getLoginId();
 
 

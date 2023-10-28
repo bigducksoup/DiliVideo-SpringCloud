@@ -84,9 +84,11 @@ public class FileCombineServiceImpl implements FileCombineService{
         }
 
 
-        File mergedFile = null;
+
         try {
             countDownLatch.await();
+
+
 
             if (chunkList.size()!=chunks.size()){
                 for (ChunkFile chunk : chunks) {
@@ -96,36 +98,56 @@ public class FileCombineServiceImpl implements FileCombineService{
             }
 
             chunks.sort(Comparator.comparing(ChunkFile::getIndex));
-            //创建临时文件
-            mergedFile = File.createTempFile(FileUtil.getPrefix(fileName),"."+FileUtil.getSuffix(fileName));
-            // 创建输出流
-            OutputStream outputStream = Files.newOutputStream(mergedFile.toPath());
+
+            List<File> files = chunks.stream().map(ChunkFile::getChunk).collect(Collectors.toList());
+
+            File mergedFile = mergeFile(files,fileName);
 
 
+            List<String> list = chunkSet.stream().map(VideoChunk::getId).collect(Collectors.toList());
+            videoChunkService.update(new LambdaUpdateWrapper<VideoChunk>().set(VideoChunk::getUsed,1).in(VideoChunk::getId,list));
+            return mergedFile;
 
-            // 逐个读取输入文件并写入输出文件
-            for (ChunkFile f : chunks){
-                FileInputStream inputStream = new FileInputStream(f.getChunk());
-                int data = inputStream.read();
-                while (data != -1) {
-                    outputStream.write(data);
-                    data = inputStream.read();
-                }
-                inputStream.close();
-                f.getChunk().delete();
-            }
-
-            outputStream.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        List<String> list = chunkSet.stream().map(VideoChunk::getId).collect(Collectors.toList());
-        videoChunkService.update(new LambdaUpdateWrapper<VideoChunk>().set(VideoChunk::getUsed,1).in(VideoChunk::getId,list));
+
+    }
+
+
+    @Override
+    public File mergeFile(List<File> chunkFiles,String fileName) throws IOException {
+
+        //创建临时文件
+        File mergedFile = File.createTempFile(FileUtil.getPrefix(fileName),"."+FileUtil.getSuffix(fileName));
+
+
+        // 创建输出流
+        OutputStream outputStream = Files.newOutputStream(mergedFile.toPath());
+
+
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+
+        // 逐个读取输入文件并写入输出文件
+        for (File f : chunkFiles){
+            BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(f.toPath()));
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read() )!= -1) {
+                bufferedOutputStream.write(buffer,0,bytesRead);
+            }
+            inputStream.close();
+            f.delete();
+        }
+        bufferedOutputStream.close();
+        outputStream.close();
+
         return mergedFile;
     }
 
-    @Async
+
     @Override
     public void combineVideoChunks(Set<VideoChunk> chunkSet,String fileName,String code)  {
         File file = combineChunks(chunkSet,fileName);
@@ -153,6 +175,7 @@ public class FileCombineServiceImpl implements FileCombineService{
         }
         file.delete();
     }
+
 
 
 

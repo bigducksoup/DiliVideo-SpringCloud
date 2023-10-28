@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideolive.mapper.LiveControlInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideolive.entity.LiveControlInfo">
+            <id property="id" column="Id" jdbcType="CHAR"/>
+            <result property="liveRoomId" column="live_room_id" jdbcType="CHAR"/>
+            <result property="addr" column="addr" jdbcType="VARCHAR"/>
+            <result property="call" column="call" jdbcType="VARCHAR"/>
+            <result property="clientId" column="client_id" jdbcType="VARCHAR"/>
+            <result property="app" column="app" jdbcType="VARCHAR"/>
+            <result property="flashver" column="flashVer" jdbcType="VARCHAR"/>
+            <result property="swfurl" column="swfUrl" jdbcType="VARCHAR"/>
+            <result property="tcurl" column="tcUrl" jdbcType="VARCHAR"/>
+            <result property="pageurl" column="pageUrl" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id,live_room_id,addr,
+        call,client_id,app,
+        flashVer,swfUrl,tcUrl,
+        pageUrl,name
+    </sql>
+</mapper>

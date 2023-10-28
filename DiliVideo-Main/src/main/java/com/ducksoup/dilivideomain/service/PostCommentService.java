@@ -22,4 +22,10 @@ public interface PostCommentService extends IService<PostComment> {
 
     List<IdMap> queryPostCommentReplies(String commentId, Integer page, Integer pageSize, boolean orderByTime);
 
+
+    boolean deletePostComment(String commentId);
+
+
+    boolean deleteOtherCommentRelatedToPostComment(String commentId);
+
 }

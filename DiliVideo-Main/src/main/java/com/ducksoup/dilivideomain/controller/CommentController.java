@@ -13,6 +13,7 @@ import com.ducksoup.dilivideoentity.content.Videoinfo;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import com.ducksoup.dilivideofeign.content.ContentServices;
+import com.ducksoup.dilivideomain.controller.params.CommentDeleteParams;
 import com.ducksoup.dilivideomain.controller.params.CommentParams;
 import com.ducksoup.dilivideomain.controller.params.ReplyCommentParams;
 import com.ducksoup.dilivideomain.entity.Comment;
@@ -27,6 +28,8 @@ import com.ducksoup.dilivideomain.vo.CommentItemVo;
 import com.ducksoup.dilivideomain.vo.ReplyVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -130,6 +133,7 @@ public class CommentController {
         }
 
 
+
         MUser user = userInfoRes.getData();
 
         String commentId = null;
@@ -184,10 +188,8 @@ public class CommentController {
         }
         //获取评论
 
-        List<Comment> comments = commentService.listByIds(commentIds)
-                .stream()
-                .sorted(Comparator.comparing(Comment::getCreateTime).reversed())
-                .collect(Collectors.toList());
+        List<Comment> comments = commentService.listByIds(commentIds);
+
 
         //回复id映射
         List<CommentReplyComment> replyComments = replyCommentService.list(new LambdaQueryWrapper<CommentReplyComment>()
@@ -252,6 +254,12 @@ public class CommentController {
             commentItemVos.add(vo);
         }
 
+        if (mode==1){
+            commentItemVos = commentItemVos.stream().sorted(Comparator.comparing(CommentItemVo::getLikeCount).reversed()).collect(Collectors.toList());
+        }else {
+            commentItemVos = commentItemVos.stream().sorted(Comparator.comparing(CommentItemVo::getCreateTime).reversed()).collect(Collectors.toList());
+        }
+
 
         return new ResponseResult<>(HttpStatus.HTTP_OK, "评论获取成功", commentItemVos);
 
@@ -296,6 +304,39 @@ public class CommentController {
 
 
         return new ResponseResult<>(HttpStatus.HTTP_OK, "获取回复成功", replyVos);
+
+    }
+
+
+    /**
+     * delete comment
+     * @param params CommentDeleteParams
+     * @return boolean
+     */
+    @SaCheckLogin
+    @PostMapping("/delete")
+    public ResponseResult<Boolean> deleteComment(@Validated @RequestBody CommentDeleteParams params) {
+
+        String loginId = (String) StpUtil.getLoginId();
+
+        Comment comment = commentService.getOne(new LambdaQueryWrapper<Comment>().eq(Comment::getId, params.getCommentId()).select(Comment::getUserId));
+
+        if (comment == null) {
+            return  new ResponseResult<>(HttpStatus.HTTP_OK, "该评论不存在", false);
+        }
+
+        if (!comment.getUserId().equals(loginId)) {
+            return new ResponseResult<>(HttpStatus.HTTP_FORBIDDEN, "没有权限删除该评论", false);
+        }
+
+        boolean deleted = commentService.deleteVideoComment(params.getCommentId());
+
+        if (deleted) {
+            return new ResponseResult<>(HttpStatus.HTTP_OK, "删除评论成功", true);
+        }
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK, "删除评论失败", false);
+
 
     }
 

@@ -2,6 +2,7 @@ package com.ducksoup.dilivideomain.controller;
 
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideomain.controller.params.LikeActionParams;
@@ -46,7 +47,7 @@ public class ActionController {
     @GetMapping("/check_like")
     public ResponseResult<Boolean> checkLike(@RequestParam Integer targetType,@RequestParam String targetId){
 
-        return new ResponseResult<>(HttpStatus.HTTP_OK,"操作成功",actionService.checkLike(targetType, targetId));
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"操作成功",actionService.checkLike(targetType, targetId, (String) StpUtil.getLoginId()));
 
     }
 

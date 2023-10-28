@@ -7,9 +7,11 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
+import com.ducksoup.dilivideomain.controller.params.CommentDeleteParams;
 import com.ducksoup.dilivideomain.controller.params.PostCommentParams;
 import com.ducksoup.dilivideomain.controller.params.ReplyPostCommentParams;
 import com.ducksoup.dilivideomain.entity.PostComment;
@@ -298,5 +300,41 @@ public class PostCommentController {
         return new ResponseResult<>(HttpStatus.HTTP_OK,"获取回复成功",replyVos);
 
     }
+
+
+    /**
+     * delete post comment
+     * @param params CommentDeleteParams
+     * @return boolean
+     * TODO test
+     */
+    @PostMapping("/delete")
+    public ResponseResult<Boolean> delete(@RequestBody CommentDeleteParams params){
+
+        String loginId = (String) StpUtil.getLoginId();
+
+        PostComment postComment = Db.lambdaQuery(PostComment.class).eq(PostComment::getId, params.getCommentId()).select(PostComment::getUserId).one();
+
+
+        if (postComment==null){
+            return  new ResponseResult<>(HttpStatus.HTTP_OK, "该评论不存在", false);
+        }
+
+        if (!postComment.getUserId().equals(loginId)){
+            return new ResponseResult<>(HttpStatus.HTTP_FORBIDDEN, "没有权限删除该评论", false);
+        }
+
+        boolean deleted = postCommentService.deletePostComment(params.getCommentId());
+
+
+        if (deleted) {
+            return new ResponseResult<>(HttpStatus.HTTP_OK, "删除评论成功", true);
+        }
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK, "删除评论失败", false);
+
+    }
+
+
 
 }

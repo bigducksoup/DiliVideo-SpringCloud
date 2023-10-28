@@ -29,9 +29,10 @@ public class AuthCallBackController {
 
     /**
      * 开启直播时的回调 Nginx会携带原来的参数回调此接口
-     * @param params  OnPublishParams
-     * @see OnPublishParams 包含Key和
+     *
+     * @param params OnPublishParams
      * @return 200状态码允许推流 其他状态码拒绝推流
+     * @see OnPublishParams 包含Key和
      */
     @PostMapping("/on_publish")
     ResponseEntity<Void> onPublish(OnPublishParams params) {
@@ -43,18 +44,15 @@ public class AuthCallBackController {
         }
 
 
-
         LiveRoom liveRoom = liveRoomService.getById(roomId);
 
-        new Thread(()->{
-            try {
-                liveInfoService.initRoomInfo(liveRoom);
-            }catch (Exception e){
-                //TODO kick Publish Client
-                liveInfoService.deleteRoomInfo(liveRoom);
-            }
-        }).start();
-
+        try {
+            liveInfoService.initRoomInfo(liveRoom);
+            liveInfoService.initRoomControlInfo(params,roomId);
+        } catch (Exception e) {
+            //TODO kick Publish Client
+            liveInfoService.deleteRoomInfo(liveRoom);
+        }
 
 
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -73,7 +71,7 @@ public class AuthCallBackController {
 
         //设置直播状态为0
 
-        redisUtil.remove(CONSTANT_LIVE.LIVE_SECRET_KEY+params.getKey());
+        redisUtil.remove(CONSTANT_LIVE.LIVE_SECRET_KEY + params.getKey());
 
         //删除房间直播信息
         liveInfoService.deleteRoomInfo(liveRoom);
@@ -81,12 +79,6 @@ public class AuthCallBackController {
         return ResponseEntity.status(HttpStatus.OK).build();
 
     }
-
-
-
-
-
-
 
 
 }

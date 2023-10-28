@@ -130,11 +130,11 @@ public class PostQueryService {
     }
 
 
-    @PerformanceLog
     public List<PostVo> queryFollowPost(String userId,Integer page,Integer pageSize,boolean video_only){
 
-        List<String> followIds = authServices.getFollowList(userId).stream().map(UserVo::getId).collect(Collectors.toList());
+        List<UserVo> followList = authServices.getFollowList(userId);
 
+        List<String> followIds = followList.stream().map(UserVo::getId).collect(Collectors.toList());
         if (followIds.isEmpty())return new ArrayList<>();
 
         //查询关注用户的动态

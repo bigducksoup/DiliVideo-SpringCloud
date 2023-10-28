@@ -84,11 +84,11 @@ public class ViewsServiceImpl implements ViewsService {
     }
 
 
+
     /**
      * 设置视频播放量
      * @param videoInfoVos List<VideoInfoVo>
      */
-    @PerformanceLog
     @Override
     public void setVideoListViewCount(List<VideoInfoVo> videoInfoVos) {
         videoInfoVos.forEach(this::setVideoViewCount);

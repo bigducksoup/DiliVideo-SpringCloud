@@ -1,13 +1,18 @@
 package com.ducksoup.dilivideotranscoding.mq.consumer;
 
+import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.content.FileInfoUpdateParam;
 import com.ducksoup.dilivideoentity.content.Videofile;
 import com.ducksoup.dilivideofeign.content.ContentServices;
 import com.ducksoup.dilivideotranscoding.config.FFMPEGRabbitmqConfig;
 import com.ducksoup.dilivideotranscoding.mq.provider.VideoPostAddProvider;
 import com.ducksoup.dilivideotranscoding.services.DownLoadFromMinIOService;
-import com.ducksoup.dilivideotranscoding.services.FFMPEGService;
 import com.ducksoup.dilivideotranscoding.services.UpLoadToMinIOService;
+import com.ducksoup.dilivideotranscoding.services.ffmpeg.FFMpegService;
+import com.ducksoup.dilivideotranscoding.services.filestorage.FileDownloadService;
+import com.ducksoup.dilivideotranscoding.services.filestorage.FileUploadService;
+import com.ducksoup.dilivideotranscoding.services.filestorage.Impl.MinioFileDownloadService;
+import com.ducksoup.dilivideotranscoding.services.transcoding.TranscodeService;
 import com.ducksoup.dilivideotranscoding.utils.OSSUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -15,25 +20,26 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.File;
 
 @Component
 @Slf4j
-public class RabbitmqConsumerFFMPEGcovert {
+public class RabbitMQConsumerFFMPEGConvert {
 
 
 
-    @Autowired
-    private DownLoadFromMinIOService downLoadFromMinIOService;
 
-    @Autowired
-    private UpLoadToMinIOService upLoadToMinIOService;
 
-    @Autowired
-    private FFMPEGService ffmpegService;
+
+
 
     @Autowired
     private OSSUtils ossUtils;
+
+
+    @Resource
+    private TranscodeService transcodeService;
 
     @Autowired
     private VideoPostAddProvider videoPostAddProvider;
@@ -50,18 +56,16 @@ public class RabbitmqConsumerFFMPEGcovert {
         try {
 
             String url = ossUtils.makeUrl(payload.getBucket(), payload.getPath());
-
             //下载
-            File origin = downLoadFromMinIOService.downLoadObject("video", url, payload.getPath(), payload.getUniqueName());
-            //转码
-            File file = ffmpegService.ffmpegEncode(origin, payload);
-            //上传
-            boolean b = upLoadToMinIOService.upLoadFile(file, payload);
 
-            if (b){
-                contentServices.setVideoInfoStatus(new FileInfoUpdateParam(payload.getVideoinfoId(), payload.getId(), 1));
-                videoPostAddProvider.notifyVideoPostAdd(payload.getVideoinfoId());
-            }
+            //转码
+            transcodeService.transcodeToMp4(payload);
+
+            //上传
+
+            contentServices.setVideoInfoStatus(new FileInfoUpdateParam(payload.getVideoinfoId(), payload.getId(), 1));
+            videoPostAddProvider.notifyVideoPostAdd(payload.getVideoinfoId());
+
 
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -19,6 +19,7 @@ import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,6 +56,7 @@ public class VideoInfoController {
      */
     @SaCheckLogin
     @GetMapping("/get_playurl")
+    @Cacheable(cacheNames = "VideoPlayUrl",key = "#videoId")
     public ResponseResult<VideoFileVo> getPlayerUrl(@RequestParam String videoId){
         Videofile videofile = videofileService.getById(videoId);
 

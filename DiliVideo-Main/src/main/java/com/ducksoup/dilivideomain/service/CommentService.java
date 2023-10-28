@@ -19,4 +19,9 @@ public interface CommentService extends IService<Comment> {
 
     List<String> queryCommentIdsByVideoInfoIdSortByTime(String videoInfoId,Integer page,Integer pageSize);
 
+
+    boolean deleteOtherCommentRelatedToVideoComment(String commentId);
+
+    boolean deleteVideoComment(String commentId);
+
 }

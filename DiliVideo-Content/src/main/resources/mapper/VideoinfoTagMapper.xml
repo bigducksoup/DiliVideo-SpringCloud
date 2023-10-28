@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideocontent.mapper.VideoinfoTagMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideocontent.entity.VideoinfoTag">
+            <id property="id" column="id" jdbcType="CHAR"/>
+            <result property="videoInfoId" column="video_info_id" jdbcType="CHAR"/>
+            <result property="tagId" column="tag_id" jdbcType="CHAR"/>
+            <result property="tagNo" column="tag_no" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,video_info_id,tag_id,
+        tag_no,create_time,update_time,
+        status
+    </sql>
+</mapper>

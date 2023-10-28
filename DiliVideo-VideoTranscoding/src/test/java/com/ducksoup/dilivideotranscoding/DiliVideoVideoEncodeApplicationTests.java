@@ -1,10 +1,6 @@
 package com.ducksoup.dilivideotranscoding;
 
-import com.ducksoup.dilivideoentity.content.FileInfoUpdateParam;
-import com.ducksoup.dilivideofeign.auth.AuthServices;
-import com.ducksoup.dilivideofeign.content.ContentServices;
 import com.ducksoup.dilivideotranscoding.mq.provider.VideoPostAddProvider;
-import com.ducksoup.dilivideotranscoding.services.FFMPEGService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -43,7 +43,6 @@ public class LiveRoomServiceImpl extends ServiceImpl<LiveRoomMapper, LiveRoom>
 
         //从redis获取key
         byte[] secretKey = (byte[]) redisUtil.get(CONSTANT_LIVE.LIVE_SECRET_KEY+key);
-
         if (secretKey==null)return null;
 
         AES aes = SecureUtil.aes(secretKey);

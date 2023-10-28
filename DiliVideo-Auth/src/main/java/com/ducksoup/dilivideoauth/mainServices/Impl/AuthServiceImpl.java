@@ -13,6 +13,7 @@ import com.ducksoup.dilivideoauth.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,8 @@ public class AuthServiceImpl implements AuthService {
     public List<String> getRoleList(Object loginId) {
 
         List<String> roleIds = this.getRoleIds((String) loginId);
+
+        if (roleIds.isEmpty())return new ArrayList<>();
 
         return roleService.list(
                         new LambdaQueryWrapper<Role>()

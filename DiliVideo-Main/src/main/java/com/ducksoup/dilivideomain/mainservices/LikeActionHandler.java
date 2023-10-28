@@ -30,6 +30,10 @@ public class LikeActionHandler {
     //更新频率锁 每三十分钟才能更新
     private String REDISLOCK;
 
+    private String LIKE_COUNT_PREFIX;
+
+    private String userId;
+
 
     /**
      * （取消）点赞操作
@@ -41,25 +45,27 @@ public class LikeActionHandler {
     public boolean doHandel(BiConsumer<String,Long> consumer){
 
         Assert.notNull(targetId,"被（取消）点赞对象id不可以为null");
+        Assert.notNull(userId,"用户id不可以为null");
 
-        String loginId = StpUtil.getLoginId("default");
+        String set_key = PREFIX+userId;
+        String like_count_key = LIKE_COUNT_PREFIX+targetId;
 
-        String key = PREFIX+targetId;
-
-        boolean existSetItem = redisUtil.checkExistSetItem(key, loginId);
+        boolean existSetItem = redisUtil.checkExistSetItem(set_key, targetId);
 
         boolean res = true;
 
-        redisUtil.addToSet(key,loginId);
-
         if (existSetItem){
-            redisUtil.rmFromSet(key,loginId);
+            redisUtil.rmFromSet(set_key,targetId);
+            redisUtil.decreaseKey(like_count_key);
             res = false;
+        }else {
+            redisUtil.addToSet(set_key,targetId);
+            redisUtil.increaseKey(like_count_key);
         }
 
 
         if (redisUtil.get(REDISLOCK+targetId)==null){
-            consumer.accept(targetId,redisUtil.countSetItem(key));
+            consumer.accept(targetId, (Long) redisUtil.get(like_count_key));
             redisUtil.set(REDISLOCK+targetId,1,3L, TimeUnit.MINUTES);
         }
 

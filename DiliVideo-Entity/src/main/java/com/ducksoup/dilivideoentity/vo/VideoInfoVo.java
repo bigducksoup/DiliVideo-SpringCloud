@@ -54,6 +54,9 @@ public class VideoInfoVo {
     private Long likeCount;
 
 
+    private boolean liked;
+
+
 
     /**
      * 是否发布

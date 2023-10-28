@@ -4,10 +4,10 @@ package com.ducksoup.dilivideocontent.mainservices.Video.Impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ducksoup.dilivideocontent.controller.Params.VideoInfoForm;
-import com.ducksoup.dilivideocontent.entity.Cover;
-import com.ducksoup.dilivideocontent.entity.Videofile;
-import com.ducksoup.dilivideocontent.entity.Videoinfo;
+import com.ducksoup.dilivideocontent.entity.*;
 import com.ducksoup.dilivideocontent.mainservices.MinIO.DeleteService;
 import com.ducksoup.dilivideocontent.mainservices.MinIO.UploadService;
 import com.ducksoup.dilivideocontent.mainservices.Video.VideoOperationService;
@@ -15,12 +15,17 @@ import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 
+import com.ducksoup.dilivideocontent.utils.RedisUtil;
 import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -47,6 +52,9 @@ public class VideoOperationServiceImpl implements VideoOperationService {
 
     @Autowired
     private CoverService coverService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
 
     @Override
@@ -96,8 +104,9 @@ public class VideoOperationServiceImpl implements VideoOperationService {
         //保存文件信息
         boolean videofilesave = videofileService.save(videofile);
 
+        boolean saveVideoTagInfo = saveVideoTagInfo(infoId, videoInfoForm.getTagIds());
 
-        return videoinfosave&&videofilesave;
+        return videoinfosave&&videofilesave&&saveVideoTagInfo;
 
     }
 
@@ -132,6 +141,7 @@ public class VideoOperationServiceImpl implements VideoOperationService {
         boolean c = deleteService.deleteObj(cover.getPath(),"img");
 
 
+        redisUtil.remove("VideoPlayUrl:"+videofile.getId());
 
 
         //删除数据库中videofile和cover的记录
@@ -140,6 +150,30 @@ public class VideoOperationServiceImpl implements VideoOperationService {
         videoinfoService.removeById(videoInfoId);
 
 
+
         return a&&b&&c&&videoFileRemove&&coverRemove;
+    }
+
+    @Override
+    public boolean saveVideoTagInfo(String videoInfoId, List<String> tagIds) {
+
+        List<Tag> tags = Db.lambdaQuery(Tag.class)
+                .in(Tag::getId, tagIds)
+                .select(Tag::getId).select(Tag::getTagNo).list();
+
+        List<VideoinfoTag> tagMappings = new ArrayList<>();
+
+        tags.forEach(tag -> {
+            VideoinfoTag tagMapping = new VideoinfoTag();
+            tagMapping.setVideoInfoId(videoInfoId);
+            tagMapping.setTagId(tag.getId());
+            tagMapping.setTagNo(tag.getTagNo());
+            DateTime now = DateTime.now();
+            tagMapping.setCreateTime(now);
+            tagMapping.setUpdateTime(now);
+            tagMappings.add(tagMapping);
+        });
+
+        return Db.saveBatch(tagMappings);
     }
 }

@@ -2,17 +2,24 @@ package com.ducksoup.dilivideomain.service.impl;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.lang.UUID;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ducksoup.dilivideoentity.auth.Avatar;
 import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import com.ducksoup.dilivideomain.entity.Comment;
+import com.ducksoup.dilivideomain.entity.CommentReplyComment;
+import com.ducksoup.dilivideomain.entity.CommentVideoinfo;
 import com.ducksoup.dilivideomain.service.CommentService;
 import com.ducksoup.dilivideomain.mapper.CommentMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +39,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Autowired
     private AuthServices authServices;
+
+    @Autowired
+    private CommentService commentService;
+
 
     @Override
     public String saveComment(String content, MUser user) throws Exception {
@@ -87,6 +98,25 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         return ids;
     }
 
+    @Override
+    public boolean deleteVideoComment(String commentId) {
+        boolean commentDeleted = commentService.deleteOtherCommentRelatedToVideoComment(commentId);
+
+        return commentDeleted;
+    }
+
+
+    @Transactional
+    @Override
+    public boolean deleteOtherCommentRelatedToVideoComment(String commentId){
+
+        boolean a = Db.removeById(commentId, Comment.class);
+        boolean b = Db.remove(Wrappers.lambdaQuery(CommentVideoinfo.class).eq(CommentVideoinfo::getCommentId, commentId));
+        boolean c = Db.remove(Wrappers.lambdaQuery(CommentReplyComment.class).eq(CommentReplyComment::getFatherCommentId, commentId).or().eq(CommentReplyComment::getCommentId, commentId).or().eq(CommentReplyComment::getReplyCommentId, commentId));
+
+        return true;
+
+    }
 
 
 }

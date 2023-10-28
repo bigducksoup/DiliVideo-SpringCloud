@@ -3,16 +3,15 @@ package com.ducksoup.dilivideoentity.constant;
 public class CONSTANT_MAIN {
 
 
-    public static String POSTLIKEPERFIX = "POST LIKE:";
+    public static String POST_LIKE_COUNT_PREFIX = "POST LIKE_COUNT:";
+    public static String POST_LIKE_PREFIX = "POST LIKE:";
+    public static String POST_LIKE_UPDATE_LOCK = "POSTLIKEUPDATELOCK:";
 
-    public static String POSTLIKEUPDATELOCK = "POSTLIKEUPDATELOCK:";
+    public static String POST_COMMENT_LIKE_COUNT_PREFIX = "POST_COMMENT LIKE_COUNT:";
+    public static String POST_COMMENT_LIKE_PREFIX = "POST_COMMENT_LIKE:";
+    public static String POST_COMMENT_UPDATE_LOCK = "POSTCOMMENTUPDATELOCK:";
 
-
-    public static String POSTCOMMENTLIKEPERFIX = "POSTCOMMENTLIKE:";
-
-    public static String POSTCOMMENTUPDATELOCK = "POSTCOMMENTUPDATELOCK:";
-
-    public static String COMMENTLIKEPERFIX = "COMMENTLIKEPERFIX:";
-
-    public static String COMMENTUPDATELOCK = "COMMENTUPDATELOCK";
+    public static String COMMENT_LIKE_COUNT_PREFIX = "COMMENT LIKE_COUNT:";
+    public static String COMMENT_LIKE_PREFIX = "COMMENT_LIKE_PREFIX:";
+    public static String COMMENT_UPDATE_LOCK = "COMMENTUPDATELOCK";
 }

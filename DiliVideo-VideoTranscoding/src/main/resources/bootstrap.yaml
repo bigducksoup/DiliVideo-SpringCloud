@@ -15,7 +15,8 @@ spring:
   profiles:
     active: dev
 
-
+  main:
+    allow-bean-definition-overriding: true
 
 ffmpeg: /Users/meichuankutou/Public/ffmp/ffmpeg
 ffprobe: /Users/meichuankutou/Public/ffmp/ffprobe
