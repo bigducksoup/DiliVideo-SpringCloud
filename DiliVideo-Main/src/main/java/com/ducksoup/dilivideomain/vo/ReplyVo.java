@@ -28,4 +28,6 @@ public class ReplyVo {
 
     private Integer likeCount;
 
+    private boolean liked;
+
 }

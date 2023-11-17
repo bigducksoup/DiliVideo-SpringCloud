@@ -59,7 +59,8 @@ public class RedisUtil implements Serializable {
      * @return
      */
     public boolean exists(String key) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+        if (key == null)return false;
+        return redisTemplate.hasKey(key);
     }
 
     /**
@@ -180,6 +181,41 @@ public class RedisUtil implements Serializable {
         }
         return member;
 
+    }
+
+    public <T>Map<T,Boolean> isSetMember(String key,List<T> values){
+        if (!this.exists(key)){
+            Map<T,Boolean> res = new HashMap<>();
+            for (T value : values) {
+                res.put(value,false);
+            }
+            return res;
+        }
+
+        Map<Object, Boolean> member = redisTemplate.opsForSet().isMember(key, values.toArray());
+
+        return (Map<T, Boolean>) member;
+
+    }
+
+
+    public <R>List<R> mget(List<String> keys) {
+
+        Collection<Serializable> serializableCollection = new ArrayList<>(keys);
+
+        List<Object> res = redisTemplate.opsForValue().multiGet(serializableCollection);
+        List<R> list = new ArrayList<>();
+
+        for (Object item : res) {
+            list.add((R)item);
+        }
+
+        return list;
+
+    }
+
+    public void mset(Map<String,Serializable> map){
+        redisTemplate.opsForValue().multiSet(map);
     }
 
 

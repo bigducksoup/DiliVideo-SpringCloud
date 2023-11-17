@@ -35,13 +35,21 @@ public class Request {
     }
 
 
+    public Request(String url,HttpMethod method){
+        headers = new HashMap<>();
+        params = new HashMap<>();
+        this.url = url;
+        this.method = method;
+    }
+
+
     public static Request init(){
         return new Request();
     }
 
 
-    public static Request init(String url){
-        return new Request(url);
+    public static Request init(String url,HttpMethod method){
+        return new Request(url,method);
     }
 
     public Request addHeader(String key, String value) {

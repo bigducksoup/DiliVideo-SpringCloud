@@ -6,6 +6,8 @@ import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
 * @author meichuankutou
 * @description 针对表【ct_videoinfo】的数据库操作Mapper
@@ -42,6 +44,12 @@ public interface VideoinfoMapper extends BaseMapper<Videoinfo> {
             "AND cover.Id = info.cover_id " +
             "AND info.videofile_id = file.Id")
     VideoInfoVo getVideoDetail(@Param("videoId") String videoId);
+
+
+
+
+    List<Videoinfo> queryRelatedVideo(@Param("videoInfoId") String videoInfoId);
+
 
 }
 

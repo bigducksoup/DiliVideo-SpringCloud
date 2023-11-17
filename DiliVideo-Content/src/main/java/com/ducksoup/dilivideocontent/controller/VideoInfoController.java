@@ -2,16 +2,21 @@ package com.ducksoup.dilivideocontent.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ducksoup.dilivideocontent.entity.Cover;
 import com.ducksoup.dilivideocontent.entity.Videofile;
 import com.ducksoup.dilivideocontent.entity.Videoinfo;
+import com.ducksoup.dilivideocontent.mainservices.UserOperation.LikeOperationService;
+import com.ducksoup.dilivideocontent.mainservices.UserOperation.ViewsService;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.OSSUtils;
+import com.ducksoup.dilivideocontent.utils.RedisUtil;
 import com.ducksoup.dilivideoentity.auth.MUser;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_STATUS;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.vo.UserVo;
 import com.ducksoup.dilivideoentity.vo.VideoFileVo;
@@ -22,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -33,20 +39,26 @@ import java.util.List;
 @RequestMapping("/video_info")
 public class VideoInfoController {
 
-    @Autowired
+    @Resource
     private VideofileService videofileService;
 
-    @Autowired
+    @Resource
     private AuthServices authServices;
 
-    @Autowired
+    @Resource
     private VideoinfoService videoinfoService;
 
-    @Autowired
+    @Resource
+    private LikeOperationService likeOperationService;
+
+    @Resource
     private CoverService coverService;
 
+    @Resource
+    private ViewsService viewsService;
 
-    @Autowired
+
+    @Resource
     private OSSUtils ossUtils;
 
     /**
@@ -56,7 +68,6 @@ public class VideoInfoController {
      */
     @SaCheckLogin
     @GetMapping("/get_playurl")
-    @Cacheable(cacheNames = "VideoPlayUrl",key = "#videoId")
     public ResponseResult<VideoFileVo> getPlayerUrl(@RequestParam String videoId){
         Videofile videofile = videofileService.getById(videoId);
 
@@ -134,6 +145,11 @@ public class VideoInfoController {
         videoInfoVo.setPartitionId(videoinfo.getPartitionId());
 
 
+        likeOperationService.setVideoLikeStatus(videoInfoVo);
+        viewsService.setVideoViewCount(videoInfoVo);
+
+
+
         return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",videoInfoVo);
 
 
@@ -145,10 +161,12 @@ public class VideoInfoController {
 
 
         List<Videoinfo> videoinfos = videoinfoService.list(new LambdaQueryWrapper<Videoinfo>()
+                .eq(Videoinfo::getMarkStatus, CONSTANT_STATUS.VIDEO_STATUS_READY)
                 .in(Videoinfo::getId, ids)
         );
 
         List<VideoInfoVo> videoInfoVos = videoinfoService.getVideoInfoVoByVideoInfo(videoinfos);
+
 
         return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",videoInfoVos);
     }

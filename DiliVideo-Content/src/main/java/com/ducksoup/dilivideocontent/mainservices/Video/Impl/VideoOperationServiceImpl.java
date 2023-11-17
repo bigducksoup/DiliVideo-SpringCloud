@@ -17,6 +17,7 @@ import com.ducksoup.dilivideocontent.service.VideoinfoService;
 
 import com.ducksoup.dilivideocontent.utils.RedisUtil;
 import com.ducksoup.dilivideoentity.auth.MUser;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_STATUS;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import lombok.extern.slf4j.Slf4j;
@@ -58,8 +59,7 @@ public class VideoOperationServiceImpl implements VideoOperationService {
 
 
     @Override
-    public boolean saveVideo(VideoInfoForm videoInfoForm, Videofile videofile){
-
+    public boolean saveVideo(VideoInfoForm videoInfoForm, Videofile videofile) {
 
 
         String loginId = (String) StpUtil.getLoginId();
@@ -69,7 +69,6 @@ public class VideoOperationServiceImpl implements VideoOperationService {
 
         //videoinfoId
         String infoId = UUID.randomUUID().toString();
-
 
 
         //填充视频基本信息
@@ -84,11 +83,12 @@ public class VideoOperationServiceImpl implements VideoOperationService {
         videoinfo.setLikeCount(0L);
         videoinfo.setCollectCount(0);
         videoinfo.setCommentCount(0);
+        videoinfo.setMarkStatus(CONSTANT_STATUS.VIDEO_STATUS_HANDLING);
         videoinfo.setStatus(1);
         videoinfo.setIsPublish(1);
         videoinfo.setOpenComment(1);
         videoinfo.setVideofileId(videofile.getId());
-        videoinfo.setIsOriginal(videoInfoForm.isIforiginal() ? 1:0);
+        videoinfo.setIsOriginal(videoInfoForm.isIforiginal() ? 1 : 0);
         videoinfo.setAuthorName(user.getNickname());
         videoinfo.setPartitionId(videoInfoForm.getPartitionId());
 
@@ -104,9 +104,12 @@ public class VideoOperationServiceImpl implements VideoOperationService {
         //保存文件信息
         boolean videofilesave = videofileService.save(videofile);
 
-        boolean saveVideoTagInfo = saveVideoTagInfo(infoId, videoInfoForm.getTagIds());
+        boolean saveVideoTagInfo = false;
+        if (videoInfoForm.getTagIds() != null) {
+            saveVideoTagInfo = saveVideoTagInfo(infoId, videoInfoForm.getTagIds());
+        }
 
-        return videoinfosave&&videofilesave&&saveVideoTagInfo;
+        return videoinfosave && videofilesave && saveVideoTagInfo;
 
     }
 

@@ -14,7 +14,9 @@ spring:
         group: DiliVideo
   profiles:
     active: dev
-
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
 server:
   port: 8082
 

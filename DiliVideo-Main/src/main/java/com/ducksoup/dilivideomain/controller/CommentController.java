@@ -8,6 +8,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ducksoup.dilivideobase.annotation.Cache;
 import com.ducksoup.dilivideoentity.auth.MUser;
 import com.ducksoup.dilivideoentity.content.Videoinfo;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
@@ -19,6 +21,8 @@ import com.ducksoup.dilivideomain.controller.params.ReplyCommentParams;
 import com.ducksoup.dilivideomain.entity.Comment;
 import com.ducksoup.dilivideomain.entity.CommentReplyComment;
 import com.ducksoup.dilivideomain.entity.CommentVideoinfo;
+import com.ducksoup.dilivideomain.mainservices.CommentLikeService;
+import com.ducksoup.dilivideomain.mainservices.VideoCommentService;
 import com.ducksoup.dilivideomain.utils.OSSUtils;
 import com.ducksoup.dilivideomain.service.CommentReplyCommentService;
 import com.ducksoup.dilivideomain.service.CommentService;
@@ -32,10 +36,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -58,6 +62,9 @@ public class CommentController {
     @Autowired
     private CommentReplyCommentService replyCommentService;
 
+    @Resource
+    private CommentLikeService commentLikeService;
+
     @Autowired
     private OSSUtils ossUtils;
 
@@ -70,7 +77,7 @@ public class CommentController {
      */
     @SaCheckLogin
     @PostMapping("/replyToVideo")
-    public ResponseResult<Boolean> replyToVideo(@RequestBody CommentParams commentParams) {
+    public ResponseResult<Boolean> replyToVideo(@RequestBody @Valid CommentParams commentParams) {
 
         String loginId = (String) StpUtil.getLoginId();
 
@@ -93,7 +100,7 @@ public class CommentController {
             commentId = commentService.saveComment(commentParams.getContent(), user);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"服务器内部错误",false);
+            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR, "服务器内部错误", false);
         }
 
         if (commentId == null) {
@@ -124,7 +131,7 @@ public class CommentController {
 
     @SaCheckLogin
     @PostMapping("/replyToComment")
-    public ResponseResult<Boolean> replyToComment(@RequestBody ReplyCommentParams params) {
+    public ResponseResult<Boolean> replyToComment(@RequestBody @Valid ReplyCommentParams params) {
         String loginId = (String) StpUtil.getLoginId();
         ResponseResult<MUser> userInfoRes = authServices.getUserInfo(loginId);
         if (userInfoRes.getCode() != 200) {
@@ -133,14 +140,13 @@ public class CommentController {
         }
 
 
-
         MUser user = userInfoRes.getData();
 
         String commentId = null;
         try {
             commentId = commentService.saveComment(params.getContent(), user);
         } catch (Exception e) {
-            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"服务器内部错误",false);
+            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR, "服务器内部错误", false);
         }
 
 
@@ -165,23 +171,24 @@ public class CommentController {
 
 
     /**
+     * @Warn 已废弃
      * 查询视频信息下的评论
      * videoInfoId
      * mode : 查询模式：0为按时间，1为按热度
      *
      * @return ResponseResult
      */
-    @GetMapping("/comment_item")
-    public ResponseResult<List<CommentItemVo>> commentItem(@RequestParam String videoInfoId, @RequestParam Integer mode, @RequestParam Integer page) {
+    @GetMapping("/v1/comment_item")
+    public ResponseResult<List<CommentItemVo>> commentItem(@RequestParam @NotNull String videoInfoId, @RequestParam @NotNull Integer mode, @NotNull @RequestParam Integer page) {
 
         Integer pageSize = 20;
 
         //通过videoinfoid查询commentId
         List<String> commentIds =
-                mode==1?
-                commentService.queryCommentIdsByVideoInfoIdSortByLikeCount(videoInfoId,page,pageSize)
-                :
-                commentService.queryCommentIdsByVideoInfoIdSortByTime(videoInfoId,page,pageSize);
+                mode == 1 ?
+                        commentService.queryCommentIdsByVideoInfoIdSortByLikeCount(videoInfoId, page, pageSize)
+                        :
+                        commentService.queryCommentIdsByVideoInfoIdSortByTime(videoInfoId, page, pageSize);
 
         if (commentIds.size() == 0) {
             return new ResponseResult<>(HttpStatus.HTTP_OK, "没有评论", new ArrayList<CommentItemVo>());
@@ -226,7 +233,7 @@ public class CommentController {
             CommentItemVo vo = new CommentItemVo();
             BeanUtil.copyProperties(c, vo);
 
-            vo.setUserAvatarUrl(ossUtils.makeUrl(vo.getUserAvatarBucket(),vo.getUserAvatarPath()));
+            vo.setUserAvatarUrl(ossUtils.makeUrl(vo.getUserAvatarBucket(), vo.getUserAvatarPath()));
 
             vo.setChildren(new ArrayList<>());
             //获取子评论ids
@@ -254,9 +261,9 @@ public class CommentController {
             commentItemVos.add(vo);
         }
 
-        if (mode==1){
+        if (mode == 1) {
             commentItemVos = commentItemVos.stream().sorted(Comparator.comparing(CommentItemVo::getLikeCount).reversed()).collect(Collectors.toList());
-        }else {
+        } else {
             commentItemVos = commentItemVos.stream().sorted(Comparator.comparing(CommentItemVo::getCreateTime).reversed()).collect(Collectors.toList());
         }
 
@@ -266,8 +273,67 @@ public class CommentController {
     }
 
 
+    @Resource
+    private VideoCommentService videoCommentService;
+
+
+
+    //TODO 缓存优化
+    @GetMapping("/comment_item")
+    public ResponseResult<List<CommentItemVo>> commentItem2(@RequestParam @NotNull String videoInfoId, @RequestParam @NotNull Integer mode, @RequestParam @NotNull Integer page) {
+
+
+        List<Comment> comments = videoCommentService.queryCommentByVideoInfoId(videoInfoId, mode, page, 20);
+
+        List<CommentItemVo> res = new ArrayList<>();
+
+        if (comments.isEmpty()){
+            return new ResponseResult<>(HttpStatus.HTTP_OK,"success",res);
+        }
+
+        List<String> fatherCommentIds = comments.stream().map(Comment::getId).collect(Collectors.toList());
+
+
+        Map<String, List<Comment>> fatherId_ChildCommentList = videoCommentService.queryChildComment(fatherCommentIds);
+
+
+        for (Comment comment : comments) {
+
+            CommentItemVo itemVo = new CommentItemVo();
+            BeanUtil.copyProperties(comment,itemVo);
+            List<CommentChild> childVos = new ArrayList<>();
+
+            List<Comment> childComments = fatherId_ChildCommentList.get(comment.getId());
+            for (Comment childComment : childComments) {
+                CommentChild child = new CommentChild();
+                child.setId(childComment.getId());
+                child.setUserId(childComment.getUserId());
+                child.setNickName(childComment.getUserNickname());
+                child.setContent(childComment.getContent());
+                childVos.add(child);
+            }
+            itemVo.setChildren(childVos);
+            res.add(itemVo);
+
+        }
+
+        String loginId = null;
+
+        if (StpUtil.isLogin()){
+            loginId = (String) StpUtil.getLoginId();
+        }
+        log.info("设置视频评论点赞情况");
+        commentLikeService.setLikeStatus(res,loginId);
+
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"success",res);
+
+
+    }
+
+
     @GetMapping("/comment_reply")
-    public ResponseResult<List<ReplyVo>> commentReply(@RequestParam String fatherCommentId) {
+    public ResponseResult<List<ReplyVo>> commentReply(@RequestParam @NotNull String fatherCommentId) {
         List<ReplyVo> replyVos = new ArrayList<>();
         List<CommentReplyComment> commentReplyCommentList = replyCommentService.list(new LambdaQueryWrapper<CommentReplyComment>().eq(CommentReplyComment::getFatherCommentId, fatherCommentId));
 
@@ -287,7 +353,7 @@ public class CommentController {
                 ReplyVo replyVo = new ReplyVo();
                 replyVo.setId(rep.getId());
                 replyVo.setReplierId(rep.getUserId());
-                replyVo.setAvatar(ossUtils.makeUrl(rep.getUserAvatarBucket(),rep.getUserAvatarPath()));
+                replyVo.setAvatar(ossUtils.makeUrl(rep.getUserAvatarBucket(), rep.getUserAvatarPath()));
                 replyVo.setReplierName(rep.getUserNickname());
                 replyVo.setLevel(rep.getUserLevel());
                 replyVo.setToId(com.getUserId());
@@ -303,6 +369,14 @@ public class CommentController {
         }
 
 
+        String loginId = null;
+        if (StpUtil.isLogin()){
+            loginId = (String) StpUtil.getLoginId();
+        }
+
+        commentLikeService.setReplyLikeStatus(replyVos,loginId);
+
+
         return new ResponseResult<>(HttpStatus.HTTP_OK, "获取回复成功", replyVos);
 
     }
@@ -310,19 +384,20 @@ public class CommentController {
 
     /**
      * delete comment
+     *
      * @param params CommentDeleteParams
      * @return boolean
      */
     @SaCheckLogin
     @PostMapping("/delete")
-    public ResponseResult<Boolean> deleteComment(@Validated @RequestBody CommentDeleteParams params) {
+    public ResponseResult<Boolean> deleteComment(@RequestBody @Valid CommentDeleteParams params) {
 
         String loginId = (String) StpUtil.getLoginId();
 
         Comment comment = commentService.getOne(new LambdaQueryWrapper<Comment>().eq(Comment::getId, params.getCommentId()).select(Comment::getUserId));
 
         if (comment == null) {
-            return  new ResponseResult<>(HttpStatus.HTTP_OK, "该评论不存在", false);
+            return new ResponseResult<>(HttpStatus.HTTP_OK, "该评论不存在", false);
         }
 
         if (!comment.getUserId().equals(loginId)) {

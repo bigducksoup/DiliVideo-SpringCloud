@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -28,6 +30,10 @@ public class CommentVideoinfo implements Serializable {
      * 视频信息Id
      */
     private String videoinfoId;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     /**
      * 是否可用

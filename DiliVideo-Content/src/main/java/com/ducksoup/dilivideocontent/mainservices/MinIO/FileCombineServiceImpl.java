@@ -54,7 +54,7 @@ public class FileCombineServiceImpl implements FileCombineService{
 
 
     @Autowired
-    private ThreadPoolTaskExecutor MinIOThreadPool;
+    private ThreadPoolTaskExecutor IOThreadPool;
 
     @Override
     public File combineChunks(Set<VideoChunk> chunkSet,String fileName) {
@@ -69,7 +69,7 @@ public class FileCombineServiceImpl implements FileCombineService{
         CountDownLatch countDownLatch = new CountDownLatch(chunkList.size());
 
         for (VideoChunk item : chunkList) {
-            MinIOThreadPool.execute(() -> {
+            IOThreadPool.execute(() -> {
                 File file = null;
                 try {
                     file = downLoadFromMinIOService.downLoadObject(item.getChunkBucket(), item.getChunkPath(), item.getOriginalName());

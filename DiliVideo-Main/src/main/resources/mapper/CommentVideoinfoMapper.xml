@@ -15,4 +15,18 @@
         Id,comment_id,videoinfo_id,
         status
     </sql>
+    <select id="queryCommentByVideoInfoId" resultType="com.ducksoup.dilivideomain.entity.Comment">
+
+        SELECT c.* from m_comment c,m_comment_videoinfo cv WHERE c.Id = cv.comment_id and cv.videoinfo_id = #{videoInfoId}
+        <if test="mode==1">
+            ORDER BY c.like_count DESC
+        </if>
+        <if test="mode==0">
+            ORDER BY c.create_time DESC
+        </if>
+
+        LIMIT #{limit01},#{limit02}
+
+
+    </select>
 </mapper>

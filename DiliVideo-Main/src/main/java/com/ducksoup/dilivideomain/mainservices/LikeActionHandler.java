@@ -42,7 +42,7 @@ public class LikeActionHandler {
      */
 
     @PerformanceLog
-    public boolean doHandel(BiConsumer<String,Long> consumer){
+    public boolean doHandel(BiConsumer<String,Integer> consumer){
 
         Assert.notNull(targetId,"被（取消）点赞对象id不可以为null");
         Assert.notNull(userId,"用户id不可以为null");
@@ -65,7 +65,7 @@ public class LikeActionHandler {
 
 
         if (redisUtil.get(REDISLOCK+targetId)==null){
-            consumer.accept(targetId, (Long) redisUtil.get(like_count_key));
+            consumer.accept(targetId, (Integer) redisUtil.get(like_count_key));
             redisUtil.set(REDISLOCK+targetId,1,3L, TimeUnit.MINUTES);
         }
 

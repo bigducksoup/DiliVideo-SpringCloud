@@ -3,6 +3,8 @@ package com.ducksoup.dilivideolive.service.impl;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_LIVE;
 import com.ducksoup.dilivideolive.entity.LiveRoom;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -42,8 +46,15 @@ public class LiveServerServiceImpl extends ServiceImpl<LiveServerMapper, LiveSer
         //baseUrl
         String baseUrl = server.getProtocol()+"://"+ipAndPort;
 
+
+        Map<String,String> info = new HashMap<>();
+        info.put("userId",userId);
+        info.put("roomId",room.getId());
+        info.put("appName","push");
+        info.put("serverAddr",ipAndPort);
+
         //加密前的内容
-        String content = room.getId()+"::::::::"+userId;
+        String content = JSON.toJSONString(info);
 
         SecretKey secretKey = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue());
 

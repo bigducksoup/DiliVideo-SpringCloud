@@ -1,5 +1,7 @@
 package com.ducksoup.dilivideomain.config;
 
+import com.ducksoup.dilivideobase.aspect.CacheAspect;
+import com.ducksoup.dilivideobase.seivices.Impl.RedisCacheService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,4 +47,18 @@ public class RedisConfig {
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
+
+    @Bean
+    public RedisCacheService redisCacheService(RedisTemplate<Serializable,Object> redisTemplate){
+        return new RedisCacheService(redisTemplate);
+    }
+
+
+    @Bean
+    public CacheAspect cacheAspect(RedisCacheService redisCacheService){
+        CacheAspect cacheAspect = new CacheAspect();
+        cacheAspect.setCacheService(redisCacheService);
+        return cacheAspect;
+    }
+
 }

@@ -5,18 +5,28 @@
 <mapper namespace="com.ducksoup.dilivideocontent.mapper.TagMapper">
 
     <resultMap id="BaseResultMap" type="com.ducksoup.dilivideocontent.entity.Tag">
-            <id property="id" column="id" jdbcType="CHAR"/>
-            <result property="tagNo" column="tag_no" jdbcType="INTEGER"/>
-            <result property="tagName" column="tag_name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="status" column="status" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="CHAR"/>
+        <result property="tagNo" column="tag_no" jdbcType="INTEGER"/>
+        <result property="tagName" column="tag_name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,tag_no,tag_name,
+        id
+        ,tag_no,tag_name,
         description,create_time,update_time,
         status
     </sql>
+    <select id="queryTagsByVideoInfoId" resultType="com.ducksoup.dilivideocontent.entity.Tag">
+        SELECT t.*
+        from ct_tag t,
+             ct_videoInfo_tag v
+        WHERE t.`status` = 1
+          and v.`status` = 1
+          and t.id = v.tag_id
+          and v.video_info_id = #{videoInfoId}
+    </select>
 </mapper>

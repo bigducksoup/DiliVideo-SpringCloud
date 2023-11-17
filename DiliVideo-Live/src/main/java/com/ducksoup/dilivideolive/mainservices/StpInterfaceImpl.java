@@ -1,4 +1,4 @@
-package com.ducksoup.dilivideolive.mainservices.Impl;
+package com.ducksoup.dilivideolive.mainservices;
 
 import cn.dev33.satoken.stp.StpInterface;
 

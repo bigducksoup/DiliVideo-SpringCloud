@@ -10,6 +10,7 @@ import com.ducksoup.dilivideocontent.entity.Videoinfo;
 import com.ducksoup.dilivideocontent.service.VideofileService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.OSSUtils;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_STATUS;
 import com.ducksoup.dilivideoentity.content.FileInfoUpdateParam;
 import com.ducksoup.dilivideoentity.content.VideoAuthorInfoUpdateParams;
 import com.ducksoup.dilivideoentity.content.VideoInfoUpdateParams;
@@ -56,7 +57,9 @@ public class FeignVideoInfoController {
         videofile.setUniqueName(newUniqueName);
         videofile.setFullpath(newFullPath);
 
+
         videofileService.updateById(videofile);
+        videoinfoService.update(new LambdaUpdateWrapper<Videoinfo>().eq(Videoinfo::getId,videofile.getVideoinfoId()).set(Videoinfo::getMarkStatus, CONSTANT_STATUS.VIDEO_STATUS_CHECKING));
 
 
         return videoinfoService.update(
@@ -78,7 +81,7 @@ public class FeignVideoInfoController {
     }
 
 
-    @PostMapping("/feign/video_info/update_video_author_info")
+    @PostMapping("/update_video_author_info")
     public Boolean updateVideoAuthorInfo(@RequestBody VideoAuthorInfoUpdateParams params){
 
         return videoinfoService.update(new LambdaUpdateWrapper<Videoinfo>().eq(Videoinfo::getAuthorid,params.getAuthorId())

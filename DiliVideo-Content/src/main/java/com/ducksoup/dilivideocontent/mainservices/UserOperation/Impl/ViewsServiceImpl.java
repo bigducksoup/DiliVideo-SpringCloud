@@ -11,8 +11,11 @@ import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -91,6 +94,27 @@ public class ViewsServiceImpl implements ViewsService {
      */
     @Override
     public void setVideoListViewCount(List<VideoInfoVo> videoInfoVos) {
-        videoInfoVos.forEach(this::setVideoViewCount);
+
+
+        List<String> keys = videoInfoVos.stream().map(item->VIDEO_VIEW_PREFIX+item.getVideoInfoId()).collect(Collectors.toList());
+        List<Integer> list = redisUtil.mget(keys);
+
+        Map<String, Serializable> map = new HashMap<>();
+
+        for (int i = 0; i < videoInfoVos.size(); i++) {
+            VideoInfoVo videoInfoVo = videoInfoVos.get(i);
+            Integer viewCount = list.get(i);
+
+            if (viewCount==null){
+                map.put(keys.get(i),viewCount);
+                viewCount = 0;
+            }
+            videoInfoVo.setWatchCount(Long.valueOf(viewCount));
+        }
+
+        redisUtil.mset(map);
+
+
+
     }
 }

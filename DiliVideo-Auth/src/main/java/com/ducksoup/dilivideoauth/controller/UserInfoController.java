@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.ducksoup.dilivideoauth.controller.Params.UserInfoUpdateParams;
 import com.ducksoup.dilivideoauth.entity.Avatar;
 import com.ducksoup.dilivideoauth.entity.MUser;
+import com.ducksoup.dilivideoauth.mainServices.UserInfoService;
 import com.ducksoup.dilivideoauth.service.AvatarService;
 import com.ducksoup.dilivideoauth.service.MUserService;
 import com.ducksoup.dilivideoauth.utils.OSSUtils;
@@ -21,6 +22,7 @@ import com.ducksoup.dilivideofeign.content.VideoInfoServices;
 import com.ducksoup.dilivideofeign.main.TextInfoServices;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +47,12 @@ public class UserInfoController {
 
     @Resource
     private VideoInfoServices videoInfoServices;
+
+    @Resource
+    private UserInfoService userInfoService;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     @GetMapping("/basic")
     public ResponseResult<UserVo> getUserBasicInfo(@RequestParam String userId){
@@ -81,26 +89,12 @@ public class UserInfoController {
     public ResponseResult<Boolean> updateUserInfo(@RequestBody @Validated UserInfoUpdateParams params){
 
         String loginId = (String) StpUtil.getLoginId();
-        DateTime time = null;
-        if (params.getBirthDay()!=null){
-            time = DateUtil.parse(params.getBirthDay(), "yyyy-MM-dd");
-        }
-
-        //更新基本信息
-        boolean update = userService.update(new LambdaUpdateWrapper<MUser>()
-                .eq(MUser::getId, loginId)
-                .set(params.getName() != null, MUser::getNickname, params.getName())
-                .set(params.getSummary() != null, MUser::getSummary, params.getSummary())
-                .set(time != null, MUser::getBirthday, time)
-                .set(params.getGender() != null, MUser::getGender, params.getGender())
-        );
 
         //更新视频信息中的作者信息
         VideoAuthorInfoUpdateParams videoAuthorInfoUpdateParams = new VideoAuthorInfoUpdateParams();
         videoAuthorInfoUpdateParams.setNickName(params.getName());
         videoAuthorInfoUpdateParams.setSummary(params.getSummary());
         videoAuthorInfoUpdateParams.setAuthorId(loginId);
-        videoInfoServices.updateVideoAuthorInfo(videoAuthorInfoUpdateParams);
 
 
         // 更新Post和Comment中的作者信息
@@ -108,9 +102,18 @@ public class UserInfoController {
         textUserInfoUpdateParams.setNickName(params.getName());
         textUserInfoUpdateParams.setUserId(loginId);
 
-        textInfoServices.updateUserInfo(textUserInfoUpdateParams);
 
-        return update? new ResponseResult<>(HttpStatus.HTTP_OK,"更新成功",true):
+
+        //事务更新信息
+        Boolean update = transactionTemplate.execute(status -> {
+            boolean basicInfo = userInfoService.updateUserBasicInfo(params, loginId);
+            textInfoServices.updateUserInfo(textUserInfoUpdateParams);
+            videoInfoServices.updateVideoAuthorInfo(videoAuthorInfoUpdateParams);
+            return basicInfo;
+        });
+
+
+        return Boolean.TRUE.equals(update) ? new ResponseResult<>(HttpStatus.HTTP_OK,"更新成功",true):
                 new ResponseResult<>(HttpStatus.HTTP_OK,"更新失败",false);
 
 

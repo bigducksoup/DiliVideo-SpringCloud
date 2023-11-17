@@ -37,10 +37,10 @@
         WHERE p.Id in (SELECT post_comment_to_post.comment_id from post_comment_to_post WHERE post_id = #{postId})
         ORDER BY
         <if test="orderByTime == true">
-            p.create_time
+            p.create_time desc
         </if>
         <if test="orderByTime == false">
-            p.like_count
+            p.like_count desc
         </if>
         limit #{start},#{end};
     </select>

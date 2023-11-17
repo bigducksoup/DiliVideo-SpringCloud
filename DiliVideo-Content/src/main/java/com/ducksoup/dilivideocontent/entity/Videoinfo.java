@@ -72,6 +72,11 @@ public class Videoinfo implements Serializable {
     private Integer commentCount;
 
     /**
+     * 视频状态
+     */
+    private Integer markStatus;
+
+    /**
      * 是否可用
      */
     private Integer status;

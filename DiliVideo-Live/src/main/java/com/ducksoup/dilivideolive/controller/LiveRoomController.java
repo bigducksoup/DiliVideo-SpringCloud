@@ -4,7 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
-import com.ducksoup.dilivideofeign.admin.RoleServices;
 import com.ducksoup.dilivideofeign.auth.AuthServices;
 import com.ducksoup.dilivideolive.mainservices.RoleApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;

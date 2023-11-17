@@ -25,6 +25,8 @@ public class LiveControlInfo implements Serializable {
      */
     private String liveRoomId;
 
+    private String serverUrl;
+
     /**
      * 
      */
@@ -33,7 +35,7 @@ public class LiveControlInfo implements Serializable {
     /**
      * 
      */
-    private String call;
+    private String callConnect;
 
     /**
      * use this to control stream

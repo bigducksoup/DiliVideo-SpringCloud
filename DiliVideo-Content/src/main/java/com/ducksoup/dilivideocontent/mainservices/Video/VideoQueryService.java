@@ -8,4 +8,7 @@ public interface VideoQueryService {
 
     List<VideoInfoVo> getRecommend(Integer page);
 
+
+    List<VideoInfoVo> getRelatedVideo(String videoInfoId);
+
 }

@@ -50,6 +50,9 @@ public class CommentItemVo {
      */
     private Integer userLevel;
 
+
+    private boolean liked;
+
     /**
      * 内容
      */

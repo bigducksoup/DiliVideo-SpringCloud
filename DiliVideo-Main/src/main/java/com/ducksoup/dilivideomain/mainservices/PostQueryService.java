@@ -1,5 +1,6 @@
 package com.ducksoup.dilivideomain.mainservices;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +52,9 @@ public class PostQueryService {
 
     @Autowired
     private OSSUtils ossUtils;
+
+    @Resource
+    private PostLikeService postLikeService;
 
 
     public List<PostVo> getPostByUserId(String userId,Integer page,boolean video_only){
@@ -175,6 +181,9 @@ public class PostQueryService {
             postVo.setModuleVO(moduleVo);
             res.add(postVo);
         });
+
+        //设置点赞状态
+        postLikeService.setPostLikeStatus(res, StpUtil.isLogin()? (String) StpUtil.getLoginId() :null);
 
         return res;
     }

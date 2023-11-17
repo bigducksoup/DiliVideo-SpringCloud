@@ -33,7 +33,6 @@ public class VideoInfoForm {
     @NotNull
     private String code;
 
-    @NotNull
     private List<String> tagIds;
 
 }

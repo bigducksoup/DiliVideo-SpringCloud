@@ -47,6 +47,7 @@ public class PostVo {
     private ModuleVo moduleVO;
 
 
+    private boolean liked;
 
 
 

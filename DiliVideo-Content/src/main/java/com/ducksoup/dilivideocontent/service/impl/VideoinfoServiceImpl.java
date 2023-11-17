@@ -3,16 +3,22 @@ package com.ducksoup.dilivideocontent.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ducksoup.dilivideocontent.aop.annonation.PerformanceLog;
 import com.ducksoup.dilivideocontent.entity.Cover;
 import com.ducksoup.dilivideocontent.entity.Videoinfo;
+import com.ducksoup.dilivideocontent.mainservices.UserOperation.LikeOperationService;
+import com.ducksoup.dilivideocontent.mainservices.UserOperation.ViewsService;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.mapper.VideoinfoMapper;
 import com.ducksoup.dilivideocontent.utils.OSSUtils;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_STATUS;
 import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +29,7 @@ import java.util.stream.Collectors;
 * @description 针对表【ct_videoinfo】的数据库操作Service实现
 * @createDate 2023-03-08 19:16:37
 */
+@Slf4j
 @Service
 public class VideoinfoServiceImpl extends ServiceImpl<VideoinfoMapper, Videoinfo>
     implements VideoinfoService{
@@ -34,7 +41,14 @@ public class VideoinfoServiceImpl extends ServiceImpl<VideoinfoMapper, Videoinfo
     @Autowired
     private OSSUtils ossUtils;
 
+    @Resource
+    private ViewsService viewsService;
 
+    @Resource
+    private LikeOperationService likeOperationService;
+
+
+    @PerformanceLog
     @Override
     public List<VideoInfoVo> getVideoInfoVoByVideoInfo(List<Videoinfo> videoinfos) {
 
@@ -94,8 +108,16 @@ public class VideoinfoServiceImpl extends ServiceImpl<VideoinfoMapper, Videoinfo
 
         });
 
+
+
+
+        viewsService.setVideoListViewCount(videoInfoVos);
+        likeOperationService.setVideoLikeStatus(videoInfoVos);
+
+
         return videoInfoVos;
     }
+
 
     @Override
     public List<VideoInfoVo> getPublishedVideoById(String userId,int page,int pageSize) {
@@ -103,7 +125,7 @@ public class VideoinfoServiceImpl extends ServiceImpl<VideoinfoMapper, Videoinfo
 
         Page<Videoinfo> pager = new Page<>(page,pageSize);
 
-        this.page(pager,new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus,1).eq(Videoinfo::getAuthorid,userId).orderByDesc(Videoinfo::getCreateTime));
+        this.page(pager,new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus,1).eq(Videoinfo::getMarkStatus, CONSTANT_STATUS.VIDEO_STATUS_READY).eq(Videoinfo::getAuthorid,userId).orderByDesc(Videoinfo::getCreateTime));
 
         List<Videoinfo> videoinfos = pager.getRecords();
 

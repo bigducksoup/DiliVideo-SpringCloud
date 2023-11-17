@@ -6,6 +6,8 @@ import com.ducksoup.dilivideocontent.service.TagService;
 import com.ducksoup.dilivideocontent.mapper.TagMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
 * @author meichuankutou
 * @description 针对表【ct_tag】的数据库操作Service实现
@@ -15,6 +17,10 @@ import org.springframework.stereotype.Service;
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
     implements TagService{
 
+    @Override
+    public List<Tag> getTagsByVideoInfoId(String videoInfoId) {
+        return baseMapper.queryTagsByVideoInfoId(videoInfoId);
+    }
 }
 
 

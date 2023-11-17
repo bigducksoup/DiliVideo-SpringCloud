@@ -14,9 +14,11 @@ import com.ducksoup.dilivideofeign.auth.AuthServices;
 import com.ducksoup.dilivideomain.controller.params.CommentDeleteParams;
 import com.ducksoup.dilivideomain.controller.params.PostCommentParams;
 import com.ducksoup.dilivideomain.controller.params.ReplyPostCommentParams;
+import com.ducksoup.dilivideomain.entity.Comment;
 import com.ducksoup.dilivideomain.entity.PostComment;
 import com.ducksoup.dilivideomain.entity.PostCommentReplyComment;
 import com.ducksoup.dilivideomain.entity.PostCommentToPost;
+import com.ducksoup.dilivideomain.mainservices.MyPostCommentService;
 import com.ducksoup.dilivideomain.utils.OSSUtils;
 import com.ducksoup.dilivideomain.dto.IdMap;
 import com.ducksoup.dilivideomain.service.PostCommentReplyCommentService;
@@ -30,7 +32,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,6 +68,10 @@ public class PostCommentController {
     private OSSUtils ossUtils;
 
 
+    @Resource
+    private MyPostCommentService myPostCommentService;
+
+
     /**
      * 回复动态
      *
@@ -71,7 +80,7 @@ public class PostCommentController {
      */
     @SaCheckLogin
     @PostMapping("/reply_to_post")
-    public ResponseResult<Boolean> replyToPost(@RequestBody PostCommentParams params) {
+    public ResponseResult<Boolean> replyToPost(@RequestBody @Valid PostCommentParams params) {
         String loginId = (String) StpUtil.getLoginId();
 
         //获取用户信息
@@ -119,7 +128,7 @@ public class PostCommentController {
 
     @SaCheckLogin
     @PostMapping("/reply_to_post_comment")
-    public ResponseResult<Boolean> replyToPostComment(@RequestBody ReplyPostCommentParams params) {
+    public ResponseResult<Boolean> replyToPostComment(@RequestBody @Valid ReplyPostCommentParams params) {
 
         String loginId = (String) StpUtil.getLoginId();
 
@@ -165,6 +174,7 @@ public class PostCommentController {
     }
 
 
+    // TODO test
     @GetMapping("/get_comments")
     public ResponseResult<List<PostCommentVo>> getComments(@RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String postId, @RequestParam boolean orderByTime) {
 
@@ -175,34 +185,11 @@ public class PostCommentController {
             return new ResponseResult<>(HttpStatus.HTTP_OK, "暂无评论", new ArrayList<>());
         }
 
-        List<String> commentIds = postComments.stream().map(PostComment::getId).collect(Collectors.toList());
+        List<String> fatherCommentIds = postComments.stream().map(PostComment::getId).collect(Collectors.toList());
 
 
-        //获取父评论的子评论
-        List<PostCommentReplyComment> fatherIdReplyId = postCommentReplyCommentService.list(
-                new LambdaQueryWrapper<PostCommentReplyComment>()
-                        .in(PostCommentReplyComment::getFatherCommentId, commentIds)
-        );
-        //分类子评论
-        Map<String, List<PostCommentReplyComment>> fatherIdMapChildId = fatherIdReplyId.stream().collect(Collectors.groupingBy(
-                item -> {
-                    for (String fatherId : commentIds) {
-                        if (fatherId.equals(item.getFatherCommentId())) return fatherId;
-                    }
-                    return "none";
-                }
-        ));
+        Map<String, List<PostComment>> fatherId_ChildCommentList = myPostCommentService.queryChildPostComments(fatherCommentIds);
 
-
-        //子评论id集合
-        List<String> childCommentIds = fatherIdReplyId.stream().map(PostCommentReplyComment::getReplyCommentId).collect(Collectors.toList());
-
-
-        //子评论集合
-        List<PostComment> childComments = new ArrayList<>();
-        if (childCommentIds.size() != 0) {
-            childComments = postCommentService.list(new LambdaQueryWrapper<PostComment>().in(PostComment::getId, childCommentIds).orderByAsc(PostComment::getCreateTime));
-        }
 
         List<PostCommentVo> response = new ArrayList<>();
 
@@ -210,37 +197,22 @@ public class PostCommentController {
 
             PostCommentVo postCommentVo = new PostCommentVo();
             BeanUtil.copyProperties(item, postCommentVo);
-            postCommentVo.setChild(new ArrayList<>());
             postCommentVo.setUserAvatarUrl(ossUtils.makeUrl(item.getUserAvatarBucket(), item.getUserAvatarPath()));
 
+            List<CommentChild> childVos = new ArrayList<>();
 
-            //子评论是否存在
-            List<PostCommentReplyComment> childCommentsIdInMap = fatherIdMapChildId.get(item.getId());
+            List<PostComment> childComments = fatherId_ChildCommentList.get(item.getId());
 
-            if (childCommentsIdInMap != null) {
-                //子评论id
-                List<String> childCommentsIds = childCommentsIdInMap.stream().map(PostCommentReplyComment::getReplyCommentId).collect(Collectors.toList());
-
-                //过滤不是item的子评论
-                List<PostComment> children = childComments.stream().filter(element -> childCommentsIds.contains(element.getId())).collect(Collectors.toList());
-
-                List<CommentChild> childrenVos = new ArrayList<>();
-
-                for (PostComment child : children){
-                    CommentChild commentChild = new CommentChild();
-                    commentChild.setId(child.getId());
-                    commentChild.setUserId(child.getUserId());
-                    commentChild.setNickName(child.getUserNickname());
-                    commentChild.setContent(child.getContent());
-
-
-                    childrenVos.add(commentChild);
-                    if (childrenVos.size()>=5)break;
-                }
-
-                postCommentVo.getChild().addAll(childrenVos);
-
+            for (PostComment childComment : childComments) {
+                CommentChild commentChild = new CommentChild();
+                commentChild.setId(childComment.getId());
+                commentChild.setUserId(childComment.getUserId());
+                commentChild.setNickName(childComment.getUserNickname());
+                commentChild.setContent(childComment.getContent());
+                childVos.add(commentChild);
             }
+            postCommentVo.setChild(childVos);
+
 
             response.add(postCommentVo);
         }
@@ -309,7 +281,7 @@ public class PostCommentController {
      * TODO test
      */
     @PostMapping("/delete")
-    public ResponseResult<Boolean> delete(@RequestBody CommentDeleteParams params){
+    public ResponseResult<Boolean> delete(@RequestBody @Valid CommentDeleteParams params){
 
         String loginId = (String) StpUtil.getLoginId();
 

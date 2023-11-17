@@ -289,7 +289,7 @@ public class PostOperationService {
 
 
     @Async(value = "ThreadPool")
-    public void updatePostLikeCount(String postId,Long likeCount){
+    public void updatePostLikeCount(String postId,Integer likeCount){
         postService.update(new LambdaUpdateWrapper<Post>().eq(Post::getId,postId).set(Post::getLikeCount,likeCount));
     }
 

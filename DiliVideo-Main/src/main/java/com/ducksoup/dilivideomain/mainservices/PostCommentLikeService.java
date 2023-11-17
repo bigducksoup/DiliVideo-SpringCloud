@@ -18,7 +18,7 @@ public class PostCommentLikeService {
 
 
     @Async(value = "ThreadPool")
-    public void updatePostCommentLikeCount(String postCommentId,Long count){
+    public void updatePostCommentLikeCount(String postCommentId,Integer count){
 
         postCommentService.update(new LambdaUpdateWrapper<PostComment>().eq(PostComment::getId,postCommentId).set(PostComment::getLikeCount,count));
 

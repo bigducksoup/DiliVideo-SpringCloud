@@ -3,7 +3,6 @@ package com.ducksoup.dilivideocontent.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,6 +13,7 @@ import com.ducksoup.dilivideocontent.mainservices.Video.VideoQueryService;
 import com.ducksoup.dilivideocontent.service.CoverService;
 import com.ducksoup.dilivideocontent.service.VideoinfoService;
 import com.ducksoup.dilivideocontent.utils.TimeUtils;
+import com.ducksoup.dilivideoentity.constant.CONSTANT_STATUS;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import com.ducksoup.dilivideoentity.vo.VideoInfoVo;
 import lombok.extern.slf4j.Slf4j;
@@ -77,12 +77,12 @@ public class RecommendController {
         LocalDate end = TimeUtils.getEndOfCurrentWeek();
 
 
-        videoinfoService.page(pager, new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus, 1).between(Videoinfo::getCreateTime, start, end).orderByDesc(Videoinfo::getWatchCount));
+        videoinfoService.page(pager, new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus, 1).eq(Videoinfo::getMarkStatus, CONSTANT_STATUS.VIDEO_STATUS_READY).between(Videoinfo::getCreateTime, start, end).orderByDesc(Videoinfo::getWatchCount));
 
         List<Videoinfo> records = pager.getRecords();
 
         if (records.isEmpty()){
-            videoinfoService.page(pager, new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus, 1).orderByDesc(Videoinfo::getWatchCount));
+            videoinfoService.page(pager, new LambdaQueryWrapper<Videoinfo>().eq(Videoinfo::getStatus, 1).eq(Videoinfo::getMarkStatus, CONSTANT_STATUS.VIDEO_STATUS_READY).orderByDesc(Videoinfo::getWatchCount));
             records = pager.getRecords();
         }
 
@@ -95,6 +95,25 @@ public class RecommendController {
 
 
     }
+
+
+    /**
+     * 获取视频相关的推荐
+     * @param videoInfoId 视频信息id
+     * @return List<VideoInfoVo>
+     *   TODO test
+     */
+    @GetMapping("/related_video")
+    public ResponseResult<List<VideoInfoVo>> getRelatedVideo(@RequestParam String videoInfoId){
+
+        List<VideoInfoVo> relatedVideo = videoQueryService.getRelatedVideo(videoInfoId);
+
+        return new ResponseResult<>(HttpStatus.HTTP_OK,"查询成功",relatedVideo);
+
+    }
+
+
+
 
 
 }

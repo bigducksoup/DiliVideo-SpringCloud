@@ -3,6 +3,7 @@ package com.ducksoup.dilivideomain;
 import cn.hutool.db.Db;
 import com.ducksoup.dilivideoentity.dto.FileTransmissionInfo;
 import com.ducksoup.dilivideofeign.content.ContentServices;
+import com.ducksoup.dilivideomain.controller.CommentController;
 import com.ducksoup.dilivideomain.service.CommentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,12 @@ import java.util.List;
 @SpringBootTest
 class DiliVideoMainApplicationTests {
 
-
-    @Autowired
-    private ContentServices contentService;
-
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private CommentController commentController;
+
 
     @Test
     void Test() throws IOException {
@@ -40,7 +41,7 @@ class DiliVideoMainApplicationTests {
 
         fileTransmissionInfo.setVideoInfoId("1");
 
-        contentService.transmission(fileTransmissionInfo);
+
     }
 
 
@@ -53,6 +54,18 @@ class DiliVideoMainApplicationTests {
         System.out.println(ids);
         System.out.println(ids2);
     }
+
+
+
+    @Test
+    void applySqlTest(){
+
+        String v = "b588ccdb-9c1d-4f64-b887-8a03aee2861a";
+        commentController.commentItem2(v,0,1);
+
+
+    }
+
 
 
 

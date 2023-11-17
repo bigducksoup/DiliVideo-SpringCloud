@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthCallBackController {
@@ -22,6 +25,9 @@ public class AuthCallBackController {
 
     @Autowired
     private LiveRoomService liveRoomService;
+
+    @Autowired
+    private HttpServletRequest request;
 
 
     @Autowired
@@ -37,8 +43,12 @@ public class AuthCallBackController {
     @PostMapping("/on_publish")
     ResponseEntity<Void> onPublish(OnPublishParams params) {
 
+
+
         //解密key获取RoomId 判断合法性
-        String roomId = liveRoomService.getRoomIdBykey(params.getKey());
+        Map<String,String> roomInfo = liveRoomService.getRoomInfoByKey(params.getKey());
+
+        String roomId = roomInfo.get("roomId");
         if (roomId == null || !roomId.equals(params.getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -48,10 +58,10 @@ public class AuthCallBackController {
 
         try {
             liveInfoService.initRoomInfo(liveRoom);
-            liveInfoService.initRoomControlInfo(params,roomId);
+            liveInfoService.initRoomControlInfo(params,roomInfo);
         } catch (Exception e) {
-            //TODO kick Publish Client
             liveInfoService.deleteRoomInfo(liveRoom);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
 
@@ -62,10 +72,12 @@ public class AuthCallBackController {
     @PostMapping("/on_publish_done")
     ResponseEntity<Void> onPublishDone(OnPublishParams params) {
 
-        String roomId = liveRoomService.getRoomIdBykey(params.getKey());
-        if (roomId == null) {
+        Map<String,String> roomInfo = liveRoomService.getRoomInfoByKey(params.getKey());
+        if (roomInfo == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+
+        String roomId = roomInfo.get("roomId");
 
         LiveRoom liveRoom = liveRoomService.getById(roomId);
 

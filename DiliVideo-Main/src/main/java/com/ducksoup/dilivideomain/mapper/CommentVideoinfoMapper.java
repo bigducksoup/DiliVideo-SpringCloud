@@ -1,7 +1,11 @@
 package com.ducksoup.dilivideomain.mapper;
 
+import com.ducksoup.dilivideomain.entity.Comment;
 import com.ducksoup.dilivideomain.entity.CommentVideoinfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author meichuankutou
@@ -10,6 +14,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.ducksoup.dilivideomain.Entity.CommentVideoinfo
 */
 public interface CommentVideoinfoMapper extends BaseMapper<CommentVideoinfo> {
+
+
+
+
+
+    List<Comment> queryCommentByVideoInfoId(@Param("videoInfoId") String videoInfoId,@Param("mode") int mode,@Param("limit01") int limit01,@Param("limit02") int limit02);
+
 
 }
 

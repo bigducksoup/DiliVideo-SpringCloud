@@ -3,6 +3,8 @@ package com.ducksoup.dilivideolive.service;
 import com.ducksoup.dilivideolive.entity.LiveRoom;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Map;
+
 /**
 * @author meichuankutou
 * @description 针对表【live_room】的数据库操作Service
@@ -13,6 +15,6 @@ public interface LiveRoomService extends IService<LiveRoom> {
     LiveRoom checkRoomReady(String loginId);
 
 
-    String getRoomIdBykey(String key);
+    Map<String,String> getRoomInfoByKey(String key);
 
 }

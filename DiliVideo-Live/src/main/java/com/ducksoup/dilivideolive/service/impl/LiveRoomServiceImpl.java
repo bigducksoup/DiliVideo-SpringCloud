@@ -2,6 +2,7 @@ package com.ducksoup.dilivideolive.service.impl;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_LIVE;
@@ -11,6 +12,9 @@ import com.ducksoup.dilivideolive.mapper.LiveRoomMapper;
 import com.ducksoup.dilivideolive.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
 * @author meichuankutou
@@ -38,8 +42,17 @@ public class LiveRoomServiceImpl extends ServiceImpl<LiveRoomMapper, LiveRoom>
 
     }
 
+    /**
+     * 获取信息
+     * @param key 加密后的内容
+     * @return Map<String,String>
+     *         key:roomId value:roomId
+     *         key:userId value:userId
+     *         key:appName value:appName
+     *         key:serverAddr value:serverAddr
+     */
     @Override
-    public String getRoomIdBykey(String key) {
+    public Map<String,String> getRoomInfoByKey(String key) {
 
         //从redis获取key
         byte[] secretKey = (byte[]) redisUtil.get(CONSTANT_LIVE.LIVE_SECRET_KEY+key);
@@ -47,11 +60,12 @@ public class LiveRoomServiceImpl extends ServiceImpl<LiveRoomMapper, LiveRoom>
 
         AES aes = SecureUtil.aes(secretKey);
 
-        String roomIdandUserId = aes.decryptStr(key);
+        String content = aes.decryptStr(key);
 
-        String[] ru = roomIdandUserId.split("::::::::");
+        Map<String,String> map = JSON.parseObject(content, HashMap.class);
 
-        return ru[0];
+
+        return  map;
     }
 
 
