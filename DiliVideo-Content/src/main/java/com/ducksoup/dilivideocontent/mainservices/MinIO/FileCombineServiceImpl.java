@@ -17,7 +17,6 @@ import com.ducksoup.dilivideocontent.utils.RedisUtil;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -155,15 +154,15 @@ public class FileCombineServiceImpl implements FileCombineService{
         log.info(file.getName()+"合成完毕+code="+code);
 
         try {
-            FileSavedInfo savedInfo = uploadServiceForFile.uploadFile(file, CONSTANT_MinIO.VIDEO_BUCTET, DigestUtil.md5Hex(file));
+            FileSavedInfo savedInfo = uploadServiceForFile.uploadFile(file, CONSTANT_MinIO.VIDEO_BUCKET, DigestUtil.md5Hex(file));
 
             Videofile videofile = new Videofile();
             videofile.setId(UUID.randomUUID().toString());
             videofile.setOriginName(fileName);
             videofile.setUniqueName(savedInfo.getFileName());
             videofile.setPath(savedInfo.getPath());
-            videofile.setBucket(CONSTANT_MinIO.VIDEO_BUCTET);
-            videofile.setFullpath(ossUtils.makeUrl(CONSTANT_MinIO.VIDEO_BUCTET,savedInfo.getPath()));
+            videofile.setBucket(CONSTANT_MinIO.VIDEO_BUCKET);
+            videofile.setFullpath(ossUtils.makeUrl(CONSTANT_MinIO.VIDEO_BUCKET,savedInfo.getPath()));
             videofile.setUploadTime(DateTime.now());
             videofile.setSize(FileUtil.size(file));
             videofile.setState(0);

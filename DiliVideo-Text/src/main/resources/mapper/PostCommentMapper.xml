@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideotext.mapper.PostCommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideotext.entity.PostComment">
+        <id property="id" column="Id" jdbcType="CHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="userNickname" column="user_nickname" jdbcType="VARCHAR"/>
+        <result property="userAvatarUrl" column="user_avatar_url" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="userId" column="user_id" jdbcType="CHAR"/>
+        <result property="likeCount" column="like_count" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="userLevel" column="user_level" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id
+        ,content,user_nickname,
+        user_avatar_url,create_time,user_id,
+        like_count,status,user_level
+    </sql>
+    <select id="queryPostCommentByPostId" resultType="com.ducksoup.dilivideotext.entity.PostComment">
+        SELECT p.Id,
+        p.content,
+        p.user_nickname,
+        p.user_avatar_bucket,
+        p.user_avatar_path,
+        p.user_avatar_url,
+        p.create_time,
+        p.user_id,
+        p.like_count,
+        p.user_level
+        from post_comment p
+        WHERE p.Id in (SELECT post_comment_to_post.comment_id from post_comment_to_post WHERE post_id = #{postId})
+        ORDER BY
+        <if test="orderByTime == true">
+            p.create_time desc
+        </if>
+        <if test="orderByTime == false">
+            p.like_count desc
+        </if>
+        limit #{start},#{end};
+    </select>
+    <select id="queryCommentReplies" resultType="com.ducksoup.dilivideotext.dto.IdMap">
+        SELECT comment_id as Id, reply_comment_id as mapId
+        from post_comment_reply_comment
+        INNER JOIN post_comment on post_comment_reply_comment.reply_comment_id = post_comment.Id
+        WHERE post_comment_reply_comment.father_comment_id = #{commentId} AND post_comment.status = 1
+        ORDER BY
+        <if test="orderByTime == true">
+            post_comment.create_time
+        </if>
+        <if test="orderByTime == false">
+            post_comment.like_count
+        </if>
+        DESC
+        LIMIT #{start},#{end};
+    </select>
+</mapper>

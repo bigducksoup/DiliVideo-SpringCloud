@@ -70,12 +70,6 @@ public class VideoManageController {
     private VideoChunkService videoChunkService;
 
 
-    @Autowired
-    private VideofileService videofileService;
-
-    @Autowired
-    private CoverService coverService;
-
 
 
     @SaCheckLogin

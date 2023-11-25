@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ducksoup.dilivideotext.mapper.PostMapper">
+
+    <resultMap id="BaseResultMap" type="com.ducksoup.dilivideotext.entity.Post">
+            <id property="id" column="Id" jdbcType="CHAR"/>
+            <result property="moduleId" column="module_id" jdbcType="CHAR"/>
+            <result property="topicId" column="topic_id" jdbcType="CHAR"/>
+            <result property="likeCount" column="like_count" jdbcType="INTEGER"/>
+            <result property="commentCount" column="comment_count" jdbcType="INTEGER"/>
+            <result property="shareCount" column="share_count" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id,module_id,topic_id,
+        like_count,comment_count,share_count,
+        create_time,status
+    </sql>
+    <select id="selectByFollowIds"  resultType="com.ducksoup.dilivideotext.entity.Post">
+        SELECT
+            p.*
+        from post p,
+             post_module m
+        WHERE
+            p.module_id = m.Id
+          and
+            m.user_id in
+        <foreach collection="followIds" item="item" open="(" separator="," close=")">#{item}</foreach>
+        <if test='video_only'>
+            and
+            m.type_id =1
+        </if>
+        ORDER BY p.create_time
+        desc
+        LIMIT #{start},#{end}
+    </select>
+
+
+</mapper>

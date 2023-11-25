@@ -28,4 +28,9 @@ public class OSSUtils {
 
     }
 
+
+    private String getMinIOEndPoint(){
+        return minIOEndPoint;
+    }
+
 }

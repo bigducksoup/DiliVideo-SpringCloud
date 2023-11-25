@@ -5,6 +5,7 @@ public class CONSTANT_MAIN {
 
     public static String POST_LIKE_COUNT_PREFIX = "POST_LIKE_COUNT:";
     public static String POST_LIKE_PREFIX = "POST_LIKE:";
+
     public static String POST_LIKE_UPDATE_LOCK = "POSTLIKEUPDATELOCK:";
 
     public static String POST_COMMENT_LIKE_COUNT_PREFIX = "POST_COMMENT LIKE_COUNT:";

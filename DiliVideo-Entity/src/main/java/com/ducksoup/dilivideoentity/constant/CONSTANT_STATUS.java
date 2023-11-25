@@ -26,6 +26,8 @@ public class CONSTANT_STATUS {
 
     public static final int VIDEO_STATUS_BANNED = 5;
 
+    public static final int VIDEO_STATUS_FILE_ERROR = 6;
+
 
 
 

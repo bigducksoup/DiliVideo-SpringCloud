@@ -9,11 +9,15 @@ import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 
 
 @Slf4j
@@ -51,6 +55,42 @@ public class MinioFileDownloadService implements FileDownloadService {
 
         return tempFile;
     }
+
+
+
+    @Override
+    public List<File> multiThreadsDownLoad(List<String> objectNames, String bucket) throws InterruptedException {
+
+        CountDownLatch countDownLatch = new CountDownLatch(objectNames.size());
+
+        List<File> files = new CopyOnWriteArrayList<>();
+
+
+        for (String objectName : objectNames) {
+            new Thread(()->{
+                try {
+                    //获取输入流
+                    InputStream inputStream =  minioClient.getObject(GetObjectArgs.builder().bucket(bucket).object(objectName).build());
+                    //创建文件
+                    File file  = new File(objectName);
+                    //将输入流写入文件
+                    FileUtils.copyInputStreamToFile(inputStream,file);
+                    inputStream.close();
+                    //添加到结果
+                    files.add(file);
+                }catch (Exception e){
+                    log.error(e.getMessage());
+                    throw new RuntimeException(e);
+                }finally {
+                    countDownLatch.countDown();
+                }
+            }).start();
+        }
+
+        countDownLatch.await();
+        return files;
+    }
+
 
 
 }

@@ -40,10 +40,10 @@ public class FFMpegServiceImpl implements FFMpegService {
         FFmpegProbeResult probeResult = ffprobe.probe(videoFile.getAbsolutePath());
 
         //音频流信息
-        FFmpegStream audioStream = probeResult.getStreams().get(0);
+        FFmpegStream videoStream = probeResult.getStreams().get(0);
 
         //视频流信息
-        FFmpegStream videoStream = probeResult.getStreams().get(1);
+        FFmpegStream audioStream = probeResult.getStreams().get(1);
 
         VideoStreamInfo videoStreamInfo = new VideoStreamInfo(videoStream);
 
@@ -75,7 +75,7 @@ public class FFMpegServiceImpl implements FFMpegService {
             throw new RuntimeException(e.getMessage());
         }
 
-        File outputTemp = File.createTempFile(originFile.getName(),"."+finalFormat);
+        File outputTemp = File.createTempFile(originFile.getName().split("\\.")[0],"."+finalFormat);
 
         String codec = "libx264";
 
@@ -98,8 +98,6 @@ public class FFMpegServiceImpl implements FFMpegService {
 
 
         fFmpegExecutor.createJob(fFmpegBuilder, progress -> log.info(progress.toString())).run();
-
-        originFile.delete();
 
         return outputTemp;
 

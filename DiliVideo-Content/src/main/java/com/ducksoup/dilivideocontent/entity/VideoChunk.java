@@ -62,6 +62,8 @@ public class VideoChunk implements Serializable {
      */
     private Integer totalChunkCount;
 
+    private String missionId;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

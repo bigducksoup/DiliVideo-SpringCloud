@@ -2,6 +2,7 @@ package com.ducksoup.dilivideocontent.mapper;
 
 import com.ducksoup.dilivideocontent.entity.VideoinfoTag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author meichuankutou
@@ -10,6 +11,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.ducksoup.dilivideocontent.entity.VideoinfoTag
 */
 public interface VideoinfoTagMapper extends BaseMapper<VideoinfoTag> {
+
+
+    void updateCodeByVideoInfoId(@Param("videoInfoId") String videoInfoId);
+
 
 }
 

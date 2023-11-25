@@ -4,10 +4,13 @@ import cn.hutool.core.io.file.FileNameUtil;
 import com.ducksoup.dilivideotranscoding.services.filestorage.FileUploadService;
 import io.minio.MinioClient;
 import io.minio.UploadObjectArgs;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
 
+
+@Service
 public class MinioFileUploadService implements FileUploadService {
 
 
@@ -27,10 +30,12 @@ public class MinioFileUploadService implements FileUploadService {
 
         minioClient.uploadObject(UploadObjectArgs.builder()
                         .bucket(bucket)
-                        .object(newPathName)
+                        .object(path)
+                        .filename(file.getAbsolutePath())
                 .build());
 
         file.delete();
         return true;
     }
+
 }

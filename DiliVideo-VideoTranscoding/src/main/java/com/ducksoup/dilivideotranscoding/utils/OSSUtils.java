@@ -27,4 +27,18 @@ public class OSSUtils {
 
     }
 
+
+    public String getMinIOEndPoint() {
+        return minIOEndPoint;
+    }
+
+
+    public String generatePath(String md5,String fileName){
+
+        String dir1 = md5.substring(0, 2);
+        String dir2 = md5.substring(2, 4);
+
+        return dir1 + "/" + dir2 + "/" + fileName;
+    }
+
 }

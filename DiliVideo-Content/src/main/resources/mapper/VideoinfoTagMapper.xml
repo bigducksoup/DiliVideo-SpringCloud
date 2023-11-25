@@ -19,4 +19,9 @@
         tag_no,create_time,update_time,
         status
     </sql>
+    <update id="updateCodeByVideoInfoId">
+        update ct_videoInfo_tag vt
+        set vt.tag_no  = ( select t.tag_no from ct_tag t where vt.tag_id = t.id)
+        where vt.video_info_id = #{videoInfoId};
+    </update>
 </mapper>

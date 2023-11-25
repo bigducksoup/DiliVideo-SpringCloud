@@ -2,7 +2,7 @@ package com.ducksoup.dilivideoentity.constant;
 
 public class CONSTANT_MinIO {
 
-    public static String VIDEO_BUCTET = "video";
+    public static String VIDEO_BUCKET = "video";
 
     public static String COVER_BUCKET = "img";
 

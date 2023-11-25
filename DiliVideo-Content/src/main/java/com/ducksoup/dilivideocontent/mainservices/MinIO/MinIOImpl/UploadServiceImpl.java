@@ -58,6 +58,9 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
         String s = DigestUtil.md5Hex(img1);
         System.out.println(s);
         System.out.println(img);
+
+
+
     }
 
 
@@ -92,7 +95,7 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
 
         ObjectWriteResponse video = minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket(CONSTANT_MinIO.VIDEO_BUCTET)
+                        .bucket(CONSTANT_MinIO.VIDEO_BUCKET)
                         .stream(file.getInputStream(), file.getSize(), -1)
                         .object(obj)
                         .build()
@@ -101,10 +104,10 @@ public class UploadServiceImpl implements com.ducksoup.dilivideocontent.mainserv
         Videofile videofile = new Videofile();
         videofile.setOriginName(file.getOriginalFilename());
         videofile.setMd5(md5);
-        videofile.setBucket(CONSTANT_MinIO.VIDEO_BUCTET);
+        videofile.setBucket(CONSTANT_MinIO.VIDEO_BUCKET);
         String[] objsplit = obj.split("\\.");
         String nobj = objsplit[0]+"."+"mp4";
-        videofile.setFullpath(minIOEndPoint+"/"+CONSTANT_MinIO.VIDEO_BUCTET+"/"+nobj);
+        videofile.setFullpath(minIOEndPoint+"/"+CONSTANT_MinIO.VIDEO_BUCKET +"/"+nobj);
         videofile.setId(uuid);
         videofile.setSize(file.getSize());
         videofile.setState(1);

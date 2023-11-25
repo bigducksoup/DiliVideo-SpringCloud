@@ -35,7 +35,7 @@ public class UpLoadToMinIOService {
 
         minioClient.uploadObject(
                 UploadObjectArgs.builder()
-                        .bucket(CONSTANT_MinIO.VIDEO_BUCTET)
+                        .bucket(CONSTANT_MinIO.VIDEO_BUCKET)
                         .object(obj)
                         .build()
         );
