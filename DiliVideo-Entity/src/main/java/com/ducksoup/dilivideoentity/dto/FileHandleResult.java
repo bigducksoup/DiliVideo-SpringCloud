@@ -49,6 +49,10 @@ public class FileHandleResult implements Serializable {
 
     private List<String> chunkPaths;
 
+    private String coverBucket;
+
+    private String coverPath;
+
 
 }
 

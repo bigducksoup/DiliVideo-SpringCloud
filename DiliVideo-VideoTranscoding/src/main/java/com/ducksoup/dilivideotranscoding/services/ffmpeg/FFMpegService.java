@@ -14,5 +14,6 @@ public interface FFMpegService {
     File transcode(File originFile,String originFormat,String finalFormat) throws IOException;
 
 
+    File getFirstFrame(File videoFile) throws IOException, InterruptedException;
 
 }

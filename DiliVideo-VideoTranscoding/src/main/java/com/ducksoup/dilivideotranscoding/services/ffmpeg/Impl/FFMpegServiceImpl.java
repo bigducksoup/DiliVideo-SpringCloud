@@ -1,5 +1,7 @@
 package com.ducksoup.dilivideotranscoding.services.ffmpeg.Impl;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.UUID;
 import com.ducksoup.dilivideotranscoding.entity.AudioStreamInfo;
 import com.ducksoup.dilivideotranscoding.entity.VideoFileDetail;
 import com.ducksoup.dilivideotranscoding.entity.VideoStreamInfo;
@@ -11,8 +13,6 @@ import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
-import net.bramp.ffmpeg.progress.Progress;
-import net.bramp.ffmpeg.progress.ProgressListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -102,4 +102,31 @@ public class FFMpegServiceImpl implements FFMpegService {
         return outputTemp;
 
     }
+
+
+    //TODO test
+   @Override
+    public File getFirstFrame(File videoFile) throws IOException, InterruptedException {
+
+        log.info("获取封面，file={}",videoFile.getAbsolutePath());
+
+        //Create a temporary file with the file name "frame" and the file extension ".png"
+        File tempFile = File.createTempFile(UUID.fastUUID().toString(), ".png");
+
+       String absolutePath = tempFile.getAbsolutePath();
+
+       tempFile.delete();
+
+       //Create a process builder to run the ffmpeg command
+        ProcessBuilder command = new ProcessBuilder().command(ffmpegPath, "-i", videoFile.getAbsolutePath(), "-vf", "select=eq(n\\,0)", "-vframes", "1", absolutePath);
+
+        //Run the command and wait for it to finish
+        command.start().waitFor();
+
+       File file = FileUtil.file(absolutePath);
+       //Return the temporary file
+        return file;
+    }
+
+
 }

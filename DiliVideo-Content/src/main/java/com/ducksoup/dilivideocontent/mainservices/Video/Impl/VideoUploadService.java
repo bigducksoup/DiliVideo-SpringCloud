@@ -28,7 +28,6 @@ import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_STATUS;
 import com.ducksoup.dilivideoentity.mq.MQ_FILE_COMBINE;
 import com.ducksoup.dilivideoentity.mq.messages.VideoCombineMsg;
-import com.ducksoup.dilivideoentity.result.ResponseResult;
 import io.minio.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
@@ -39,14 +38,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.nio.channels.FileChannel;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -154,13 +146,15 @@ public class VideoUploadService {
      */
     public String getChunkUploadUrl(UploadChunkParams params) throws Exception{
 
-        String uploadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                .expiry(1, TimeUnit.HOURS)
-                .bucket(CONSTANT_MinIO.VIDEO_CHUNK_BUCKET)
-                .method(Method.PUT)
-                .object(params.getMissionId() + "/" + params.getMd5() + "." + params.getIndex())
-                .build());
+        log.info("准备获取分片上传地址,missionId:{},index:{}",params.getMissionId(),params.getIndex());
 
+        String uploadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                    .expiry(1, TimeUnit.HOURS)
+                    .bucket(CONSTANT_MinIO.VIDEO_CHUNK_BUCKET)
+                    .method(Method.PUT)
+                    .object(params.getMissionId() + "/" + params.getMd5() + "." + params.getIndex())
+                    .build());
+        log.info("获取到上传地址,missionId:{},index:{},url:{}",params.getMissionId(),params.getIndex(),uploadUrl);
 
         return uploadUrl;
     }
@@ -183,16 +177,19 @@ public class VideoUploadService {
 
         //任务不存在
         if (!exists){
+            log.info("任务不存在,missionId:{}",params.getMissionId());
             return 0;
         }
 
         //任务存在，切分片存在
         boolean inChunkFile = checkChunkExistsThenCopy(params);
         if (inChunkFile){
+            log.info("任务存在，切片存在, missionId:{}",params.getMissionId());
             return 1;
         }
 
         //任务存在,切分片不存在
+        log.info("任务存在,切分片不存在,missionId:{}",params.getMissionId());
         return 2;
 
     }
@@ -260,6 +257,7 @@ public class VideoUploadService {
 
         //检测mission合法性，并且确保幂等
         if (!checkMissionValid(params.getMissionId(),loginId)){
+            log.error("任务不符合条件,missionId:{}",params.getMissionId());
             return false;
         }
 
@@ -286,6 +284,7 @@ public class VideoUploadService {
                 items.add(item);
             }
         }catch (Exception e){
+            log.error(e.getMessage());
             redisUtil.set(missionInfoKey,mission,30L,TimeUnit.MINUTES);
             throw new RuntimeException(e);
         }
@@ -293,6 +292,7 @@ public class VideoUploadService {
 
         //分片数量不够
         if (items.size()!= mission.getTotal()){
+            log.error("分片数量不足,missionId:{}",params.getMissionId());
             redisUtil.set(missionInfoKey,mission,30L,TimeUnit.MINUTES);
             return false;
         }
@@ -307,6 +307,9 @@ public class VideoUploadService {
         //插入videoInfo，并发送消息进行合并与转码
         transactionTemplate.executeWithoutResult(status -> {
             try {
+
+                log.info("事务开启，更新数据库并发送任务，missionId:{}",params.getMissionId());
+
                 Videoinfo videoinfo = insertVideoInfo(params);
 
                 VideoCombineMsg msg = new VideoCombineMsg();
@@ -318,8 +321,6 @@ public class VideoUploadService {
                         msg.setVideoInfoId(videoinfo.getId());
 
 
-
-
                 rabbitTemplate.convertAndSend(MQ_FILE_COMBINE.FILE_COMBINE_EXCHANGE,MQ_FILE_COMBINE.FILE_COMBINE_ROUTTINGKEY,msg);
                 //更新任务状态
                 videoUploadMissionService.update(new LambdaUpdateWrapper<VideoUploadMission>()
@@ -327,13 +328,15 @@ public class VideoUploadService {
                         .set(VideoUploadMission::getStateCode,MISSION_CODE.HANDLING.code)
                 );
             }catch (Exception e){
+                log.error("事务失败,missionId:{},error:{}",params.getMissionId(),e.getMessage());
                 //失败回滚
                 status.setRollbackOnly();
+                redisUtil.set(missionInfoKey,mission,30L,TimeUnit.MINUTES);
+                throw new RuntimeException(e);
             }
         });
 
-
-        //任务创建完成
+        log.info("消息发送成功，callback结束，missionId:{}",params.getMissionId());
         return true;
 
     }
@@ -393,8 +396,8 @@ public class VideoUploadService {
         videoinfo.setStatus(0);
         videoinfo.setIsPublish(1);
         videoinfo.setOpenComment(1);
-        videoinfo.setCoverId(null);
-        videoinfo.setVideofileId(null);
+        videoinfo.setCoverId("");
+        videoinfo.setVideofileId("");
         videoinfo.setIsOriginal(params.isIfOriginal()?1:0);
         videoinfo.setPartitionId(params.getPartitionId());
 

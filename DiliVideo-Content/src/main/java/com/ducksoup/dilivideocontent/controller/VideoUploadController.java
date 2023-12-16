@@ -8,14 +8,12 @@ import com.ducksoup.dilivideocontent.controller.Params.UploadChunkParams;
 import com.ducksoup.dilivideocontent.controller.Params.UploadMissionParams;
 import com.ducksoup.dilivideocontent.entity.VideoUploadMission;
 import com.ducksoup.dilivideocontent.mainservices.Video.Impl.VideoUploadService;
+import com.ducksoup.dilivideocontent.mainservices.cover.CoverManageService;
 import com.ducksoup.dilivideocontent.vo.ChunkUploadInfo;
 import com.ducksoup.dilivideoentity.result.ResponseResult;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -33,7 +31,7 @@ public class VideoUploadController {
 
     private final VideoUploadService videoUploadService;
 
-
+    private final CoverManageService coverManageService;
     /**
      * 创建分片上传任务
      * @param params UploadMissionParams
@@ -75,16 +73,16 @@ public class VideoUploadController {
      */
     @SaCheckLogin
     @PostMapping("/get_multi_chunk_upload_url")
-    public ResponseResult<Map<String,ChunkUploadInfo>> getChunkUploadUrl(@RequestBody @Valid List<UploadChunkParams> paramsList){
+    public ResponseResult<Map<Integer,ChunkUploadInfo>> getChunkUploadUrl(@RequestBody @Valid List<UploadChunkParams> paramsList){
 
         try {
 
-            Map<String,ChunkUploadInfo> map = new HashMap<>();
+            Map<Integer,ChunkUploadInfo> map = new HashMap<>();
 
             for (UploadChunkParams params : paramsList) {
                 log.info("检查并获取分片上传地址,total={},index={},md5={}",params.getTotal(),params.getIndex(),params.getMd5());
                 ChunkUploadInfo uploadInfo = videoUploadService.getChunkUploadInfo(params);
-                map.put(params.getMd5(),uploadInfo);
+                map.put(params.getIndex(),uploadInfo);
             }
             return new ResponseResult<>(HttpStatus.HTTP_OK,"获取分片上传地址成功",map);
         }catch (Exception e){
@@ -104,12 +102,27 @@ public class VideoUploadController {
     public ResponseResult<Boolean> missionDoneCallBack(@RequestBody @Valid MissionDoneCallbackParams params){
 
 
+        log.info("{} call back",params.getMissionId());
+
         boolean done = videoUploadService.handleCallBack(params);
         if (!done){
             return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"回调失败", false);
         }
         return new ResponseResult<>(HttpStatus.HTTP_OK,"回调成功", true);
 
+
+    }
+
+
+    @SaCheckLogin
+    @GetMapping("/get_cover_upload_url")
+    public ResponseResult<String> getCoverUploadUrl(@RequestParam String missionId, @RequestParam String type){
+
+        try {
+            return new ResponseResult<>(HttpStatus.HTTP_OK,"获取成功",coverManageService.getCoverUploadUrl(missionId,type));
+        } catch (Exception e) {
+            return new ResponseResult<>(HttpStatus.HTTP_INTERNAL_ERROR,"获取失败",e.getMessage());
+        }
 
     }
 
