@@ -46,8 +46,6 @@ public class FFMpegServiceImpl implements FFMpegService {
         FFmpegStream audioStream = probeResult.getStreams().get(1);
 
         VideoStreamInfo videoStreamInfo = new VideoStreamInfo(videoStream);
-
-
         AudioStreamInfo audioStreamInfo = new AudioStreamInfo(audioStream);
 
         VideoFileDetail videoFileDetail = new VideoFileDetail();

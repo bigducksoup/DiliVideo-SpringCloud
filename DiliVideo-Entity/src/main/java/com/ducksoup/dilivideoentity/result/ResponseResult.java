@@ -65,5 +65,27 @@ public class ResponseResult<T> implements Serializable {
 
 
 
+    public static <T> ResponseResult<T> success(T data) {
+        return new ResponseResult<T>(200, "success", data);
+    }
+
+    public static <T> ResponseResult<T> success() {
+        return new ResponseResult<T>(200, "success");
+    }
+
+
+
+    public static <T> ResponseResult<T> error(String msg) {
+        return new ResponseResult<T>(500, msg);
+    }
+
+    public static <T> ResponseResult<T> error(Integer code, String msg) {
+        return new ResponseResult<T>(code, msg);
+    }
+
+    public static <T> ResponseResult<T> error(Integer code, String msg, T data) {
+        return new ResponseResult<T>(code, msg, data);
+    }
+
 
 }

@@ -37,16 +37,10 @@ public class FileCombineServiceImpl implements FileCombineService {
         }catch (Exception e){
             log.error(e.getMessage());
         }
-
-
         for (File file : files) {
             file.delete();
         }
-
-
         return tempFile;
     }
-
-
 
 }
