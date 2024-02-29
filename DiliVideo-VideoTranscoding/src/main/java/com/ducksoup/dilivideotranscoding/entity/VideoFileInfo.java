@@ -4,7 +4,7 @@ package com.ducksoup.dilivideotranscoding.entity;
 import lombok.Data;
 
 @Data
-public class VideoFileDetail {
+public class VideoFileInfo {
 
     private long size;
 

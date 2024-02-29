@@ -1,5 +1,8 @@
 package com.ducksoup.dilivideotranscoding.function;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +14,7 @@ import java.util.List;
  * MyFileCombiner 实现FileComber
  * @see FileCombiner
  */
+@AllArgsConstructor
 public class MyFileCombiner implements FileCombiner{
 
     //合并后文件前缀

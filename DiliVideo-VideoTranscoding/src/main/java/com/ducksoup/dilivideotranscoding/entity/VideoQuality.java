@@ -13,7 +13,6 @@ public enum VideoQuality {
 
     VideoQuality(String bitRate) {
         this.bitRate = bitRate;
-        ConstantContext.putVideoQuality(bitRate, this);
     }
 
 }

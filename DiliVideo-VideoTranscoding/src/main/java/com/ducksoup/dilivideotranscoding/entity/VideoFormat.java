@@ -9,14 +9,12 @@ public enum VideoFormat {
     FLV("flv"),
     MOV("mov"),
     AVI("avi"),
-
     MKV("mkv");
 
     public final String value;
 
     VideoFormat(String value){
         this.value = value;
-        ConstantContext.putVideoFormat(value,this);
     }
 
 }

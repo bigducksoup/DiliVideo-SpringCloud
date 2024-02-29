@@ -3,7 +3,7 @@ package com.ducksoup.dilivideotranscoding.services.transcoding.Impl;
 import cn.hutool.core.io.file.FileNameUtil;
 import com.ducksoup.dilivideoentity.constant.CONSTANT_MinIO;
 import com.ducksoup.dilivideoentity.content.Videofile;
-import com.ducksoup.dilivideotranscoding.entity.VideoFileDetail;
+import com.ducksoup.dilivideotranscoding.entity.VideoFileInfo;
 import com.ducksoup.dilivideotranscoding.services.ffmpeg.FFMpegService;
 import com.ducksoup.dilivideotranscoding.services.filestorage.FileDownloadService;
 import com.ducksoup.dilivideotranscoding.services.filestorage.FileUploadService;
@@ -48,7 +48,7 @@ public class DefaultTranscodeService implements TranscodeService {
         File mp4 = ffMpegService.transcode(originFile, extName, "mp4");
 
         //TODO check完整性
-        VideoFileDetail fileDetail = ffMpegService.readVideoInfo(mp4);
+        VideoFileInfo fileDetail = ffMpegService.readVideoInfo(mp4);
 
         return mp4;
     }

@@ -3,7 +3,7 @@ package com.ducksoup.dilivideotranscoding.services.ffmpeg.Impl;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.UUID;
 import com.ducksoup.dilivideotranscoding.entity.AudioStreamInfo;
-import com.ducksoup.dilivideotranscoding.entity.VideoFileDetail;
+import com.ducksoup.dilivideotranscoding.entity.VideoFileInfo;
 import com.ducksoup.dilivideotranscoding.entity.VideoStreamInfo;
 import com.ducksoup.dilivideotranscoding.services.ffmpeg.FFMpegService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class FFMpegServiceImpl implements FFMpegService {
 
 
     @Override
-    public VideoFileDetail readVideoInfo(File videoFile) throws IOException {
+    public VideoFileInfo readVideoInfo(File videoFile) throws IOException {
         FFprobe ffprobe = new FFprobe(ffprobePath);
 
         //读取视频信息
@@ -48,13 +48,13 @@ public class FFMpegServiceImpl implements FFMpegService {
         VideoStreamInfo videoStreamInfo = new VideoStreamInfo(videoStream);
         AudioStreamInfo audioStreamInfo = new AudioStreamInfo(audioStream);
 
-        VideoFileDetail videoFileDetail = new VideoFileDetail();
-        videoFileDetail.setSize(probeResult.getFormat().size);
-        videoFileDetail.setDuration(probeResult.getFormat().duration);
-        videoFileDetail.setVideoStreamInfo(videoStreamInfo);
-        videoFileDetail.setAudioStreamInfo(audioStreamInfo);
+        VideoFileInfo videoFileInfo = new VideoFileInfo();
+        videoFileInfo.setSize(probeResult.getFormat().size);
+        videoFileInfo.setDuration(probeResult.getFormat().duration);
+        videoFileInfo.setVideoStreamInfo(videoStreamInfo);
+        videoFileInfo.setAudioStreamInfo(audioStreamInfo);
 
-        return videoFileDetail;
+        return videoFileInfo;
     }
 
     @Override
@@ -62,11 +62,11 @@ public class FFMpegServiceImpl implements FFMpegService {
         FFmpeg ffmpeg = new FFmpeg(ffmpegPath);
         FFprobe ffprobe = new FFprobe(ffprobePath);
 
-        VideoFileDetail videoFileDetail;
+        VideoFileInfo videoFileInfo;
 
 
         try {
-            videoFileDetail = this.readVideoInfo(originFile);
+            videoFileInfo = this.readVideoInfo(originFile);
         }catch (Exception e){
             log.error("视频信息读取失败"+"："+originFile.getName());
             log.error(e.getMessage());
@@ -84,11 +84,11 @@ public class FFMpegServiceImpl implements FFMpegService {
                 .addOutput(outputTemp.getAbsolutePath())
                 .setVideoCodec(codec)
                 .disableSubtitle()
-                .setAudioChannels(videoFileDetail.getAudioStreamInfo().getChannels())
+                .setAudioChannels(videoFileInfo.getAudioStreamInfo().getChannels())
                 .setVideoFrameRate(60,1)
-                .setVideoResolution(videoFileDetail.getVideoStreamInfo().getHeight(),videoFileDetail.getVideoStreamInfo().getWidth())
+                .setVideoResolution(videoFileInfo.getVideoStreamInfo().getHeight(), videoFileInfo.getVideoStreamInfo().getWidth())
                 .setFormat(finalFormat)
-                .setAudioCodec(videoFileDetail.getAudioStreamInfo().getCodecName())
+                .setAudioCodec(videoFileInfo.getAudioStreamInfo().getCodecName())
                 .done();
 
         FFmpegExecutor fFmpegExecutor = new FFmpegExecutor(ffmpeg,ffprobe);

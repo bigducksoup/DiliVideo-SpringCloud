@@ -1,6 +1,7 @@
 package com.ducksoup.dilivideotranscoding.entity;
 
 
+import com.ducksoup.dilivideotranscoding.entity.ffmpeg.Stream;
 import lombok.Data;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 
@@ -39,6 +40,16 @@ public class VideoStreamInfo {
         this.ratioY = Integer.parseInt(ratio[1]);
     }
 
+    public VideoStreamInfo(Stream stream){
+        this.width = Math.toIntExact(stream.getWidth());
+        this.height = Math.toIntExact(stream.getHeight());
+        this.bitRate = Long.parseLong(stream.getBitRate());
+        this.duration = Double.parseDouble(stream.getDuration());
+        this.codec_name = stream.getCodecName();
+        String[] ratio = stream.getDisplayAspectRatio().split(":");
+        this.ratioX = Integer.parseInt(ratio[0]);
+        this.ratioY = Integer.parseInt(ratio[1]);
+    }
 
 
 

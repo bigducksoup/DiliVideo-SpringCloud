@@ -1,19 +1,21 @@
 package com.ducksoup.dilivideotranscoding.service.compisition;
 
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.thread.ThreadUtil;
 import com.ducksoup.dilivideotranscoding.controller.param.MinIORelated.MinIODownLoadMeta;
+import com.ducksoup.dilivideotranscoding.controller.param.MinIORelated.MinIOSourceFileCombineParam;
 import com.ducksoup.dilivideotranscoding.controller.param.MinIORelated.MinIOSourceTranscodeParam;
 import com.ducksoup.dilivideotranscoding.controller.param.MinIORelated.QualityAndMinIOUploadMeta;
 import com.ducksoup.dilivideotranscoding.entity.ConstantContext;
 import com.ducksoup.dilivideotranscoding.entity.HandleResponse;
-import com.ducksoup.dilivideotranscoding.function.DownLoader;
-import com.ducksoup.dilivideotranscoding.function.MinIODownLoader;
-import com.ducksoup.dilivideotranscoding.function.MinIOUpLoader;
-import com.ducksoup.dilivideotranscoding.function.UpLoader;
+import com.ducksoup.dilivideotranscoding.entity.VideoFileInfo;
+import com.ducksoup.dilivideotranscoding.function.*;
+import com.ducksoup.dilivideotranscoding.service.MyFileCombineService;
 import com.ducksoup.dilivideotranscoding.service.ServiceContext;
 import com.ducksoup.dilivideotranscoding.service.StorageService;
 import com.ducksoup.dilivideotranscoding.service.VideoHandleService;
+import com.ducksoup.dilivideotranscoding.service.compisition.result.MinIOSourceCombineResult;
 import com.ducksoup.dilivideotranscoding.service.compisition.result.MinIOSourceTranscodeResult;
 import io.minio.MinioClient;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 
 @Service
@@ -31,6 +34,8 @@ import java.util.concurrent.CountDownLatch;
 public class VideoService {
 
     private MinioClient minioClient;
+
+    private MyFileCombineService myFileCombineService;
 
 
     /**
@@ -89,6 +94,7 @@ public class VideoService {
 
         try {
             // 下载
+            log.info("开始下载文件,{}", downLoadMeta);
             sourceFile = downLoader.download();
         } catch (Exception e) {
             log.error("下载失败"+e.getMessage(),downLoadMeta);
@@ -114,6 +120,7 @@ public class VideoService {
                 File transcodedFile = null;
                 try {
                     // 转码
+                    log.info("开始转码文件,{}", meta);
                     transcodedFile = handleService.transcode(finalSourceFile,
                             ConstantContext.getVideoFormat(meta.getFormat()),
                             ConstantContext.getVideoQuality(meta.getQuality()));
@@ -129,6 +136,7 @@ public class VideoService {
                             .build();
 
                     // 上传
+                    log.info("开始上传文件,{}", meta);
                     upLoader.upload(transcodedFile);
 
                     handleResponse.setOk(true);
@@ -148,7 +156,9 @@ public class VideoService {
 
 
         try {
+            log.info("等待线程执行完毕,{}", Thread.currentThread().getId());
             countDownLatch.await();
+            log.info("pass,{}", Thread.currentThread().getId());
         } catch (InterruptedException e) {
             if (sourceFile != null) sourceFile.delete();
             log.error("线程等待失败", e);
@@ -162,5 +172,102 @@ public class VideoService {
         return result;
     }
 
+
+    private final FFmpegVideoInfoReader fFmpegVideoInfoReader;
+
+
+    /**
+     * 从MinIO下载分片 并合并
+     * @param param MinIOSourceFileCombineParam
+     * @return MinIOSourceCombineResult
+     * TODO Test
+     */
+    public MinIOSourceCombineResult MinIOSourceCombine(MinIOSourceFileCombineParam param) {
+
+        MinIOSourceCombineResult result = new MinIOSourceCombineResult();
+        result.setUploadMeta(param.getUploadMeta());
+        result.setMsg("success");
+
+        List<File> chunks = new ArrayList<>();
+
+        for (MinIODownLoadMeta chunkMeta : param.getChunkMetas()) {
+
+            DownLoader downLoader = MinIODownLoader.builder()
+                    .bucket(chunkMeta.getDownloadBucket())
+                    .object(chunkMeta.getDownloadObjectName())
+                    .region(chunkMeta.getDownloadRegion())
+                    .extraHeaders(chunkMeta.getDownloadExtraHeaders())
+                    .extraQueryParams(chunkMeta.getDownloadExtraQueryParams())
+                    .minioClient(minioClient)
+                    .build();
+            try {
+                log.info("开始下载文件,{}", chunkMeta);
+                chunks.add(downLoader.download());
+                log.info("下载成功,{}", chunkMeta);
+            } catch (Exception e) {
+                log.error("下载失败"+e.getMessage(),chunkMeta);
+                chunks.forEach(File::delete);
+                log.error("download {} failed cancel mission",chunkMeta.getDownloadBucket()+chunkMeta.getDownloadRegion());
+                result.setOk(false);
+                result.setMsg(e.getMessage());
+                return result;
+            }
+        }
+
+        File combinedFile = null;
+        FileCombiner fileCombiner = new MyFileCombiner(UUID.fastUUID().toString(),".temp");
+        try {
+            log.info("开始合并文件,{}", param.getUploadMeta());
+            combinedFile = myFileCombineService.combine(chunks, fileCombiner);
+            log.info("合并成功,{}", param.getUploadMeta());
+        } catch (Exception e) {
+            log.error("合并失败",e);
+            chunks.forEach(File::delete);
+            combinedFile.delete();
+            log.error("combine file failed cancel mission,{}",param.getUploadMeta().getUploadObject());
+            result.setOk(false);
+            result.setMsg(e.getMessage());
+            return result;
+        }
+
+
+        VideoFileInfo info;
+
+        try {
+           info = fFmpegVideoInfoReader.read(combinedFile);
+        }catch (Exception e){
+            result.setOk(false);
+            result.setMsg(e.getMessage());
+            return result;
+        }
+
+        UpLoader upLoader = MinIOUpLoader.builder()
+                .bucket(param.getUploadMeta().getUploadBucket())
+                .object(param.getUploadMeta().getUploadObject())
+                .region(param.getUploadMeta().getUploadRegion())
+                .extraHeaders(param.getUploadMeta().getUploadExtraHeaders())
+                .extraQueryParams(param.getUploadMeta().getUploadExtraQueryParams())
+                .minioClient(minioClient)
+                .build();
+        try {
+            log.info("开始上传文件,{}", param.getUploadMeta());
+            upLoader.upload(combinedFile);
+            log.info("上传成功,{}", param.getUploadMeta());
+        } catch (Exception e) {
+            log.error("上传失败",e);
+            chunks.forEach(File::delete);
+            combinedFile.delete();
+            log.error("upload {} failed cancel mission",param.getUploadMeta().getUploadObject());
+            result.setOk(false);
+            result.setMsg(e.getMessage());
+            return result;
+        }
+
+
+        result.setVideoFileInfo(info);
+        result.setOk(true);
+
+        return result;
+    }
 
 }
